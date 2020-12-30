@@ -32,8 +32,8 @@ const items = [
 const Sidebar = () => {
   const {leftSidebar, toggleRightSidebar} = useSelector(
     state => ({
-      leftSidebar: state.leftSidebar,
-      toggleRightSidebar: state.toggleRightSidebar
+      leftSidebar: state.ui.leftSidebar,
+      toggleRightSidebar: state.ui.toggleRightSidebar
     }),
     shallowEqual
   )

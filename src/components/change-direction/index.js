@@ -3,7 +3,7 @@ import {useSelector, useDispatch, shallowEqual} from 'react-redux'
 const ChangeDirection = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction
+      direction: state.ui.direction
     }),
     shallowEqual
   )

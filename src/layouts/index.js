@@ -43,11 +43,11 @@ const Wrapper = ({
 const Layout = ({children}) => {
   const {layout, direction, collapsed, name, palettes} = useSelector(
     state => ({
-      layout: state.layout,
-      direction: state.direction,
-      collapsed: state.collapsed,
-      name: state.name,
-      palettes: state.palettes
+      layout: state.ui.layout,
+      direction: state.ui.direction,
+      collapsed: state.ui.collapsed,
+      name: state.ui.name,
+      palettes: state.ui.palettes
     }),
     shallowEqual
   )

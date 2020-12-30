@@ -10,10 +10,10 @@ import Button from './button'
 const DoughnutChart = ({title, subtitle, height = 260}) => {
   const {direction, palettes, collapsed, layout} = useSelector(
     state => ({
-      direction: state.direction,
-      palettes: state.palettes,
-      collapsed: state.collapsed,
-      layout: state.layout,
+      direction: state.ui.direction,
+      palettes: state.ui.palettes,
+      collapsed: state.ui.collapsed,
+      layout: state.ui.layout,
     }),
     shallowEqual
   )

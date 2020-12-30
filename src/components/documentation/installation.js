@@ -4,7 +4,7 @@ import SectionTitle from '../section-title'
 export const Intro = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name
+      name: state.ui.name
     }),
     shallowEqual
   )
@@ -63,7 +63,7 @@ export const Intro = () => {
 export const Instructions = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name
+      name: state.ui.name
     }),
     shallowEqual
   )

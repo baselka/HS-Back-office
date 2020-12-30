@@ -12,7 +12,7 @@ import Tags from '../left-sidebar-1/tags'
 const Single = ({items}) => {
   const {collapsed} = useSelector(
     state => ({
-      collapsed: state.collapsed
+      collapsed: state.ui.collapsed
     }),
     shallowEqual
   )
@@ -45,7 +45,7 @@ const Single = ({items}) => {
 const List = ({items}) => {
   const {collapsed} = useSelector(
     state => ({
-      collapsed: state.collapsed
+      collapsed: state.ui.collapsed
     }),
     shallowEqual
   )
@@ -93,7 +93,7 @@ const List = ({items}) => {
 const Sidebar = () => {
   const {collapsed} = useSelector(
     state => ({
-      collapsed: state.collapsed
+      collapsed: state.ui.collapsed
     }),
     shallowEqual
   )

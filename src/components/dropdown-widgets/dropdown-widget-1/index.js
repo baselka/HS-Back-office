@@ -7,7 +7,7 @@ import Link from 'next/link'
 const DropdownWidget1 = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction,
+      direction: state.ui.direction,
     }),
     shallowEqual
   )

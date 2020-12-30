@@ -2,7 +2,7 @@ import {useSelector, shallowEqual} from 'react-redux'
 const Text = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name
+      name: state.ui.name
     }),
     shallowEqual
   )

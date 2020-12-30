@@ -4,7 +4,7 @@ import AccountLinks from './account-links'
 const Widget3 = () => {
   const {user} = useSelector(
     state => ({
-      user: state.user,
+      user: state.ui.user,
     }),
     shallowEqual
   )

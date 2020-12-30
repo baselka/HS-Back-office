@@ -5,7 +5,7 @@ import {Button} from '../../components/buttons'
 const Widget7 = () => {
   const {user} = useSelector(
     state => ({
-      user: state.user,
+      user: state.ui.user,
     }),
     shallowEqual
   )

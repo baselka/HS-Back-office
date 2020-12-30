@@ -13,8 +13,8 @@ import ChangeDirection from '../change-direction'
 const Navbar = () => {
   const {toggleRightSidebar, collapsed} = useSelector(
     state => ({
-      toggleRightSidebar: state.toggleRightSidebar,
-      collapsed: state.collapsed
+      toggleRightSidebar: state.ui.toggleRightSidebar,
+      collapsed: state.ui.collapsed
     }),
     shallowEqual
   )

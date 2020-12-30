@@ -4,8 +4,8 @@ import Head from 'next/head'
 const Empty = ({children}) => {
   const {direction, name} = useSelector(
     state => ({
-      direction: state.direction,
-      name: state.name
+      direction: state.ui.direction,
+      name: state.ui.name
     }),
     shallowEqual
   )

@@ -6,7 +6,7 @@ import {getColor} from '../../functions/colors'
 const Logo = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name
+      name: state.ui.name
     }),
     shallowEqual
   )

@@ -12,10 +12,10 @@ import navigation from '../../navigation'
 const Sidebar = () => {
   const {leftSidebar, toggleRightSidebar, collapsed, layout} = useSelector(
     state => ({
-      leftSidebar: state.leftSidebar,
-      toggleRightSidebar: state.toggleRightSidebar,
-      collapsed: state.collapsed,
-      layout: state.layout
+      leftSidebar: state.ui.leftSidebar,
+      toggleRightSidebar: state.ui.toggleRightSidebar,
+      collapsed: state.ui.collapsed,
+      layout: state.ui.layout
     }),
     shallowEqual
   )

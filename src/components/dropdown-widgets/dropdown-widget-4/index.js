@@ -7,7 +7,7 @@ import {ProgressBar} from '../../../components/progress-bars'
 const DropdownWidget4 = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction,
+      direction: state.ui.direction,
     }),
     shallowEqual
   )

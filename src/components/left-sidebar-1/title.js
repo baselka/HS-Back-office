@@ -4,7 +4,7 @@ import {useSelector, useDispatch, shallowEqual} from 'react-redux'
 const Title = ({children}) => {
   const {leftSidebar} = useSelector(
     state => ({
-      leftSidebar: state.leftSidebar
+      leftSidebar: state.ui.leftSidebar
     }),
     shallowEqual
   )

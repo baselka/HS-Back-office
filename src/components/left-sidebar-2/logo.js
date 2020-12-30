@@ -6,9 +6,9 @@ import Link from 'next/link'
 const Logo = () => {
   const {name, leftSidebar, collapsed} = useSelector(
     state => ({
-      name: state.name,
-      collapsed: state.collapsed,
-      leftSidebar: state.leftSidebar,
+      name: state.ui.name,
+      collapsed: state.ui.collapsed,
+      leftSidebar: state.ui.leftSidebar,
     }),
     shallowEqual
   )

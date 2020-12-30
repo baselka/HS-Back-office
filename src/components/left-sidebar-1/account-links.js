@@ -39,7 +39,7 @@ const AccountLinks = () => {
 
   const {leftSidebar} = useSelector(
     state => ({
-      leftSidebar: state.leftSidebar
+      leftSidebar: state.ui.leftSidebar
     }),
     shallowEqual
   )

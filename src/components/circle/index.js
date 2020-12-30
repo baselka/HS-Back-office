@@ -6,9 +6,9 @@ import Circle from 'react-circle'
 const Index = ({size, progress, color}) => {
   const {palettes, collapsed, layout} = useSelector(
     state => ({
-      palettes: state.palettes,
-      collapsed: state.collapsed,
-      layout: state.layout
+      palettes: state.ui.palettes,
+      collapsed: state.ui.collapsed,
+      layout: state.ui.layout
     }),
     shallowEqual
   )

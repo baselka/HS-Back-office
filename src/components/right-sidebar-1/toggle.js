@@ -5,7 +5,7 @@ import {useSelector, useDispatch, shallowEqual} from 'react-redux'
 const Toggle = ({title, palettes, name}) => {
   const {toggleRightSidebar} = useSelector(
     state => ({
-      toggleRightSidebar: state.toggleRightSidebar
+      toggleRightSidebar: state.ui.toggleRightSidebar
     }),
     shallowEqual
   )

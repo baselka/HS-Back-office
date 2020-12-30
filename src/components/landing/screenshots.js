@@ -54,7 +54,7 @@ const items = [
 const Screenshots = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction
+      direction: state.ui.direction
     }),
     shallowEqual
   )

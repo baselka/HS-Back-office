@@ -4,7 +4,7 @@ import SectionTitle from '../section-title'
 export const CodeStructure = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name
+      name: state.ui.name
     }),
     shallowEqual
   )

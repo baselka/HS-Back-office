@@ -8,7 +8,7 @@ import {CircularBadge} from '../../badges'
 const DropdownWidget5 = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction,
+      direction: state.ui.direction,
     }),
     shallowEqual
   )
@@ -16,7 +16,7 @@ const DropdownWidget5 = () => {
   const [hidden, setHidden] = useState(true)
   const {user} = useSelector(
     state => ({
-      user: state.user
+      user: state.ui.user
     }),
     shallowEqual
   )

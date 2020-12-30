@@ -22,7 +22,7 @@ const ListWidget1 = ({number, title, subtitle, bg, color}) => {
 const DropdownWidget3 = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction,
+      direction: state.ui.direction,
     }),
     shallowEqual
   )

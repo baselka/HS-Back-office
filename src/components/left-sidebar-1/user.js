@@ -10,7 +10,7 @@ import Widget7 from './widget-7'
 const User = () => {
   const {leftSidebar} = useSelector(
     state => ({
-      leftSidebar: state.leftSidebar
+      leftSidebar: state.ui.leftSidebar
     }),
     shallowEqual
   )

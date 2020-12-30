@@ -6,7 +6,7 @@ import Link from 'next/link'
 const Logo = () => {
   const {name} = useSelector(
     state => ({
-      name: state.name,
+      name: state.ui.name,
     }),
     shallowEqual
   )

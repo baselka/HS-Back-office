@@ -4,7 +4,7 @@ import Link from 'next/link'
 const Images = () => {
   const {direction} = useSelector(
     state => ({
-      direction: state.direction
+      direction: state.ui.direction
     }),
     shallowEqual
   )
