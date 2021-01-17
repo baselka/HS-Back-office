@@ -15,14 +15,14 @@ const Widget2 = () => {
           <div className="flex-shrink-0 w-16">
             <img
               src={`/assets/faces/${user.img}`}
-              alt={user.name}
+              alt={user.fullName}
               className="shadow rounded-full h-16 w-16 border-2"
             />
           </div>
           <div className="ltr:ml-3 rtl:mr-3 py-2">
             <p
               className={` text-sm font-bold whitespace-no-wrap`}>
-              {user.name}
+              {user.fullName}
             </p>
             <p className={`text-sm whitespace-no-wrap mb-1`}>
               {user.email}

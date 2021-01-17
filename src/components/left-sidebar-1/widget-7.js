@@ -15,13 +15,13 @@ const Widget7 = () => {
         <div className="flex flex-col w-full items-center justify-center text-center">
           <img
               src={`/assets/faces/${user.img}`}
-              alt={user.name}
+              alt={user.fullName}
             className="shadow rounded-full h-20 w-20 border-2 mb-2"
           />
           <div className="py-2">
             <p
               className={` text-sm font-bold whitespace-no-wrap`}>
-              {user.name}
+              {user.fullName}
             </p>
             <p className={`text-sm whitespace-no-wrap`}>
               {user.company}

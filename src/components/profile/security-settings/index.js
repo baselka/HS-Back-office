@@ -15,7 +15,7 @@ const AccountSettings = () => {
         className="flex flex-col text-sm mb-4">
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Current password</span>
+            <span className="text-default">كلمة المرور الحالية</span>
             <input
               name="currentpassword"
               type="password"
@@ -26,14 +26,14 @@ const AccountSettings = () => {
           </label>
           {errors.currentpassword && (
             <p className="mt-1 text-xs text-red-500">
-              Current password is required
+              كلمة المرور الحالية إجبارية
             </p>
           )}
         </div>
 
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">New password</span>
+            <span className="text-default">كلمة المرور الجديدة</span>
             <input
               name="newpassword"
               type="password"
@@ -44,14 +44,14 @@ const AccountSettings = () => {
           </label>
           {errors.newpassword && (
             <p className="mt-1 text-xs text-red-500">
-              New password is required
+              كلمة المرور الجديدة اجبارية
             </p>
           )}
         </div>
 
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Confirm new password</span>
+            <span className="text-default">تأكيد كلمة المرور الجديدة</span>
             <input
               name="confirmnewpassword"
               type="password"
@@ -62,7 +62,7 @@ const AccountSettings = () => {
           </label>
           {errors.confirmnewpassword && (
             <p className="mt-1 text-xs text-red-500">
-              New password confirmation is required
+              تأكيد كلمة المرور الجديدة اجباري
             </p>
           )}
         </div>
@@ -70,8 +70,8 @@ const AccountSettings = () => {
         <div className="w-full">
           <input
             type="submit"
-            className="px-4 py-2 uppercase font-bold text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none active:outline-none"
-            value="Update"
+            className="px-4 py-2 uppercase font-bold text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:outline-none active:outline-none"
+            value="تحديث"
           />
         </div>
       </form>

@@ -19,7 +19,6 @@ import '../src/scss/react-datetime.scss'
 import '../src/scss/react-notifications.scss'
 import '../src/scss/nprogress.scss'
 
-
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
@@ -30,9 +29,8 @@ const MyApp = ({ Component, pageProps }) => (
     <div>
         <CookiesProvider>
             <Provider store={store}>
-
                 <Head>
-                    <title>IWatch PH</title>
+                    <title>هابي سيزون</title>
                     <link rel="shortcut icon" href="/public/favicon.ico" />
                     <meta
                         name="viewport"

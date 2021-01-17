@@ -15,92 +15,57 @@ const AccountSettings = () => {
         className="flex flex-col text-sm mb-4">
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">First name</span>
+            <span className="text-default">الاسم</span>
             <input
               name="firstname"
               type="text"
               ref={register({required: true})}
               className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Eric"
+              placeholder="الاسم"
             />
           </label>
           {errors.firstname && (
-            <p className="mt-1 text-xs text-red-500">First name is required</p>
+            <p className="mt-1 text-xs text-red-500">الاسم إجباري</p>
           )}
         </div>
 
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Last name</span>
-            <input
-              name="lastname"
-              type="text"
-              ref={register({required: true})}
-              className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Simpson"
-            />
-          </label>
-          {errors.lastname && (
-            <p className="mt-1 text-xs text-red-500">Last name is required</p>
-          )}
-        </div>
-
-        <div className="w-full mb-4">
-          <label className="block">
-            <span className="text-default">Company</span>
+            <span className="text-default">الشركة</span>
             <input
               name="company"
               type="text"
               ref={register({required: true})}
               className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Facebook"
+              placeholder="الشركة"
             />
           </label>
           {errors.company && (
-            <p className="mt-1 text-xs text-red-500">Company is required</p>
+            <p className="mt-1 text-xs text-red-500">الشركة إجبارية</p>
           )}
         </div>
 
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Position</span>
+            <span className="text-default">الوظيفة</span>
             <input
               name="position"
               type="text"
               ref={register({required: true})}
               className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Innovation pioneer"
+              placeholder="الوظيفة"
             />
           </label>
           {errors.position && (
-            <p className="mt-1 text-xs text-red-500">Position is required</p>
-          )}
-        </div>
-
-        <div className="w-full mb-4">
-          <label className="block">
-            <span className="text-default">Select</span>
-            <select
-              name="language"
-              ref={register()}
-              className="form-select block w-full mt-1 text-xs">
-              <option value="0">Choose your language</option>
-              <option value="1">English</option>
-              <option value="2">Spanish</option>
-              <option value="3">Portuguese</option>
-              <option value="4">Chinese</option>
-            </select>
-          </label>
-          {errors.language && (
-            <p className="mt-1 text-xs text-red-500">Language is required</p>
+            <p className="mt-1 text-xs text-red-500">الوظيفة إجبارية</p>
           )}
         </div>
 
         <div className="w-full">
           <input
             type="submit"
-            className="px-4 py-2 uppercase font-bold text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none active:outline-none"
-            value="Submit"
+            className="px-4 py-2 uppercase font-bold text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:outline-none active:outline-none"
+            value="تحديث"
           />
         </div>
       </form>

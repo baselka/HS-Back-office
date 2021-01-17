@@ -35,33 +35,16 @@ const Navbar = () => {
           className="mx-4">
           <Menu size={20} />
         </button>
-        <Search />
+
         <span className="ltr:ml-auto rtl:mr-auto"></span>
-        <DropdownWidget1 />
-        <DropdownWidget4 />
-        <DropdownWidget3 />
-        <DropdownWidget2 />
+
         <DropdownWidget5 />
-        <Link href="/pages/login-1">
-          <a className="btn btn-default flex lg:hidden">Logout</a>
+        <Link href="/pages/logout">
+          <a className="btn btn-default flex lg:hidden">تسجيل الخروج</a>
         </Link>
-        <Link href="/pages/login">
-          <a className="btn btn-default hidden lg:flex">Logout</a>
+        <Link href="/pages/logout">
+          <a className="btn btn-default hidden lg:flex">تسجيل الخروج</a>
         </Link>
-        <button
-          className="btn-transparent flex items-center justify-center h-16 w-8 pl-2 lg:pl-0"
-          onClick={() =>
-            dispatch({
-              type: 'SET_CONFIG',
-              config: {
-                key: 'toggleRightSidebar',
-                value: !toggleRightSidebar
-              }
-            })
-          }>
-          <Settings size={18} />
-        </button>
-        <ChangeDirection />
       </div>
     </div>
   )

@@ -26,6 +26,10 @@
       }
     }
 
+    button.open-active-btn, a.open-active-btn{
+        @apply bg-pink-800 #{!important};
+    }
+
     .right-arrow:before {
       font-family: "simple-line-icons";
       content: "\e606";
@@ -46,7 +50,7 @@
     [data-direction="rtl"] & {
       .right-arrow:before {
         left: 8px;
-        transform: rotate(-540deg);
+        //transform: rotate(-540deg);
       }
     }
   }

@@ -19,7 +19,6 @@ const Sidebar = () => {
     }),
     shallowEqual
   )
-
   const {showProjects, showTags} = {...leftSidebar}
   const dispatch = useDispatch()
 
@@ -65,8 +64,6 @@ const Sidebar = () => {
               </div>
             </div>
           ))}
-          {showProjects && <Projects />}
-          {showTags && <Tags />}
         </div>
       </div>
     </div>

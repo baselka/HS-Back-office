@@ -21,7 +21,11 @@ const Logo = () => {
       className="logo h-16 flex flex-row items-center uppercase font-bold text-lg tracking-wider justify-between px-4">
       <Link href="/">
         <a className="flex flex-row items-center justify-start children-x-1">
-          <ToggleLeft size={26} />
+          <img
+            alt=""
+            className="h-full w-12"
+            src="/logo-white.png"
+          />
           <span>{name}</span>
         </a>
       </Link>

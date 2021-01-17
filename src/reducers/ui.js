@@ -1,10 +1,8 @@
-import users from '../json/users.json'
-
 const initialState = {
-  name: 'Happy Season',
-  description: 'Concavo React Tailwind CSS admin template',
-  user: users[0],
-  url: 'https://concavo.mobifica.com',
+  name: 'هابي سيزون',
+  description: 'لوحة تحكم',
+  user: null,
+  url: 'https://happy-season.com/admin',
   layout: 'layout-1',
   direction: 'rtl',
   collapsed: false,
@@ -23,8 +21,8 @@ const initialState = {
   ],
   palettes: {
     background: 'white',
-    logo: 'white',
-    leftSidebar: 'white',
+    logo: 'bg-pink-700',
+    leftSidebar: 'bg-pink-700',
     rightSidebar: 'white',
     navbar: 'white',
     topNavigation: 'white'
@@ -43,6 +41,11 @@ const initialState = {
 
 const ui = (state = initialState, action) => {
   switch (action.type) {
+    case 'LOGIN_NOW':
+      return {
+        ...state,
+        user: action.user
+      }
     case 'SET_DEMO':
       return {
         ...state,

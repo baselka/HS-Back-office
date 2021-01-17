@@ -1,39 +1,38 @@
 import axios from 'axios'
-var localStorage = require( '../utils/localStorage');
+//var localStorage = require( '../utils/localStorage');
 // import { getPersistToken } from '../utils/localStorage'
 
-
 let API_ROOT
+let headers
 
 if(process.env.NODE_ENV === 'production') {
-    API_ROOT = `http://localhost:5000/api/v1/backOffice`
+    API_ROOT = `http://localhost:5000/api/v1/back-office`
 } else {
-    API_ROOT = `https://api-staging.happy-season.com/api/v1/backOffice`
+    API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`
 }
 
-
-
 const handleErrors = async (error) => {
+	console.log('Auth handleErrors', error);
 	let result = {}
 	const data = error && error.response && error.response.data
 	const status = error && error.response && error.response.status
 	
 	result = {
-		status: status,
-		data: data,
-		error: true
+		statusCode: status,
+		statusName: data.statusName,
+		data
 	}
 	return result
-	
 }
 
 const handleResponse = res => {
+	console.log('Auth handleResponse', res);
 	return res && res.data
 }
 
-
 const createApi = () => {
-    const authToken = localStorage.getLocalStorage('persist:auth') && localStorage.getLocalStorage('persist:auth').authToken
+	const authToken = localStorage.getItem('persist:auth') && localStorage.getItem('persist:auth').authToken
+	console.log('Auth authToken', authToken);
     if (authToken) {
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -56,7 +55,6 @@ const createApi = () => {
 	api.interceptors.response.use(function (response) {
         return response
     }, function (error) {
-        
         return Promise.reject(error)
     })
     return api
@@ -87,7 +85,7 @@ const requests = {
 
 const Auth = {
     login: (data) => requests.post('/login', data ),
-	 logout: (token) => requests.post('/logout/',token)
+	logout: (token) => requests.post('/logout/',token)
 }
 
 const Branches = {
