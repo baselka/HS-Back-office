@@ -43,7 +43,7 @@ const Datatable = ({columns, data}) => {
     {
       columns,
       data,
-      initialState: {pageIndex: 0, pageSize: 10}
+      initialState: {pageIndex: 0, pageSize: 20}
     },
     useSortBy,
     usePagination,
@@ -55,18 +55,18 @@ const Datatable = ({columns, data}) => {
           id: 'selection',
           // The header can use the table's getToggleAllRowsSelectedProps method
           // to render a checkbox
-          Header: ({getToggleAllRowsSelectedProps}) => (
-            <>
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            </>
-          ),
+          // Header: ({getToggleAllRowsSelectedProps}) => (
+          //   <>
+          //     <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+          //   </>
+          // ),
           // The cell can use the individual row's getToggleRowSelectedProps method
           // to the render a checkbox
-          Cell: ({row}) => (
-            <>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </>
-          )
+          // Cell: ({row}) => (
+          //   <>
+          //     <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+          //   </>
+          // )
         },
         ...columns
       ])
@@ -81,8 +81,8 @@ const Datatable = ({columns, data}) => {
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  <div className="flex flex-row items-center justify-start">
+                <th {...column.getHeaderProps(column.getSortByToggleProps())} >
+                  <div className="items-center justify-center text-center">
                     <span>{column.render('Header')}</span>
                     {/* Add a sort direction indicator */}
                     <span className="ltr:ml-auto rtl:mr-auto">
@@ -108,7 +108,7 @@ const Datatable = ({columns, data}) => {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  return <td {...cell.getCellProps()} style={{textAlign:'center'}} >{cell.render('Cell')}</td>
                 })}
               </tr>
             )
@@ -117,41 +117,41 @@ const Datatable = ({columns, data}) => {
       </table>
 
       <div className="flex flex-row items-center justify-between my-4">
-        <div className="flex flex-wrap items-center justify-start children-x-2 pagination">
+        <div className="items-center justify-center text-center children-x-2 pagination">
           {pageIndex !== 0 && (
             <PageWithText
               onClick={() => gotoPage(0)}
               color="text-default">
-              First
+              الصحفة الاولى
             </PageWithText>
           )}
           {canPreviousPage && (
             <PageWithText
               onClick={() => previousPage()}
               color="text-default">
-              Previous
+              السابقة
             </PageWithText>
           )}
           {canNextPage && (
             <PageWithText
               onClick={() => nextPage()} disabled={!canNextPage}
               color="text-default">
-              Next
+              التالية
             </PageWithText>
           )}
           {pageIndex !== pageCount - 1 && (
             <PageWithText
               onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}
               color="text-default">
-              Last
+              الصحفة الاخيرة
             </PageWithText>
           )}
         </div>
 
         <span>
-          Page{' '}
+          صفحة {' '}
           <b>
-            {pageIndex + 1} of {pageOptions.length}
+            {pageIndex + 1} من {pageOptions.length}
           </b>{' '}
         </span>
 
@@ -161,9 +161,9 @@ const Datatable = ({columns, data}) => {
           onChange={e => {
             setPageSize(Number(e.target.value))
           }}>
-          {[10, 25, 50, 100].map(pageSize => (
+          {[10, 25, 50, 100, 200].map(pageSize => (
             <option key={pageSize} value={pageSize}>
-              Show {pageSize}
+              عرض {pageSize}
             </option>
           ))}
         </select>

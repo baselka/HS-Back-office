@@ -288,6 +288,10 @@ module.exports = {
       fontFamily: {
         'sans': ['Cairo', 'sans-serif'],
         poppins: ['Cairo', 'sans-serif'],
+        borderRadius: ['responsive', 'hover'],
+        padding: ['responsive', 'hover'],
+        backgroundColor: ['responsive', 'hover'],
+        borderColor: ['responsive', 'hover'],
       }
     },
     fontSize: {

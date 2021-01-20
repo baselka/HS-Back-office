@@ -1,6 +1,5 @@
 import axios from 'axios'
-//var localStorage = require( '../utils/localStorage');
-// import { getPersistToken } from '../utils/localStorage'
+import cookie from "js-cookie";
 
 let API_ROOT
 let headers
@@ -12,7 +11,6 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 const handleErrors = async (error) => {
-	console.log('Auth handleErrors', error);
 	let result = {}
 	const data = error && error.response && error.response.data
 	const status = error && error.response && error.response.status
@@ -26,18 +24,16 @@ const handleErrors = async (error) => {
 }
 
 const handleResponse = res => {
-	console.log('Auth handleResponse', res);
 	return res && res.data
 }
 
 const createApi = () => {
-	const authToken = localStorage.getItem('persist:auth') && localStorage.getItem('persist:auth').authToken
-	console.log('Auth authToken', authToken);
+	const authToken = cookie.get('token'); // localStorage.getItem('persist:auth') && localStorage.getItem('persist:auth').authToken
     if (authToken) {
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Type': 'application/json',
-            Authorization: authToken !== 'null' ? `Token ${authToken.replace(/['"]+/g, '')}` : ''
+            'Authorization': authToken !== 'null' ? `Bearer ${authToken}` : ''
         }
     } else {
         headers = {
@@ -89,12 +85,24 @@ const Auth = {
 }
 
 const Branches = {
-    instantEdit: (data) => requests.post('/instantEdit', data ),
+    all: (data, counts) => requests.get('/branches/'+data+'/'+counts+'/0/0/0/0/', {}),
+    search: (data) => requests.get('/branches/'+data.start+'/'+data.end+'/'+data.city+'/'+data.cat+'/'+data.subCat+'/'+data.term+'/', {}),
+    instantEdit: (data) => requests.post('/instant-edit', data ),
 	// logout: (token) => requests.post('/logout/logout.php','',token)
 }
 
+const Cities = {
+    all: () => requests.get('/cities', {}),
+}
+
+const Categories = {
+    all: () => requests.get('/categories', {}),
+    sub: () => requests.get('/subcategories', {}),
+}
 
 export default {
 	Auth,
+	Cities,
+	Categories,
 	Branches
 }

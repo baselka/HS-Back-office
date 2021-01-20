@@ -47,7 +47,7 @@ const Logout = ({deauthenticate}) => {
       </h3>
 
       <p className="text-secondary mb-4 text-center">
-        تم تسجيل الخروج بنجاح
+        تم تسجيل الخروج
       </p>
       <div className="flex text-sm mb-4">
         <Link href="/pages/login">
