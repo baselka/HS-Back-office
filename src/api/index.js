@@ -11,6 +11,7 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 const handleErrors = async (error) => {
+	console.log('error', error);
 	let result = {}
 	const data = error && error.response && error.response.data
 	const status = error && error.response && error.response.status
@@ -86,13 +87,20 @@ const Auth = {
 
 const Branches = {
     all: (data, counts) => requests.get('/branches/'+data+'/'+counts+'/0/0/0/0/', {}),
+	delete: (branch_id) => requests.delete('/delete-branch/'+branch_id, {}),
     search: (data) => requests.get('/branches/'+data.start+'/'+data.end+'/'+data.city+'/'+data.cat+'/'+data.subCat+'/'+data.term+'/', {}),
+    create: (data) => requests.post('/add-branch', data ),
     instantEdit: (data) => requests.post('/instant-edit', data ),
-	// logout: (token) => requests.post('/logout/logout.php','',token)
+    changeStatus: (data) => requests.patch('/update-branch-status/'+data.branch_id+'/'+data.status, {} ),
 }
 
 const Cities = {
     all: () => requests.get('/cities', {}),
+}
+
+const Providers = {
+	all: (data) => requests.get('/providers/'+data.start+'/'+data.end+'/0', {}),
+	create: (data) => requests.post('/add-provider', data ),
 }
 
 const Categories = {
@@ -104,5 +112,6 @@ export default {
 	Auth,
 	Cities,
 	Categories,
+	Providers,
 	Branches
 }

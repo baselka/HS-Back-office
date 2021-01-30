@@ -1,7 +1,7 @@
 import React from 'react'
 import WidgetTitle from '../widget-title'
 
-const Widget = ({title, description, right = null, children}) => {
+const Widget = ({title, description, right = null, children, className = null}) => {
   if (right) {
     return (
       <div className="w-full p-4 shadow mb-4 widget">
@@ -14,7 +14,7 @@ const Widget = ({title, description, right = null, children}) => {
     )
   }
   return (
-    <div className="w-full p-4 shadow mb-4 widget">
+    <div className={ className ? "w-full p-4 shadow mb-4 widget "+ className : "w-full p-4 shadow mb-4 widget"}>
       <WidgetTitle title={title} description={description} />
       {children}
     </div>
