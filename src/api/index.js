@@ -5,7 +5,7 @@ let API_ROOT
 let headers
 
 if(process.env.NODE_ENV === 'production') {
-    API_ROOT = `http://localhost:3000/api/v1/back-office`
+    API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`
 } else {
     API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`
 }
