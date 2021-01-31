@@ -3,6 +3,7 @@ import Container from './Container'
 import { useRouter } from 'next/router'
 import * as Icon from 'react-feather'
 import cookie from "js-cookie"
+import LoadingModal from '../src/components/modals/LoadingModal'
 
 const Index = () => {
   const token = cookie.get('token'); 
@@ -18,12 +19,7 @@ const Index = () => {
 
   return (
     <Container>
-        <div className="flex justify-center w-screen h-screen content-center pt-80" style={{paddingTop:200}} > 
-          <div className="w-15 h-20 text-center text-xl text-gray-800 py-80">
-            <Icon.Loader size={30} className="m-auto" />
-            ... loading ...
-          </div>
-        </div>
+      <LoadingModal />
     </Container>
   )
 }

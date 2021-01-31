@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Container from '../../Container'
 import Layout from '../../../src/layouts'
 import SectionTitle from '../../../src/components/section-title'
+import LoadingModal from '../../../src/components/modals/LoadingModal'
 import Datatable from '../../../src/components/datatable'
 import Widget from '../../../src/components/widget'
 import { Alert } from '../../../src/components/alerts'
@@ -121,6 +122,8 @@ const Simple = ( { branches, cities, categories, subCategories, changeStatus, ch
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [modal, setModal] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [hasSearch, setHasSearch] = useState(false)
   const [branches, setBranches] = useState([])
   const [cities, setCities] = useState([])
   const [searchCities, setSearchCities] = useState([])
@@ -136,6 +139,7 @@ const Index = () => {
   const [fieldToChange, setFieldToChange] = useState('')
   const [modalTitle, setModalTitle] = useState('')
   const [modalMessage, setModalMessage] = useState('')
+  const [baranchToDeleteID, setBaranchToDeleteID] = useState('')
   const [alertType, setAlertType] = useState('red')
   const [branchIDToChange, setBranchIDToChange] = useState(0)
   const router = useRouter();
@@ -149,22 +153,14 @@ const Index = () => {
 
   useEffect(() => {
     _search();
-  }, [searchCityId])
-
-  useEffect(() => {
-    _search();
-  }, [searchCatID])
-
-  useEffect(() => {
-    _search();
-  }, [searchSubCatID])
+  }, [searchCityId, searchCatID, searchSubCatID, hasSearch])
 
   const _getAllCities = () => {
     Api.Cities.all().then((res)=>{
       console.log('_getAllCities', res);
       if(res.statusCode === 200){
         setCities(res.data);
-        let citlist = [];
+        let citlist = [{label:"كل المدن", value:0}];
         for (let index = 0; index < res.data.length; index++) {
           const element = res.data[index];
           citlist.push({label:element.city, value:element.id});
@@ -262,7 +258,7 @@ const Index = () => {
     console.log(data);
     setSearchCatID(data.value);
 
-    let subcat = [];
+    let subcat = [{label:"كل التصنيفات", value:0}];
     for (let index = 0; index < subCategories.length; index++) {
       const element = subCategories[index];
       if(element.id === data.value){
@@ -326,7 +322,7 @@ const Index = () => {
       console.log('_getAllCategories', res);
       if(res.statusCode === 200){
         setCategories(res.data);
-        let catlist = [];
+        let catlist = [{label:"كل التصنيفات", value:0}];
         for (let index = 0; index < res.data.length; index++) {
           const element = res.data[index];
           catlist.push({label:element.type_name, value:element.id});
@@ -352,28 +348,37 @@ const Index = () => {
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       _search();
+      setHasSearch(true);
     }
+  }
+  const _clearInputSearch = () => {
+    setHasSearch(false);
+    setSearchTerm('');
   }
 
   const _deleteBranch = ( branch_id ) => {
-    if(window.confirm('هل تريد فعلا حذف الفرع ؟')){
-      Api.Branches.delete( branch_id ).then((res)=>{
-        console.log('_deleteBranches', res);
-        if(res.statusCode === 202){
-          _getAllBranches(0, 1000);
-          setMessages(res.data.message);
-          setAlertType('green');
-          NotificationManager.success(res.data.message, 'نجاح', 3000);
-        }else{
-          setMessages(res.data.message);
-          setAlertType('red');
-          NotificationManager.error(res.data.message, 'عفواً', 3000);
-          setTimeout(() => {
-            setMessages(false);
-          }, 3000);
-        }
-      });
-    }
+    setConfirmModal(true);
+    setBaranchToDeleteID(branch_id);
+  }
+
+  const _deleteBranchConfirmed = () => {
+    setConfirmModal(false);
+    Api.Branches.delete( baranchToDeleteID ).then((res)=>{
+      console.log('_deleteBranches', res);
+      if(res.statusCode === 202){
+        _getAllBranches(0, 1000);
+        setMessages(res.data.message);
+        setAlertType('green');
+        NotificationManager.success(res.data.message, 'نجاح', 3000);
+      }else{
+        setMessages(res.data.message);
+        setAlertType('red');
+        NotificationManager.error(res.data.message, 'عفواً', 3000);
+        setTimeout(() => {
+          setMessages(false);
+        }, 3000);
+      }
+    });
   }
 
   const _getAllBranches = ( page, counts ) => {
@@ -405,6 +410,11 @@ const Index = () => {
           <Modal change={(value)=>_instantEdit(value)} cancel={()=>setModal(false)} title={modalTitle} message={modalMessage} options={modalOptions} />
         )}
 
+        {confirmModal && (
+          <Modal change={()=>_deleteBranchConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الفرع ؟'} options={null} />
+        )}
+
+
         <div className="flex text-sm mb-4">
           <div className="w-10/12">
             <SectionTitle title="إدارة الفروع" />
@@ -424,19 +434,23 @@ const Index = () => {
               <input
                 name="brnachname"
                 type="text"
-                className="form-input text-xs block border-red-500 w-40"
+                className={"form-input text-xs block border-red-500 w-40"}
                 placeholder="ابحث عن فرع ..."
                 onChange={(e)=> _setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
+                value={searchTerm}
               />
+              {hasSearch &&
+                <div className="mt-2 ml-20 -mr-12 pl-5" ><i class="icon-close text-xl font-bold text-gray-600 cursor-pointer" onClick={()=>_clearInputSearch()} ></i></div>
+              }
 
-              <label className="block w-16 leading-8">المدينة</label>
+              <label className="block w-16 leading-8 text-left">المدينة</label>
               <Select options={searchCities} className="w-40" placeholder={"اختر المدينة"} onChange={_changeSearchCity} />
 
-              <label className="block w-20 leading-8">التصنيف</label>
+              <label className="block w-20 leading-8 text-left">التصنيف</label>
               <Select options={searchCategories} className="w-40" placeholder={"اختر التصنيف"} onChange={_changeSearchCat} />
               
-              <label className="block w-26 leading-8">التصنيف الفرعي</label>
+              <label className="block w-26 leading-8 text-left">التصنيف الفرعي</label>
               <Select options={searchSubCategories} className="w-48" placeholder={"اختر التصنيف الفرعي"} onChange={_changeSearchSubCat} />
 
             <button className="btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1"  style={{width:80}} onClick={()=>_search()} >
@@ -444,21 +458,16 @@ const Index = () => {
               <span>بحث</span>
             </button>
 
-            <button className="btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1" style={{width:120}} onClick={()=>_clearSearch()} >
+            {/* <button className="btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1" style={{width:120}} onClick={()=>_clearSearch()} >
               <i className="icon-close font-bold mr-1 ml-1" />
               <span>إلغاء البحث</span>
-            </button>
+            </button> */}
 
           </div>
         </Widget>
 
         { branches.length === 0 ? (
-          <div className="flex justify-center w-11/12 h-screen content-center" style={{paddingTop:200}} > 
-            <div className="w-15 h-20 text-center text-xl text-gray-800">
-              <Icon.Loader size={30} className="m-auto" />
-              ... loading ...
-            </div>
-          </div>
+          <LoadingModal />
         ) : (
           <Widget title={"قائمة الفروع ( "+ branches.length + " )"} >
             <div className="">

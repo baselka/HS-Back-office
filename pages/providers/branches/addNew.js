@@ -14,6 +14,7 @@ import LoadingModal from '../../../src/components/modals/LoadingModal'
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
+  const [loadingData, setLoadingData] = useState(true)
   const [modal, setModal] = useState(false)
   const [branches, setBranches] = useState(['1'])
   const [providerID, setProviderID] = useState(null)
@@ -95,6 +96,7 @@ const Index = () => {
       console.log('_getSubCategories', res);
       if(res.statusCode === 200){
         setSubCategories(res.data);
+        setLoadingData(false);
       }
     });
   }
@@ -123,6 +125,7 @@ const Index = () => {
     console.log('_createNewBranch', data);
     Api.Branches.create(data).then((res)=>{
       console.log('_createNewBranch res', res);
+      setLoadingData(false);
       if(res.statusCode === 201){
         NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
         router.push('/providers/branches');
@@ -164,12 +167,14 @@ const Index = () => {
         }
         _createNewBranch(data);
       }else{
+        setLoadingData(false);
         NotificationManager.error('حدث خطأ اثناء إضافة مقدم الخدمة', 'عفواً', 3000);
       }
     });
   }
 
   const onSubmit = fields => {
+    setLoadingData(true);
     fields.city_id = cityID.value;
     fields.category_id = categoryID.value;
     fields.sub_cat_id = subCategoryID.value;
@@ -196,13 +201,14 @@ const Index = () => {
     } else if(providerType.value === "New"){
       _createNewProvider(fields)
     } else {
+      setLoadingData(false);
       NotificationManager.error('الرجاء إختيار ما إذا كان مقدم الخدمة مسجلا مسبقاً ام لا', 'عفواً', 3000);
     }
   }
 
   return (
     <Container>
-      <LoadingModal />
+      { loadingData && <LoadingModal /> }
       <Layout>
         { branches.length === 0 ? (
           <div className="flex justify-center w-11/12 h-screen content-center" style={{paddingTop:200}} > 
