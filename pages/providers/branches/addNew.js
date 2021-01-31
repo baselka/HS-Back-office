@@ -10,12 +10,20 @@ import Api from '../../../src/api'
 import * as Icon from 'react-feather'
 import { NotificationManager } from 'react-notifications'
 import { useRouter } from 'next/router'
+import LoadingModal from '../../../src/components/modals/LoadingModal'
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [modal, setModal] = useState(false)
   const [branches, setBranches] = useState(['1'])
   const [providerID, setProviderID] = useState(null)
+  const [cityID, setCityID] = useState({label:'', value:null})
+  const [categoryID, setCategoryID] = useState({label:'', value:null})
+  const [subCategoryID, setSubCategoryID] = useState({label:'', value:null})
+  const [citiesList, setCitiesList] = useState([])
+  const [categoriesList, setCategoriesList] = useState([])
+  const [subCategories, setSubCategories] = useState([])
+  const [subCategoriesList, setSubCategoriesList] = useState([])
   const [alertType, setAlertType] = useState('red')
   const [providerType, setProviderType] = useState({label:'-- إختر نوع مقدم الخدمة --',value:"null"})
   const [providersList, setProvidersList] = useState([{label:'مقدم خدمة تجريبي',value:"1"}])
@@ -29,6 +37,12 @@ const Index = () => {
       _getProvidersList();
     }
   }, [providerType])
+
+  useEffect(() => {
+    _getAllCities();
+    _getAllCategories();
+    _getSubCategories();
+  }, [])
   
   const _getProvidersList = () => {
     let data = {
@@ -48,6 +62,58 @@ const Index = () => {
     });
   }
 
+  const _getAllCities = () => {
+    Api.Cities.all().then((res)=>{
+      console.log('_getAllCities', res);
+      if(res.statusCode === 200){
+        let citlist = [];
+        for (let index = 0; index < res.data.length; index++) {
+          const element = res.data[index];
+          citlist.push({label:element.city, value:element.id});
+        }
+        setCitiesList(citlist);
+      }
+    });
+  }
+
+  const _getAllCategories = () => {
+    Api.Categories.all().then((res)=>{
+      console.log('_getAllCategories', res);
+      if(res.statusCode === 200){
+        let catlist = [];
+        for (let index = 0; index < res.data.length; index++) {
+          const element = res.data[index];
+          catlist.push({label:element.type_name, value:element.id});
+        }
+        setCategoriesList(catlist);
+      }
+    });
+  }
+
+  const _getSubCategories = () => {
+    Api.Categories.sub().then((res)=>{
+      console.log('_getSubCategories', res);
+      if(res.statusCode === 200){
+        setSubCategories(res.data);
+      }
+    });
+  }
+
+  const _updateSubCategories = (cat) => {
+    setCategoryID(cat);
+    let subcat = [];
+    for (let index = 0; index < subCategories.length; index++) {
+      const element = subCategories[index];
+      if(element.id === cat.value){
+        for (let sx = 0; sx < element.sub_categories.length; sx++) {
+          const subelem = element.sub_categories[sx];
+          subcat.push({label:subelem.name, value:subelem.id});
+        }
+      }
+    }
+    setSubCategoriesList(subcat);
+  }
+
   const _setProviderID = fields => {
     console.log('_setProviderID', fields);
     setProviderID(fields.value)
@@ -57,7 +123,7 @@ const Index = () => {
     console.log('_createNewBranch', data);
     Api.Branches.create(data).then((res)=>{
       console.log('_createNewBranch res', res);
-      if(res.statusCode === 200){
+      if(res.statusCode === 201){
         NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
         router.push('/providers/branches');
       }else{
@@ -76,9 +142,11 @@ const Index = () => {
       phone: fields.provider_phone,
     };
 
+    console.log('_createNewProvider data', data);
+
     Api.Providers.create(data).then((res)=>{
       console.log('_createNewProvider res', res);
-      if(res.statusCode === 200){
+      if(res.statusCode === 201){
         let data = {
           branch_name: fields.branch_name,
           branch_desc: fields.branch_desc,
@@ -102,12 +170,16 @@ const Index = () => {
   }
 
   const onSubmit = fields => {
+    fields.city_id = cityID.value;
+    fields.category_id = categoryID.value;
+    fields.sub_cat_id = subCategoryID.value;
+
     console.log('onSubmit', fields);
-    if(providerTypeOpts === "Registered"){
+
+    if(providerType.value === "Registered"){
       let data = {
         branch_name: fields.branch_name,
         branch_desc: fields.branch_desc,
-        provider_id: fields.provider_id,
         whats: fields.whats,
         twitter: fields.twitter,
         facebook: fields.facebook,
@@ -119,8 +191,9 @@ const Index = () => {
         email: fields.email,
         sub_cat_id: fields.sub_cat_id
       }
+      data.provider_id = providerID;
       _createNewBranch(data);
-    } else if(providerTypeOpts === "New"){
+    } else if(providerType.value === "New"){
       _createNewProvider(fields)
     } else {
       NotificationManager.error('الرجاء إختيار ما إذا كان مقدم الخدمة مسجلا مسبقاً ام لا', 'عفواً', 3000);
@@ -129,6 +202,7 @@ const Index = () => {
 
   return (
     <Container>
+      <LoadingModal />
       <Layout>
         { branches.length === 0 ? (
           <div className="flex justify-center w-11/12 h-screen content-center" style={{paddingTop:200}} > 
@@ -162,7 +236,7 @@ const Index = () => {
                                       <input
                                         name="provider_name"
                                         type="text"
-                                        ref={register({required: false})}
+                                        ref={register({required: true})}
                                         className="form-input mt-1 text-xs block w-full bg-white placeholder-gray-400 mt-2"
                                         placeholder="ادخل اسم مقدم الخدمة"
                                       />
@@ -174,7 +248,7 @@ const Index = () => {
                                       <input
                                         name="provider_email"
                                         type="email"
-                                        ref={register({required: false})}
+                                        ref={register({required: true})}
                                         className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                         placeholder="ادخل البريد الإلكتروني لمقدم الخدمة"
                                       />
@@ -186,7 +260,7 @@ const Index = () => {
                                     <input
                                       name="provider_phone"
                                       type="number"
-                                      ref={register({required: false})}
+                                      ref={register({required: true})}
                                       className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                       placeholder="ادخل رقم جوال مقدم الخدمة"
                                     />
@@ -198,7 +272,7 @@ const Index = () => {
                                     <input
                                       name="provider_pwd"
                                       type="password"
-                                      ref={register({required: false})}
+                                      ref={register({required: true})}
                                       className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                       placeholder="ادخل كلمة مرور مقدم الخدمة"
                                     />
@@ -215,7 +289,7 @@ const Index = () => {
                                 <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                                   <label className="block">
                                     <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>إختر مقدم الخدمة</span>
-                                    <Select name="provider_id" options={providersList} className="w-full mt-2" placeholder={"-- إختر مقدم الخدمة --"}onChange={_setProviderID} />
+                                    <Select name="provider_id" options={providersList} className="w-full mt-2" placeholder={"-- إختر مقدم الخدمة --"} onChange={_setProviderID} />
                                   </label>
                                 </div>
                               ):null}
@@ -225,7 +299,7 @@ const Index = () => {
                                   <input
                                     name="branch_name"
                                     type="text"
-                                    ref={register({required: false})}
+                                    ref={register({required: true})}
                                     className="form-input mt-1 text-xs block w-full bg-white placeholder-gray-400 mt-2"
                                     placeholder="ادخل اسم الفرع"
                                   />
@@ -234,13 +308,7 @@ const Index = () => {
                               <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                                 <label className="block">
                                   <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>المدينة</span>
-                                  <input
-                                    name="city_id"
-                                    type="number"
-                                    ref={register({required: false})}
-                                    className="form-input mt-1 text-xs block w-full bg-white mt-2"
-                                    placeholder="اختر المدينة"
-                                  />
+                                  <Select name="city_id" options={citiesList} className="w-full mt-2" placeholder={"-- إختر المدينة --"} onChange={setCityID} />
                                 </label>
                               </div>
                               <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
@@ -249,7 +317,7 @@ const Index = () => {
                                   <input
                                     name="email"
                                     type="email"
-                                    ref={register({required: false})}
+                                    ref={register({required: true})}
                                     className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                     placeholder="ادخل البريد الإلكتروني"
                                   />
@@ -260,25 +328,13 @@ const Index = () => {
                             <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                                 <label className="block">
                                   <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>التصنيف الرئيسي</span>
-                                  <input
-                                    name="category_id"
-                                    type="number"
-                                    ref={register({required: false})}
-                                    className="form-input mt-1 text-xs block w-full bg-white mt-2"
-                                    placeholder="اختر التصنيف الرئيسي"
-                                  />
+                                  <Select name="category_id" options={categoriesList} className="w-full mt-2" placeholder={"-- إختر التصنيف الرئيسي --"} onChange={_updateSubCategories} />
                                 </label>
                               </div>
                             <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                                 <label className="block">
                                   <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>التصنيف الفرعي</span>
-                                  <input
-                                    name="sub_cat_id"
-                                    type="number"
-                                    ref={register({required: false})}
-                                    className="form-input mt-1 text-xs block w-full bg-white mt-2"
-                                    placeholder="اختر التصنيف الفرعي"
-                                  />
+                                  <Select name="sub_cat_id" options={subCategoriesList} className="w-full mt-2" placeholder={"-- إختر التصنيف الفرعي --"} onChange={setSubCategoryID} />
                                 </label>
                               </div>
                             <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
@@ -287,6 +343,7 @@ const Index = () => {
                                 <input
                                   name="telephone"
                                   type="number"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل رقم الجوال"
                                 />
@@ -298,6 +355,7 @@ const Index = () => {
                                 <input
                                   name="whats"
                                   type="number"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل رقم الواتس"
                                 />
@@ -312,6 +370,7 @@ const Index = () => {
                                 <input
                                   name="twitter"
                                   type="text"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب تويتر"
                                 />
@@ -323,6 +382,7 @@ const Index = () => {
                                 <input
                                   name="facebook"
                                   type="text"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب فيسبوك"
                                 />
@@ -334,6 +394,7 @@ const Index = () => {
                                 <input
                                   name="snapchat"
                                   type="text"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب سناب شات"
                                 />
@@ -345,6 +406,7 @@ const Index = () => {
                                 <input
                                   name="insta"
                                   type="text"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب انستغرام"
                                 />
@@ -358,6 +420,7 @@ const Index = () => {
                                 <span className="text-default">معلومات عن الفرع</span>
                                 <textarea
                                   name="branch_desc"
+                                  ref={register({required: true})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="اكتب معلومات عن الفرع"
                                   style={{minHeight:110}}

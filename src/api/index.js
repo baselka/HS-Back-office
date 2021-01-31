@@ -13,6 +13,15 @@ if(process.env.NODE_ENV === 'production') {
 const handleErrors = async (error) => {
 	console.log('error', error);
 	let result = {}
+	if(error === "Network Error"){
+		result = {
+			statusCode: 401,
+			statusName: 'Network Error',
+			data: "Network Error"
+		}
+		return result;
+	}
+	
 	const data = error && error.response && error.response.data
 	const status = error && error.response && error.response.status
 	
