@@ -6,6 +6,7 @@ import LoadingModal from '../../../src/components/modals/LoadingModal'
 import Datatable from '../../../src/components/datatable'
 import Widget from '../../../src/components/widget'
 import { Alert } from '../../../src/components/alerts'
+import Link from 'next/link'
 import Modal from '../../../src/components/modals'
 import Select from 'react-select'
 import Api from '../../../src/api'
@@ -90,10 +91,12 @@ const Simple = ( { branches, cities, categories, subCategories, changeStatus, ch
         accessor: 'branch_id',
         Cell: (props) => {
           return <div className="flex justify-center" >
-            <button className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22" >
-              <i className="icon-note font-bold mr-1 ml-1" />
-              <span>تعديل</span>
-            </button>
+              <Link href={"/providers/branches/"+props.row.original.branch_id} >
+                <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
+                  <i className="icon-note font-bold mr-1 ml-1" />
+                  تعديل
+                </a>
+            </Link>
             {(props.row.original.status === 1) &&
               <button className="float-right btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 0)} >
                 <i className="icon-ban font-bold mr-1 ml-1" />
@@ -413,7 +416,6 @@ const Index = () => {
         {confirmModal && (
           <Modal change={()=>_deleteBranchConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الفرع ؟'} options={null} />
         )}
-
 
         <div className="flex text-sm mb-4">
           <div className="w-10/12">

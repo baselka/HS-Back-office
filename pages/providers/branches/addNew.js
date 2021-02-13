@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Container from '../../Container'
 import Layout from '../../../src/layouts'
-import SectionTitle from '../../../src/components/section-title'
 import Widget from '../../../src/components/widget'
 import { Alert } from '../../../src/components/alerts'
 import Select from 'react-select'
@@ -11,6 +10,32 @@ import * as Icon from 'react-feather'
 import { NotificationManager } from 'react-notifications'
 import { useRouter } from 'next/router'
 import LoadingModal from '../../../src/components/modals/LoadingModal'
+import ImageSelector from "./imageSelector"
+
+import { compose, withProps } from "recompose"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+
+const MapComponent = compose(
+  withProps({
+    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDZXyEzKc1WXdZeXh9zyWCiRJQDEJXOfPo&v=3.exp&libraries=geometry,drawing,places",
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `400px` }} />,
+    mapElement: <div style={{ height: `100%` }} />,
+  }),
+  withScriptjs,
+  withGoogleMap
+)((props) =>
+  <GoogleMap
+    defaultZoom={5}
+    defaultCenter={{ lat: props.latitude, lng: props.longitude }}
+  >
+    <Marker
+      position={{ lat: props.latitude, lng: props.longitude }}
+      defaultDraggable={true}
+      onDragEnd={props.onMarkerDragEnd}
+    />
+  </GoogleMap>
+);
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
@@ -23,6 +48,7 @@ const Index = () => {
   const [subCategoryID, setSubCategoryID] = useState({label:'', value:null})
   const [citiesList, setCitiesList] = useState([])
   const [categoriesList, setCategoriesList] = useState([])
+  const [imagesList, setImagesList] = useState([])
   const [subCategories, setSubCategories] = useState([])
   const [subCategoriesList, setSubCategoriesList] = useState([])
   const [alertType, setAlertType] = useState('red')
@@ -30,6 +56,8 @@ const Index = () => {
   const [providersList, setProvidersList] = useState([{label:'مقدم خدمة تجريبي',value:"1"}])
   const [providerTypeOpts, setProviderTypeOpts] = useState([{label:'-- إختر نوع مقدم الخدمة --',value:"null"},{label:'مقدم خدمة مسجل مسبقا',value:'Registered'},{label:'مقدم خدمة جديد',value:'New'}]);
   const {register, handleSubmit, watch, errors} = useForm()
+  const [latitude, setLatitude] = useState(24.7249316);
+  const [longitude, setLongitude] = useState(46.5423435);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +72,21 @@ const Index = () => {
     _getAllCategories();
     _getSubCategories();
   }, [])
+
+  useEffect(() => {
+    console.log('imagesList', imagesList);
+  }, [imagesList])
+
+  useEffect(() => {
+    console.log('latitude', latitude);
+    console.log('longitude', longitude);
+  }, [latitude, longitude])
   
+  const _onMarkerDragEnd = (e) => {
+    setLatitude(e.latLng.lat())
+    setLongitude(e.latLng.lng())
+  };
+
   const _getProvidersList = () => {
     let data = {
       start: 0,
@@ -125,13 +167,32 @@ const Index = () => {
     console.log('_createNewBranch', data);
     Api.Branches.create(data).then((res)=>{
       console.log('_createNewBranch res', res);
-      setLoadingData(false);
       if(res.statusCode === 201){
-        NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
-        router.push('/providers/branches');
+        if(imagesList && imagesList.length > 0){
+          NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
+          _uploadBranchImages(res.data.branch_id);
+        }else{
+          NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
+          setTimeout(() => {
+            setLoadingData(false);
+            router.push('/providers/branches');
+          }, 1000);
+        }
       }else{
         NotificationManager.error('حدث خطأ اثناء إضافة الفرع', 'عفواً', 3000);
       }
+    });
+  }
+
+  const _uploadBranchImages = branch => {
+    var data = {id: branch, images: imagesList};
+    Api.Branches.uploadBranchImages(data).then((res)=>{
+      console.log('uploadBranchImages', res);
+      NotificationManager.success('تم إضافة فرع صور الفرع بنجاح ', 'نجاح', 3000);
+      setTimeout(() => {
+        setLoadingData(false);
+        router.push('/providers/branches');
+      }, 1000);
     });
   }
 
@@ -153,7 +214,7 @@ const Index = () => {
         let data = {
           branch_name: fields.branch_name,
           branch_desc: fields.branch_desc,
-          provider_id: res.data.id, ///// provider_id
+          provider_id: res.data.provider_id, ///// provider_id 
           whats: fields.whats,
           twitter: fields.twitter,
           facebook: fields.facebook,
@@ -163,6 +224,8 @@ const Index = () => {
           city_id: fields.city_id,
           category_id: fields.category_id,
           email: fields.email,
+          lat: latitude,
+          lon: longitude,
           sub_cat_id: fields.sub_cat_id
         }
         _createNewBranch(data);
@@ -194,6 +257,8 @@ const Index = () => {
         city_id: fields.city_id,
         category_id: fields.category_id,
         email: fields.email,
+        lat: latitude,
+        lon: longitude,
         sub_cat_id: fields.sub_cat_id
       }
       data.provider_id = providerID;
@@ -420,7 +485,7 @@ const Index = () => {
                             </div>
                           </div>
 
-                          <div className="flex-col w-full mb-4 ml-6 float-right">
+                          <div className="flex-col w-full mb-2 ml-6 float-right">
                             <div className="w-11/12 mb-12 p-5 bg-white border-2 border-gray-200">
                               <label className="block">
                                 <span className="text-default">معلومات عن الفرع</span>
@@ -430,6 +495,28 @@ const Index = () => {
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="اكتب معلومات عن الفرع"
                                   style={{minHeight:110}}
+                                />
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="flex-col w-full mb-2 ml-6 float-right">
+                            <div className="w-11/12 mb-12 p-5 bg-white border-2 border-gray-200">
+                              <label className="block">
+                                <span className="text-default mb-2 block">صور الفرع (10 صور كـ حد اقصى)</span>
+                              </label>
+                              <ImageSelector uploadImages={setImagesList} />
+                            </div>
+                          </div>
+
+                          <div className="flex-col w-full mb-2 ml-6 float-right">
+                            <div className="w-11/12 mb-12 p-5 bg-white border-2 border-gray-200">
+                              <label className="block">
+                                <span className="text-default mb-2 block">موقع الفرع</span>
+                                <MapComponent
+                                  latitude={Number(latitude)}
+                                  longitude={Number(longitude)}
+                                  onMarkerDragEnd={_onMarkerDragEnd}
                                 />
                               </label>
                             </div>

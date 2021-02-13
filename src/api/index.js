@@ -66,6 +66,40 @@ const createApi = () => {
     return api
 }
 
+const uploadDataFormApi = async (data) => {
+	console.log('uploadDataFormApi data', data);
+	const authToken = cookie.get('token');
+    if (!authToken) return { status: 'error', data: "Token not valid" };
+
+	var myHeaders = new Headers();
+	myHeaders.append("Authorization", "Bearer " + authToken);
+	
+	var formdata = new FormData();
+	formdata.append("branch_id", data.id);
+	for (let index = 0; index < data.images.length; index++) {
+		const element = data.images[index];
+		console.log('element', element);
+		formdata.append("images", element, element.name);
+		// formdata.append("images", fileInput.files[0], "bg.jpg");
+	}
+	
+	var requestOptions = {
+	  method: 'POST',
+	  headers: myHeaders,
+	  body: formdata,
+	  redirect: 'follow'
+	};
+	console.log('upload-branch-images requestOptions', requestOptions);
+	
+	await fetch(API_ROOT+"/upload-branch-images/", requestOptions).then(response => response.text()).then(result => {
+		console.log('upload-branch-images success', result);
+		return { status: 'success', data: result };
+	}).catch(error => {
+		console.log('upload-branch-images error', error);
+		return { status: 'error', data: error};
+	});
+}
+
 const requests = {
 	get: (url,data) =>
 		createApi()
@@ -97,10 +131,14 @@ const Auth = {
 const Branches = {
     all: (data, counts) => requests.get('/branches/'+data+'/'+counts+'/0/0/0/0/', {}),
 	delete: (branch_id) => requests.delete('/delete-branch/'+branch_id, {}),
+	details: (id) => requests.get('/branch-details/'+id, {}),
     search: (data) => requests.get('/branches/'+data.start+'/'+data.end+'/'+data.city+'/'+data.cat+'/'+data.subCat+'/'+data.term+'/', {}),
     create: (data) => requests.post('/add-branch', data ),
+    update: (data) => requests.patch('/update-branch', data ),
+    deleteImage: (data) => requests.delete('/delete-branch-image/'+data.branch+'/'+data.image, {} ),
     instantEdit: (data) => requests.post('/instant-edit', data ),
     changeStatus: (data) => requests.patch('/update-branch-status/'+data.branch_id+'/'+data.status, {} ),
+    uploadBranchImages: (data) => uploadDataFormApi(data),
 }
 
 const Cities = {

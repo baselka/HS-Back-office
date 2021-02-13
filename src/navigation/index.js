@@ -34,12 +34,12 @@ const navigation = [
             title: 'إدارة الأقسام الرئيسية',
             items: []
           },
-          {
-            url: '/app/sub-categories',
-            icon: <Icon.CornerDownLeft size={20} />,
-            title: 'إدارة الأقسام الفرعية',
-            items: []
-          },
+          // {
+          //   url: '/app/sub-categories',
+          //   icon: <Icon.CornerDownLeft size={20} />,
+          //   title: 'إدارة الأقسام الفرعية',
+          //   items: []
+          // },
           {
             url: '/app/cards',
             icon: <Icon.CornerDownLeft size={20} />,
@@ -63,6 +63,12 @@ const navigation = [
             url: '/services',
             icon: <Icon.CornerDownLeft size={20} />,
             title: 'إدارة الخدمات',
+            items: []
+          },
+          {
+            url: '/providers',
+            icon: <Icon.CornerDownLeft size={20} />,
+            title: 'مقدمي الخدمات',
             items: []
           },
         ]
