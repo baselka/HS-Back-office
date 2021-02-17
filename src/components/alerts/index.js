@@ -54,6 +54,7 @@ export const Alert = ({
   flat = false,
   rounded = false,
   type = null,
+  closeable = null,
   size = 'default',
   children
 }) => {
@@ -72,7 +73,7 @@ export const Alert = ({
       <div>{children}</div>
       <button
         className="alert-close flex items-center justify-center"
-        onClick={() => setHidden(!hidden)}>
+        onClick={ closeable ? null : () => setHidden(!hidden) }>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

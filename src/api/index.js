@@ -5,13 +5,23 @@ let API_ROOT;
 let headers;
 
 if (process.env.NODE_ENV === "production") {
-  API_ROOT = `http://localhost:5000/api/v1/back-office`;
+  API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`;
 } else {
   API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`;
 }
 
 const handleErrors = async error => {
+  console.log("error", error);
   let result = {};
+  if (error === "Network Error") {
+    result = {
+      statusCode: 401,
+      statusName: "Network Error",
+      data: "Network Error"
+    };
+    return result;
+  }
+
   const data = error && error.response && error.response.data;
   const status = error && error.response && error.response.status;
 
@@ -59,6 +69,43 @@ const createApi = () => {
   return api;
 };
 
+const uploadDataFormApi = async data => {
+  console.log("uploadDataFormApi data", data);
+  const authToken = cookie.get("token");
+  if (!authToken) return { status: "error", data: "Token not valid" };
+
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + authToken);
+
+  var formdata = new FormData();
+  formdata.append("branch_id", data.id);
+  for (let index = 0; index < data.images.length; index++) {
+    const element = data.images[index];
+    console.log("element", element);
+    formdata.append("images", element, element.name);
+    // formdata.append("images", fileInput.files[0], "bg.jpg");
+  }
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: formdata,
+    redirect: "follow"
+  };
+  console.log("upload-branch-images requestOptions", requestOptions);
+
+  await fetch(API_ROOT + "/upload-branch-images/", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log("upload-branch-images success", result);
+      return { status: "success", data: result };
+    })
+    .catch(error => {
+      console.log("upload-branch-images error", error);
+      return { status: "error", data: error };
+    });
+};
+
 const requests = {
   get: (url, data) =>
     createApi()
@@ -93,6 +140,8 @@ const Auth = {
 const Branches = {
   all: (data, counts) =>
     requests.get("/branches/" + data + "/" + counts + "/0/0/0/0/", {}),
+  delete: branch_id => requests.delete("/delete-branch/" + branch_id, {}),
+  details: id => requests.get("/branch-details/" + id, {}),
   search: data =>
     requests.get(
       "/branches/" +
@@ -110,8 +159,20 @@ const Branches = {
         "/",
       {}
     ),
-  instantEdit: data => requests.post("/instant-edit", data)
-  // logout: (token) => requests.post('/logout/logout.php','',token)
+  create: data => requests.post("/add-branch", data),
+  update: data => requests.patch("/update-branch", data),
+  deleteImage: data =>
+    requests.delete(
+      "/delete-branch-image/" + data.branch + "/" + data.image,
+      {}
+    ),
+  instantEdit: data => requests.post("/instant-edit", data),
+  changeStatus: data =>
+    requests.patch(
+      "/update-branch-status/" + data.branch_id + "/" + data.status,
+      {}
+    ),
+  uploadBranchImages: data => uploadDataFormApi(data)
 };
 
 const Cities = {
@@ -119,6 +180,12 @@ const Cities = {
   // delete: id => requests.post("/cities", id),
   add: data => requests.post("/add-city", data),
   update: data => requests.patch("/update-city/" + data.city_id, data)
+};
+
+const Providers = {
+  all: data =>
+    requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
+  create: data => requests.post("/add-provider", data)
 };
 
 const Categories = {
@@ -130,5 +197,6 @@ export default {
   Auth,
   Cities,
   Categories,
+  Providers,
   Branches
 };

@@ -26,6 +26,13 @@ const ModalHeader = ({cancel, head}) => (
 
 const ModalBody = (prop) => {
   console.log('tesm', prop);
+  if(!prop.list) {
+    return (
+      <div className="relative p-4 flex-auto">
+        <p className="mb-3" >{prop.body}</p>
+      </div>
+    )
+  }
   return (
     <div className="relative p-4 flex-auto">
       <p className="mb-3" >{prop.body} :</p>
@@ -53,14 +60,24 @@ const ModalBody = (prop) => {
   )
 }
 
-const ModalFooter = ({cancel}) => (
+const ModalFooter = ( prop ) => (
   <div className="modal-footer children-x-2">
-    <button
-      className="btn btn-default btn-red btn-rounded"
-      type="button"
-      onClick={cancel}>
-      تراجع
-    </button>
+    {prop.confirm &&
+      <button
+        className="btn btn-default btn-green btn-rounded float-right"
+        type="button"
+        onClick={prop.confirm}>
+          {'تأكيد'}
+      </button>
+    }
+    {prop.cancel &&
+      <button
+        className="btn btn-default btn-red btn-rounded float-left"
+        type="button"
+        onClick={prop.cancel} >
+          {'تراجع'}
+      </button>
+    }
   </div>
 )
 
@@ -73,7 +90,7 @@ const Modal = ({change, cancel, title, message, options}) => {
           <div className="modal-content">
             <ModalHeader cancel={() => cancel()} head={title} />
             <ModalBody body={message} list={options} change={change} />
-            <ModalFooter cancel={() => cancel()} />
+            <ModalFooter cancel={() => cancel()} confirm={options ? false : ()=>change()} />
           </div>
         </div>
       </div>

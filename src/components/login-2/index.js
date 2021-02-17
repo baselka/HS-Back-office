@@ -76,7 +76,7 @@ const Login1 = ({ authenticate, token }) => {
           )}
           <input
             type="submit"
-            className="px-4 py-3 mt-4 uppercase font-bold text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:outline-none active:outline-none"
+            className="px-4 py-3 mt-4 uppercase font-bold text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:outline-none active:outline-none cursor-pointer"
             value="تسجيل الدخول"
           />
         </div>

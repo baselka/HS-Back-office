@@ -1,5 +1,5 @@
 import React from 'react'
-import Container from '../Container'
+import Container from './Container'
 import Layout from '../src/layouts'
 import SectionTitle from '../src/components/section-title'
 
