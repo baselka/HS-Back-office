@@ -10,10 +10,12 @@ import * as Icon from 'react-feather'
 import { NotificationManager } from 'react-notifications'
 import { useRouter } from 'next/router'
 import LoadingModal from '../../../src/components/modals/LoadingModal'
+import Modal from '../../../src/components/modals'
 import ImageSelector from "./imageSelector"
 
-import { compose, withProps } from "recompose"
+import { compose, withProps, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+const { SearchBox } = require("react-google-maps/lib/components/places/SearchBox");
 
 const MapComponent = compose(
   withProps({
@@ -22,25 +24,97 @@ const MapComponent = compose(
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
+  lifecycle({
+    componentWillMount() {
+      const refs = {}
+      this.setState({
+        coords: null,
+        updated: false,
+        onMapMounted: ref => {
+          refs.map = ref;
+        },
+        onSearchBoxMounted: ref => {
+          refs.searchBox = ref;
+        },
+        onPlacesChanged: () => {
+          const places = refs.searchBox.getPlaces();
+          const bounds = new google.maps.LatLngBounds();
+          places.forEach(place => {
+            if (place.geometry.viewport) {
+              bounds.union(place.geometry.viewport)
+            } else {
+              bounds.extend(place.geometry.location)
+            }
+          });
+          refs.map.fitBounds(bounds);
+          this.setState({
+            address: places[0].formatted_address,
+            coords: {
+              latitude: places[0].geometry.location.lat(),
+              longitude: places[0].geometry.location.lng(),
+            },
+            zoom: 15
+          });
+        },
+      })
+    },
+  }),
   withScriptjs,
   withGoogleMap
-)((props) =>
+)((props) => {
+  useEffect(()=>{
+    if(props.coords){
+      if(props.coords.latitude !== props.latitude || props.coords.longitude !== props.longitude){
+        props.onSelectPlace(props.address, props.coords);
+      }
+    }
+  }, [props.coords]);
+  return (
   <GoogleMap
-    defaultZoom={5}
+    defaultZoom={props.zoom ? props.zoom : 7}
+    ref={props.onMapMounted}
     defaultCenter={{ lat: props.latitude, lng: props.longitude }}
   >
+    <SearchBox
+      ref={props.onSearchBoxMounted}
+      bounds={props.bounds}
+      controlPosition={google.maps.ControlPosition.TOP_RIGHT}
+      onPlacesChanged={props.onPlacesChanged}
+    >
+      <input
+        type="text"
+        placeholder="ادخل عنوان للبحث عنه"
+        style={{
+          boxSizing: `border-box`,
+          border: `1px solid transparent`,
+          width: `500px`,
+          height: `45px`,
+          marginTop: `8px`,
+          marginRight: `8px`,
+          padding: `8px 15px`,
+          borderRadius: `3px`,
+          boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+          fontSize: `15px`,
+          fontFamily: `Cairo`,
+          outline: `none`,
+          textOverflow: `ellipses`,
+        }}
+      />
+    </SearchBox>
     <Marker
       position={{ lat: props.latitude, lng: props.longitude }}
       defaultDraggable={true}
       onDragEnd={props.onMarkerDragEnd}
     />
   </GoogleMap>
-);
+)});
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
+  const [confirmModal, setConfirmModal] = useState(false)
   const [modal, setModal] = useState(false)
+  const [updated, setUpdated] = useState(false);
   const [branches, setBranches] = useState(['1'])
   const [providerID, setProviderID] = useState(null)
   const [branchData, setBranchData] = useState(null)
@@ -61,11 +135,13 @@ const Index = () => {
   const [subCategories, setSubCategories] = useState([])
   const [subCategoriesList, setSubCategoriesList] = useState([])
   const [alertType, setAlertType] = useState('red');
+  const [address, setAddress] = useState('')
   const [providerType, setProviderType] = useState({label:'مقدم خدمة مسجل مسبقا',value:'Registered'})
   const [providersList, setProvidersList] = useState([{label:'مقدم خدمة تجريبي',value:"1"}])
   const [providerTypeOpts, setProviderTypeOpts] = useState([{label:'-- إختر نوع مقدم الخدمة --',value:"null"},{label:'مقدم خدمة مسجل مسبقا',value:'Registered'},{label:'مقدم خدمة جديد',value:'New'}]);
   const [latitude, setLatitude] = useState(24.7249316);
   const [longitude, setLongitude] = useState(46.5423435);
+  const [toDeleteID, setToDeleteID] = useState(null);
   const {register, handleSubmit, watch, errors, setValue} = useForm();
   const router = useRouter();
   const { id } = router.query;
@@ -85,20 +161,30 @@ const Index = () => {
   }, []);
 
   const _removeBranchImage = ( image_id ) => {
-    console.log('image_id', image_id);
-    let imagesIDs = imagesIDsToRemove;
-    imagesIDs.push(image_id);
-    setImagesIDsToRemove(imagesIDs);
+    setConfirmModal(true);
+    setToDeleteID(image_id);
+  }
 
-    let newListimgs = [];
-    let curImages = defaultImagesList;
-    for (let index = 0; index < curImages.length; index++) {
-      const imGent = curImages[index];
-      if(imGent.id !== image_id){
-        newListimgs.push(imGent);
+  const _confirmRemoveBranchImage = () => {
+    setConfirmModal(false);
+    var data = {branch: id, image: toDeleteID};
+    Api.Branches.deleteImage(data).then((res)=>{
+      console.log('removeBranchImages', res);
+      if(res.statusCode === 201){
+        NotificationManager.success('تم حذف الصورة بنجاح', 'نجاح', 3000);
+        let newListimgs = [];
+        let curImages = defaultImagesList;
+        for (let index = 0; index < curImages.length; index++) {
+          const imGent = curImages[index];
+          if(imGent.id !== toDeleteID){
+            newListimgs.push(imGent);
+          }
+        }
+        setDefaultImagesList(newListimgs);
+      }else{
+        NotificationManager.error("حدث خطأ اثناء حذف الصورة", 'عفواً', 3000);
       }
-    }
-    setDefaultImagesList(newListimgs);
+    });
   }
 
   const _getBrancheDetails = ( branch_id ) => {
@@ -158,10 +244,19 @@ const Index = () => {
       setLoadingData(false);
     }
   }, [longitude, latitude, providersList, subCategoriesList, subCategories, defaultImagesList, imagesList, branchData, cityID, categoryID, subCategoryID, selectedProvider, selectedCity, selectedCat, selectedSubCat, citiesList, categoriesList])
-  
+ 
+
   const _onMarkerDragEnd = (e) => {
+    setUpdated(false);
     setLatitude(e.latLng.lat())
     setLongitude(e.latLng.lng())
+  };
+  
+  const _onPlacesChanged = (address, coords) => {
+    console.log(address, coords);
+    if(coords) setLatitude(coords.latitude);
+    if(coords) setLongitude(coords.longitude);
+    if(address) setAddress(address);
   };
 
   const _getProvidersList = () => {
@@ -268,10 +363,7 @@ const Index = () => {
       console.log('_updateBranch res', res);
       if(res.statusCode === 200){
         NotificationManager.success('تم تحديث بيانات فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
-        if(imagesIDsToRemove && imagesIDsToRemove.length > 0){
-          _confirmBranchImageRemoval();
-        }
-        if(imagesIDsToRemove && imagesIDsToRemove.length > 0){
+        if(imagesList && imagesList.length > 0){
           _uploadBranchImages(id);
         }else{
           NotificationManager.success('تم تحديث بيانات فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
@@ -286,17 +378,6 @@ const Index = () => {
         router.push('/providers/branches');
       }
     });
-  }
-
-  const _confirmBranchImageRemoval = () => {
-    // imagesIDsToRemove
-    for (let index = 0; index < imagesIDsToRemove.length; index++) {
-      const imgid = imagesIDsToRemove[index];
-      var data = {branch: id, image: imgid};
-      Api.Branches.deleteImage(data).then((res)=>{
-        console.log('removeBranchImages', res);
-      });
-    }
   }
 
   const _uploadBranchImages = branch => {
@@ -322,7 +403,7 @@ const Index = () => {
       category_id: categoryID.value,
       sub_cat_id: subCategoryID.value,
       branch_id: id,
-      address: branchData.address,
+      address: address ? address : branchData.address,
       status: fields.status ? fields.status : 2
     }
     _updateBranch(data);
@@ -348,6 +429,9 @@ const Index = () => {
             </div>
           ) : (
             <div>
+              {confirmModal && (
+                <Modal change={()=>_confirmRemoveBranchImage()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الصورة ؟'} options={null} />
+              )}
               <Widget title="تعديل بيانات الفرع" description={""}>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
@@ -506,7 +590,7 @@ const Index = () => {
                           
                           <div className="form-group multi-preview addNewImageCont" >
                               {defaultImagesList.map((imag, index) => (
-                                  <div className="float-right m-0 border-8 border-transparent rounded shadow-sm w-4/12 h-96 imagecontainer relative">
+                                  <div className="float-right m-0 mb-5 border-8 border-transparent rounded shadow-sm w-1/5 h-48 imagecontainer relative">
                                       <img key={index} src={imag.img_path} className="" alt="..." />
                                       <i className="w-34 h-34 p-0 cursor-pointer rounded-full icon-close text-xl absolute right-0 top-0 text-white z-0" onClick={()=>_removeBranchImage(imag.id)} />
                                   </div>
@@ -524,6 +608,8 @@ const Index = () => {
                               latitude={Number(latitude)}
                               longitude={Number(longitude)}
                               onMarkerDragEnd={_onMarkerDragEnd}
+                              onSelectPlace={_onPlacesChanged}
+                              updated={updated}
                             />
                           </label>
                         </div>

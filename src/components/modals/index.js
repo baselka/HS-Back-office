@@ -25,7 +25,15 @@ const ModalHeader = ({cancel, head}) => (
 )
 
 const ModalBody = (prop) => {
-  console.log('tesm', prop);
+  console.log('ModalBody', prop);
+  if(prop.showInput){
+    return (
+      <div className="relative p-4 flex-auto">
+        <p className="mb-3" >{"ادخل كلمة المرور الجديدة"}</p>
+        <input type="password" placeholder={"ادخل كلمة المرور"} onChange={(e)=>prop.keyInput(e.target.value)} className="w-full h-10 border-2 rounded-3xl	border-gray-400	p-2" />
+      </div>
+    )
+  }
   if(!prop.list) {
     return (
       <div className="relative p-4 flex-auto">
@@ -72,7 +80,7 @@ const ModalFooter = ( prop ) => (
     }
     {prop.cancel &&
       <button
-        className="btn btn-default btn-red btn-rounded float-left"
+        className="btn btn-default btn-red btn-rounded float-left mr-4 ml-4"
         type="button"
         onClick={prop.cancel} >
           {'تراجع'}
@@ -81,15 +89,15 @@ const ModalFooter = ( prop ) => (
   </div>
 )
 
-const Modal = ({change, cancel, title, message, options}) => {
+const Modal = ({change, cancel, title, message, options, hasInput, newPwd}) => {
   return (
     <>
       <div className="backdrop fade-in fixed inset-0 z-40 bg-black"></div>
       <div className="modal show justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-        <div className="relative w-3/12 my-4 mx-auto max-w-lg">
+        <div className="relative w-3/12 my-4 mx-auto max-w-lg bg-white-900 direction-rtl">
           <div className="modal-content">
             <ModalHeader cancel={() => cancel()} head={title} />
-            <ModalBody body={message} list={options} change={change} />
+            <ModalBody body={message} list={options} change={change} showInput={hasInput} keyInput={newPwd} />
             <ModalFooter cancel={() => cancel()} confirm={options ? false : ()=>change()} />
           </div>
         </div>

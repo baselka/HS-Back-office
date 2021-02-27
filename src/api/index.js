@@ -27,7 +27,7 @@ const handleErrors = async (error) => {
 	
 	result = {
 		statusCode: status,
-		statusName: data.statusName,
+		statusName: data ? data.statusName : "Responce Error",
 		data
 	}
 	return result
@@ -155,10 +155,20 @@ const Categories = {
     sub: () => requests.get('/subcategories', {}),
 }
 
+const Users = {
+    all: (data) => requests.get('/get-users', data),
+	delete: (id) => requests.delete('/delete-user/'+id, {}),
+	changePassword: (data) => requests.patch('/change-user-password/'+data.id, data),
+    update: (data) => requests.patch('/update-user', data ),
+    create: (data) => requests.post('/add-user', data ),
+    details: (id) => requests.get('/user-details/'+id, {} ),
+}
+
 export default {
 	Auth,
 	Cities,
 	Categories,
 	Providers,
+	Users,
 	Branches
 }

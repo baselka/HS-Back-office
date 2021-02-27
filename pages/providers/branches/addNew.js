@@ -12,8 +12,9 @@ import { useRouter } from 'next/router'
 import LoadingModal from '../../../src/components/modals/LoadingModal'
 import ImageSelector from "./imageSelector"
 
-import { compose, withProps } from "recompose"
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+import { compose, withProps, lifecycle } from "recompose"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+const { SearchBox } = require("react-google-maps/lib/components/places/SearchBox");
 
 const MapComponent = compose(
   withProps({
@@ -22,25 +23,96 @@ const MapComponent = compose(
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
+  lifecycle({
+    componentWillMount() {
+      const refs = {}
+      this.setState({
+        coords: null,
+        updated: false,
+        onMapMounted: ref => {
+          refs.map = ref;
+        },
+        onSearchBoxMounted: ref => {
+          refs.searchBox = ref;
+        },
+        onPlacesChanged: () => {
+          const places = refs.searchBox.getPlaces();
+          const bounds = new google.maps.LatLngBounds();
+          places.forEach(place => {
+            if (place.geometry.viewport) {
+              bounds.union(place.geometry.viewport)
+            } else {
+              bounds.extend(place.geometry.location)
+            }
+          });
+          refs.map.fitBounds(bounds);
+          this.setState({
+            address: places[0].formatted_address,
+            coords: {
+              latitude: places[0].geometry.location.lat(),
+              longitude: places[0].geometry.location.lng(),
+            },
+            zoom: 15
+          });
+        },
+      })
+    },
+  }),
   withScriptjs,
   withGoogleMap
-)((props) =>
+)((props) => {
+  useEffect(()=>{
+    if(props.coords){
+      if(props.coords.latitude !== props.latitude || props.coords.longitude !== props.longitude){
+        props.onSelectPlace(props.address, props.coords);
+      }
+    }
+  }, [props.coords]);
+  return (
   <GoogleMap
-    defaultZoom={5}
+    defaultZoom={props.zoom ? props.zoom : 7}
+    ref={props.onMapMounted}
     defaultCenter={{ lat: props.latitude, lng: props.longitude }}
   >
+    <SearchBox
+      ref={props.onSearchBoxMounted}
+      bounds={props.bounds}
+      controlPosition={google.maps.ControlPosition.TOP_RIGHT}
+      onPlacesChanged={props.onPlacesChanged}
+    >
+      <input
+        type="text"
+        placeholder="ادخل عنوان للبحث عنه"
+        style={{
+          boxSizing: `border-box`,
+          border: `1px solid transparent`,
+          width: `500px`,
+          height: `45px`,
+          marginTop: `8px`,
+          marginRight: `8px`,
+          padding: `8px 15px`,
+          borderRadius: `3px`,
+          boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+          fontSize: `15px`,
+          fontFamily: `Cairo`,
+          outline: `none`,
+          textOverflow: `ellipses`,
+        }}
+      />
+    </SearchBox>
     <Marker
       position={{ lat: props.latitude, lng: props.longitude }}
       defaultDraggable={true}
       onDragEnd={props.onMarkerDragEnd}
     />
   </GoogleMap>
-);
+)});
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
   const [modal, setModal] = useState(false)
+  const [updated, setUpdated] = useState(false);
   const [branches, setBranches] = useState(['1'])
   const [providerID, setProviderID] = useState(null)
   const [cityID, setCityID] = useState({label:'', value:null})
@@ -52,6 +124,7 @@ const Index = () => {
   const [subCategories, setSubCategories] = useState([])
   const [subCategoriesList, setSubCategoriesList] = useState([])
   const [alertType, setAlertType] = useState('red')
+  const [address, setAddress] = useState('')
   const [providerType, setProviderType] = useState({label:'-- إختر نوع مقدم الخدمة --',value:"null"})
   const [providersList, setProvidersList] = useState([{label:'مقدم خدمة تجريبي',value:"1"}])
   const [providerTypeOpts, setProviderTypeOpts] = useState([{label:'-- إختر نوع مقدم الخدمة --',value:"null"},{label:'مقدم خدمة مسجل مسبقا',value:'Registered'},{label:'مقدم خدمة جديد',value:'New'}]);
@@ -72,19 +145,18 @@ const Index = () => {
     _getAllCategories();
     _getSubCategories();
   }, [])
-
-  useEffect(() => {
-    console.log('imagesList', imagesList);
-  }, [imagesList])
-
-  useEffect(() => {
-    console.log('latitude', latitude);
-    console.log('longitude', longitude);
-  }, [latitude, longitude])
   
   const _onMarkerDragEnd = (e) => {
+    setUpdated(false);
     setLatitude(e.latLng.lat())
     setLongitude(e.latLng.lng())
+  };
+  
+  const _onPlacesChanged = (address, coords) => {
+    console.log(address, coords);
+    if(coords) setLatitude(coords.latitude);
+    if(coords) setLongitude(coords.longitude);
+    if(address) setAddress(address);
   };
 
   const _getProvidersList = () => {
@@ -226,7 +298,8 @@ const Index = () => {
           email: fields.email,
           lat: latitude,
           lon: longitude,
-          sub_cat_id: fields.sub_cat_id
+          sub_cat_id: fields.sub_cat_id,
+          address: address,
         }
         _createNewBranch(data);
       }else{
@@ -259,7 +332,8 @@ const Index = () => {
         email: fields.email,
         lat: latitude,
         lon: longitude,
-        sub_cat_id: fields.sub_cat_id
+        sub_cat_id: fields.sub_cat_id,
+        address: address,
       }
       data.provider_id = providerID;
       _createNewBranch(data);
@@ -517,6 +591,8 @@ const Index = () => {
                                   latitude={Number(latitude)}
                                   longitude={Number(longitude)}
                                   onMarkerDragEnd={_onMarkerDragEnd}
+                                  onSelectPlace={_onPlacesChanged}
+                                  updated={updated}
                                 />
                               </label>
                             </div>

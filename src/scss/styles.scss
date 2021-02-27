@@ -216,32 +216,36 @@ div.pyroundedfull:hover{
   }
 }
 .addNewImageBtn{
-  height: 298px;
+  height: 200px;
   background-color: #f7fafc;
   border: 8px solid #fff;
   text-align: center;
   line-height: 2px;
   cursor: pointer;
   color: #f7fafc;
+  outline: none;
 }
 .addNewImageCont .addNewImageBtn::-webkit-file-upload-button {
   background: #f7fafc;
   color: #f7fafc;
   opacity: 0;
+  outline: none;
 }
 .addNewImageCont img{
-  height: 283px !important;
+  height: 190px !important;
   width: 100%;
+  outline: none;
 }
 .addNewImageBtn::after{
   content: "+";
   font-size: 72px;
   color: #969696;
-  line-height: 240px;
+  line-height: 160px;
   width: 93%;
   display: block;
   height: 100%;
   text-align: center;
+  outline: none;
 }
 .addNewImageBtn:hover::after{
   color: black;
@@ -255,4 +259,8 @@ div.pyroundedfull:hover{
   background-color: red;
   padding: 5px;
   border-top-right-radius: 0;
+}
+.direction-rtl{
+  direction: rtl !important;
+  background-color: white !important;
 }

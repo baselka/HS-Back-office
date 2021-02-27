@@ -12,11 +12,6 @@ const Simple = ( { providers } ) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: '#',
-        accessor: 'provider_id',
-        width: 200,
-      },
-      {
         Header: 'الاسم',
         accessor: 'full_name',
       },
@@ -36,10 +31,6 @@ const Simple = ( { providers } ) => {
             {props.row.original.status ? "فعال" : "غير مفعل"}
         </div>
         }
-      },
-      {
-        Header: 'تاريخ الاضافة',
-        accessor: 'date_added',
       }
     ],
     []
