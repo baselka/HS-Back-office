@@ -10,28 +10,28 @@ if (process.env.NODE_ENV === "production") {
   API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`;
 }
 
-const handleErrors = async error => {
-  console.log("error", error);
-  let result = {};
-  if (error === "Network Error") {
-    result = {
-      statusCode: 401,
-      statusName: "Network Error",
-      data: "Network Error"
-    };
-    return result;
-  }
-
-  const data = error && error.response && error.response.data;
-  const status = error && error.response && error.response.status;
-
-  result = {
-    statusCode: status,
-    statusName: data.statusName,
-    data
-  };
-  return result;
-};
+const handleErrors = async (error) => {
+	console.log('error', error);
+	let result = {}
+	if(error === "Network Error"){
+		result = {
+			statusCode: 401,
+			statusName: 'Network Error',
+			data: "Network Error"
+		}
+		return result;
+	}
+	
+	const data = error && error.response && error.response.data
+	const status = error && error.response && error.response.status
+	
+	result = {
+		statusCode: status,
+		statusName: data ? data.statusName : "Responce Error",
+		data
+	}
+	return result
+}
 
 const handleResponse = res => {
   return res && res.data;
@@ -193,10 +193,20 @@ const Categories = {
   sub: () => requests.get("/subcategories", {})
 };
 
+const Users = {
+    all: (data) => requests.get('/get-users', data),
+	delete: (id) => requests.delete('/delete-user/'+id, {}),
+	changePassword: (data) => requests.patch('/change-user-password/'+data.id, data),
+    update: (data) => requests.patch('/update-user', data ),
+    create: (data) => requests.post('/add-user', data ),
+    details: (id) => requests.get('/user-details/'+id, {} ),
+}
+
 export default {
-  Auth,
-  Cities,
-  Categories,
-  Providers,
-  Branches
-};
+	Auth,
+	Cities,
+	Categories,
+	Providers,
+	Users,
+	Branches
+}
