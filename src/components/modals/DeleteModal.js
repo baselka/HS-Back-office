@@ -49,7 +49,6 @@ const ModalFooter = ({ cancel, deleteConfirm }) => (
 );
 
 const DeleteModal = ({ cancel, title, message, deleteConfirm, id }) => {
-  console.log("from the delete modal id is ", id);
   return (
     <>
       <div className='backdrop fade-in fixed inset-0 z-40 bg-black'></div>
