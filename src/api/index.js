@@ -10,28 +10,28 @@ if (process.env.NODE_ENV === "production") {
   API_ROOT = `https://api-staging.happy-season.com/api/v1/back-office`;
 }
 
-const handleErrors = async (error) => {
-	console.log('error', error);
-	let result = {}
-	if(error === "Network Error"){
-		result = {
-			statusCode: 401,
-			statusName: 'Network Error',
-			data: "Network Error"
-		}
-		return result;
-	}
-	
-	const data = error && error.response && error.response.data
-	const status = error && error.response && error.response.status
-	
-	result = {
-		statusCode: status,
-		statusName: data ? data.statusName : "Responce Error",
-		data
-	}
-	return result
-}
+const handleErrors = async error => {
+  console.log("error", error);
+  let result = {};
+  if (error === "Network Error") {
+    result = {
+      statusCode: 401,
+      statusName: "Network Error",
+      data: "Network Error"
+    };
+    return result;
+  }
+
+  const data = error && error.response && error.response.data;
+  const status = error && error.response && error.response.status;
+
+  result = {
+    statusCode: status,
+    statusName: data ? data.statusName : "Responce Error",
+    data
+  };
+  return result;
+};
 
 const handleResponse = res => {
   return res && res.data;
@@ -188,30 +188,35 @@ const Categories = {
 };
 
 const Users = {
-    all: (data) => requests.get('/get-users', data),
-	  delete: (id) => requests.delete('/delete-user/'+id, {}),
-	  changePassword: (data) => requests.patch('/change-user-password/'+data.id, data),
-    update: (data) => requests.patch('/update-user', data ),
-    create: (data) => requests.post('/add-user', data ),
-    details: (id) => requests.get('/user-details/'+id, {} ),
-}
+  all: data => requests.get("/get-users", data),
+  delete: id => requests.delete("/delete-user/" + id, {}),
+  changePassword: data =>
+    requests.patch("/change-user-password/" + data.id, data),
+  update: data => requests.patch("/update-user", data),
+  create: data => requests.post("/add-user", data),
+  details: id => requests.get("/user-details/" + id, {})
+};
 
 const Services = {
-    all: (data) => requests.post('/services', data ),
-    create: (data) => requests.post('/create-service', data ),
-    update: (data) => requests.patch('/update-service', data ),
-    images: (data) => requests.patch('/service-images', data ),
-	  delete: (id) => requests.delete('/delete-service/'+id, {}),
-	  deleteImage: (data) => requests.delete('/delete-service-image/'+data.service+"/"+data.image, {}),
-    details: (data) => requests.post('/service-details', data ),
-}
+  all: data => requests.post("/services", data),
+  create: data => requests.post("/create-service", data),
+  update: data => requests.patch("/update-service", data),
+  images: data => requests.patch("/service-images", data),
+  delete: id => requests.delete("/delete-service/" + id, {}),
+  deleteImage: data =>
+    requests.delete(
+      "/delete-service-image/" + data.service + "/" + data.image,
+      {}
+    ),
+  details: data => requests.post("/service-details", data)
+};
 
 export default {
-	Auth,
-	Cities,
+  Auth,
+  Cities,
   Services,
-	Categories,
-	Providers,
-	Users,
-	Branches
-}
+  Categories,
+  Providers,
+  Users,
+  Branches
+};
