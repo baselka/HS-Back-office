@@ -70,7 +70,6 @@ const createApi = () => {
 };
 
 const uploadDataFormApi = async data => {
-  console.log("uploadDataFormApi data", data);
   const authToken = cookie.get("token");
   if (!authToken) return { status: "error", data: "Token not valid" };
 
@@ -81,9 +80,7 @@ const uploadDataFormApi = async data => {
   formdata.append("branch_id", data.id);
   for (let index = 0; index < data.images.length; index++) {
     const element = data.images[index];
-    console.log("element", element);
     formdata.append("images", element, element.name);
-    // formdata.append("images", fileInput.files[0], "bg.jpg");
   }
 
   var requestOptions = {
@@ -92,16 +89,13 @@ const uploadDataFormApi = async data => {
     body: formdata,
     redirect: "follow"
   };
-  console.log("upload-branch-images requestOptions", requestOptions);
 
   await fetch(API_ROOT + "/upload-branch-images/", requestOptions)
     .then(response => response.text())
     .then(result => {
-      console.log("upload-branch-images success", result);
       return { status: "success", data: result };
     })
     .catch(error => {
-      console.log("upload-branch-images error", error);
       return { status: "error", data: error };
     });
 };
@@ -195,16 +189,27 @@ const Categories = {
 
 const Users = {
     all: (data) => requests.get('/get-users', data),
-	delete: (id) => requests.delete('/delete-user/'+id, {}),
-	changePassword: (data) => requests.patch('/change-user-password/'+data.id, data),
+	  delete: (id) => requests.delete('/delete-user/'+id, {}),
+	  changePassword: (data) => requests.patch('/change-user-password/'+data.id, data),
     update: (data) => requests.patch('/update-user', data ),
     create: (data) => requests.post('/add-user', data ),
     details: (id) => requests.get('/user-details/'+id, {} ),
 }
 
+const Services = {
+    all: (data) => requests.post('/services', data ),
+    create: (data) => requests.post('/create-service', data ),
+    update: (data) => requests.patch('/update-service', data ),
+    images: (data) => requests.patch('/service-images', data ),
+	  delete: (id) => requests.delete('/delete-service/'+id, {}),
+	  deleteImage: (data) => requests.delete('/delete-service-image/'+data.service+"/"+data.image, {}),
+    details: (data) => requests.post('/service-details', data ),
+}
+
 export default {
 	Auth,
 	Cities,
+  Services,
 	Categories,
 	Providers,
 	Users,

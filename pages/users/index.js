@@ -90,7 +90,6 @@ const Index = () => {
       end: 1000
     }
     Api.Users.all(data).then((res)=>{
-      console.log('_getUsersList', res);
       if(res.statusCode === 200){
         setUsers(res.data);
         setLoadingData(false);
@@ -112,16 +111,11 @@ const Index = () => {
     setHasInput(true);
   }
 
-  useEffect(() => {
-    console.log("newPwd", newPwd);
-  },[newPwd])
-
   const _confirmUpdatePassword = () => {
     if(newPwd && newPwd.length > 5){
       Api.Users.changePassword({id:userToSetID, pwd:newPwd}).then((res)=>{
         setLoadingData(false);
         setHasInput(false);
-        console.log("_confirmUpdatePassword", res);
         if(res.statusCode === 202){
           NotificationManager.success('تم تغيير كلمة مرور المستخدم', 'نجاح', 3000);
         }else{
@@ -156,6 +150,10 @@ const Index = () => {
   const _cancelModal = () => {
     setConfirmModal(false);
     setHasInput(false);
+  }
+
+  const _addNew = () => {
+    router.push('/users/addNew');
   }
 
   return (

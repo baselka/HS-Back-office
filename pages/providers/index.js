@@ -52,7 +52,7 @@ const Index = () => {
       end: 1000
     }
     Api.Providers.all(data).then((res)=>{
-      console.log('_getProvidersList', res);
+      console.log("res.data", res);
       if(res.statusCode === 200){
         setProviders(res.data);
       }

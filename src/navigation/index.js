@@ -49,29 +49,16 @@ const navigation = [
         ]
       },
       {
-        url: '/providers',
+        url: '/providers/branches',
         icon: <Icon.Briefcase size={20} />,
-        title: 'إدارة مقدمي الخدمات',
-        items: [
-          {
-            url: '/providers/branches',
-            icon: <Icon.CornerDownLeft size={20} />,
-            title: 'إدارة الفروع',
-            items: []
-          },
-          {
-            url: '/services',
-            icon: <Icon.CornerDownLeft size={20} />,
-            title: 'إدارة الخدمات',
-            items: []
-          },
-          {
-            url: '/providers',
-            icon: <Icon.CornerDownLeft size={20} />,
-            title: 'مقدمي الخدمات',
-            items: []
-          },
-        ]
+        title: 'إدارة الفروع والخدمات',
+        items: []
+      },
+      {
+        url: '/providers',
+        icon: <Icon.Settings size={20} />,
+        title: 'مقدمي الخدمات',
+        items: []
       },
       {
         url: '/advertisements',

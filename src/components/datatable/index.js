@@ -117,44 +117,46 @@ const Datatable = ({columns, data}) => {
       </table>
 
       <div className="flex flex-row items-center justify-between my-4">
-        <div className="items-center justify-center text-center children-x-2 pagination">
-          {pageIndex !== 0 && (
+
+        <div className="items-center w-full justify-center text-center children-x-2 pagination">
+          {/* {pageIndex !== 0 && (
             <PageWithText
               onClick={() => gotoPage(0)}
               color="text-default">
               الصحفة الاولى
             </PageWithText>
-          )}
+          )} */}
           {canPreviousPage && (
             <PageWithText
               onClick={() => previousPage()}
               color="text-default">
-              السابقة
+              الصفحة السابقة
             </PageWithText>
           )}
-          {canNextPage && (
-            <PageWithText
-              onClick={() => nextPage()} disabled={!canNextPage}
-              color="text-default">
-              التالية
-            </PageWithText>
-          )}
-          {pageIndex !== pageCount - 1 && (
-            <PageWithText
-              onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}
-              color="text-default">
-              الصحفة الاخيرة
-            </PageWithText>
-          )}
-        </div>
 
         <span>
-          صفحة {' '}
           <b>
             {pageIndex + 1} من {pageOptions.length}
           </b>{' '}
         </span>
 
+
+          {canNextPage && (
+            <PageWithText
+              onClick={() => nextPage()} disabled={!canNextPage}
+              color="text-default">
+              الصفحة التالية
+            </PageWithText>
+          )}
+          {/* {pageIndex !== pageCount - 1 && (
+            <PageWithText
+              onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}
+              color="text-default">
+              الصحفة الاخيرة
+            </PageWithText>
+          )} */}
+        </div>
+{/* 
         <select
           className="form-select text-sm"
           value={pageSize}
@@ -166,7 +168,7 @@ const Datatable = ({columns, data}) => {
               عرض {pageSize}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
     </>
   )

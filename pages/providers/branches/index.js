@@ -23,9 +23,9 @@ const _city = (city_id, branch_id, branch_name, cities, changeField) => {
     }
   }
   if(name){
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('city_id', branch_id, branch_name, 0)} > {name} </div>;
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('city_id', branch_id, branch_name, 0)} title={"إضغط لتغيير المدينة"} > {name} </div>;
   }else{
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('city_id', branch_id, branch_name, 0)} > - غير محددة -</div>
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('city_id', branch_id, branch_name, 0)} title={"إضغط لتغيير المدينة"} > - غير محددة -</div>
   }
 }
 
@@ -38,9 +38,9 @@ const _category = (category_id, branch_id, branch_name, categories, changeField)
     }
   }
   if(name){
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('category_id', branch_id, branch_name, 0)} > {name} </div>;
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('category_id', branch_id, branch_name, 0)} title={"إضغط لتغيير التصنيف"} > {name} </div>;
   }else{
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('category_id', branch_id, branch_name, 0)} > - غير محددة -</div>
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull" onClick={()=>changeField('category_id', branch_id, branch_name, 0)} title={"إضغط لتغيير التصنيف"} > - غير محددة -</div>
   }
 }
 
@@ -58,9 +58,9 @@ const _subCategory = (category_id, branch_id, branch_name, sub_cat_id, subCatego
     }
   }
   if(name){
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull"onClick={()=>changeField('sub_cat_id', branch_id, branch_name, category_id)} > {name} </div>;
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull"onClick={()=>changeField('sub_cat_id', branch_id, branch_name, category_id)} title={"إضغط لتغيير التصنيف الفرعي"} > {name} </div>;
   }else{
-    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull"onClick={()=>changeField('sub_cat_id', branch_id, branch_name, category_id)} > - غير محددة -</div>
+    return <div className="cursor-pointer hover:bg-pink-600 hover:text-white pyroundedfull"onClick={()=>changeField('sub_cat_id', branch_id, branch_name, category_id)} title={"إضغط لتغيير التصنيف الفرعي"} > - غير محددة -</div>
   }
 }
 
@@ -91,11 +91,17 @@ const Simple = ( { branches, cities, categories, subCategories, changeStatus, ch
         accessor: 'branch_id',
         Cell: (props) => {
           return <div className="flex justify-center" >
-              <Link href={"/providers/branches/"+props.row.original.branch_id} >
-                <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
-                  <i className="icon-note font-bold mr-1 ml-1" />
-                  تعديل
-                </a>
+            <Link href={"/services/"+props.row.original.branch_id} >
+              <a className="float-right btn btn-default btn-pink btn-rounded btn-icon mr-1 ml-1 w-22">
+                <i className="icon-eye font-bold mr-1 ml-1" />
+                عرض الخدمات
+              </a>
+            </Link>
+            <Link href={"/providers/branches/"+props.row.original.branch_id} >
+              <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
+                <i className="icon-note font-bold mr-1 ml-1" />
+                تعديل
+              </a>
             </Link>
             {(props.row.original.status === 1) &&
               <button className="float-right btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 0)} >
@@ -367,7 +373,6 @@ const Index = () => {
   const _deleteBranchConfirmed = () => {
     setConfirmModal(false);
     Api.Branches.delete( baranchToDeleteID ).then((res)=>{
-      console.log('_deleteBranches', res);
       if(res.statusCode === 202){
         _getAllBranches(0, 1000);
         setMessages(res.data.message);
