@@ -13,7 +13,7 @@ import LoadingModal from '../../src/components/modals/LoadingModal'
 
 const Index = () => {
   const [messages, setMessages] = useState(false)
-  const [loadingData, setLoadingData] = useState(true)
+  const [loadingData, setLoadingData] = useState(false)
   const [userData, setUserData] = useState(null)
   const [imagesList, setImagesList] = useState([])
   const [alertType, setAlertType] = useState('red');
@@ -21,80 +21,60 @@ const Index = () => {
   const {register, handleSubmit, watch, errors, setValue} = useForm();
   const [userID, setUserID] = useState(null);
   const router = useRouter();
-  const { id } = router.query;
 
-  useEffect(() => {
-    if(id){
-      _getUserDetails(id);
-    }else{
+  const _addUser = data => {
+    Api.Users.create(data).then((res)=>{
       setLoadingData(false);
-      setUserData(null);
-      setMessages("عفوا : رقم المستخدم غير صحيح");
-      setAlertType('red');
-      NotificationManager.error("رقم المستخدم غير صحيح", 'عفواً', 3000);
-    }
-  }, []);
-
-  const _getUserDetails = ( user_id ) => {
-      Api.Users.details(user_id).then((res)=>{
-        setLoadingData(false);
-        if(res.statusCode === 200){
-          const userDetails = res.data?.data;
-          setUserData(userDetails[0]);
-        }else{
-          setUserData(null);
-          setMessages(res.statusName);
-          setAlertType('red');
-          NotificationManager.error("حدث خطأ اثناء إسترجاع بيانات المستخدم", 'عفواً', 3000);
-        }
-      });
-  }
-
-  useEffect(() => {
-    if(userData){
-      let userCurrentData = [
-        { id: userData.id },
-        { username: userData.username },
-        { full_name: userData.full_name },
-        { email: userData.email },
-        { phone: userData.phone },
-        { acc_type: userData.acc_type }
-      ];
-      if(userData.acc_type === 1){
-        setUserID({label:"مدير لوحة التحكم", value:1});
-      }else{
-        setUserID({label:"ممثل خدمة العملاء",value:2});
-      }
-      setValue(userCurrentData);
-    }
-  }, [userData])
-
-  const _updateUser = data => {
-    Api.Users.update(data).then((res)=>{
-      setLoadingData(false);
-      if(res.statusCode === 200){
-        NotificationManager.success('تم تحديث بيانات المستخدم', 'نجاح', 3000);
+      if(res.statusCode === 201){
+        NotificationManager.success('تم اضافة المستخدم', 'نجاح', 3000);
         setTimeout(()=>{
           router.push('/users');
         }, 200);
       }else{
-        NotificationManager.error('حدث خطأ اثناء تحديث بيانات المستخدم', 'عفواً', 3000);
+        NotificationManager.error('حدث خطأ اثناء اضافة المستخدم', 'عفواً', 3000);
       }
     });
   }
 
   const onSubmit = fields => {
-    setLoadingData(true);
-    let data = {
-      id: userData.id,
-      full_name: fields.full_name,
-      username: fields.username,
-      email: fields.email,
-      phone: fields.phone,
-      acc_type: userID.value
+    let errorList = [];
+    if(!userID.value){
+      errorList.push("الرجاء إختيار نوع الحساب");
     }
-    if(fields.pwd) data.pwd = pwd;
-    _updateUser(data);
+    if(!fields.full_name){
+      errorList.push("الرجاء كتابة الاسم كاملا");
+    }
+    if(!fields.username){
+      errorList.push("الرجاء كتابة اسم المستخدم");
+    }
+    if(!fields.email){
+      errorList.push("الرجاء كتابة البريد الالكتروني");
+    }
+    if(!fields.pwd){
+      errorList.push("الرجاء كتابة كلمة المرور");
+    }
+    if(!fields.pwdcnfrm){
+      errorList.push("الرجاء كتابة تأكيد كلمة المرور");
+    }
+    if(fields.pwd !== fields.pwdcnfrm){
+      errorList.push("كلمة المرور غير متطابقة");
+    }
+    if(errorList.length > 0){
+      NotificationManager.error(errorList.join(", \n"), 'عفواً', 3000);
+    }else{
+      setLoadingData(true);
+      let data = {
+        full_name: fields.full_name,
+        username: fields.username,
+        email: fields.email,
+        phone: fields.phone,
+        acc_type: userID.value,
+        pwd: fields.pwd,
+        status: 2,
+        retries: 0,
+      }
+      _addUser(data);
+    }
   }
 
   return (
@@ -105,19 +85,8 @@ const Index = () => {
         </Layout>
       ) : (
         <Layout>
-          { userData === null ? (
-            <div className="flex justify-center w-11/12 content-center" style={{paddingTop:200}} > 
-              <div className="w-15 h-20 text-center text-xl text-gray-800">
-                  {messages &&
-                    <Alert color="red" closeable={true} type="warning" raised flat >
-                      {messages}
-                    </Alert>
-                  }
-              </div>
-            </div>
-          ) : (
             <div>
-            <Widget title="تعديل بيانات المستخدم" description={""}>
+            <Widget title="إضافة مستخدم جديد" description={""}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full"
@@ -162,16 +131,14 @@ const Index = () => {
                             />
                           </label>
                       </div>
-                    </div>
-                    <div className="flex-col w-96 mb-4 ml-6 float-right">
                       <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                         <label className="block">
                           <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>نوع الحساب</span>
-                          {userID &&
-                            <Select name="acc_type" options={accountTypes} className="w-full mt-2" placeholder={"-- إختر نوع المستخدم --"} onChange={(data)=> {setUserID(data)}} defaultValue={userID} />
-                          }
+                          <Select name="acc_type" options={accountTypes} className="w-full mt-2" placeholder={"-- إختر نوع المستخدم --"} onChange={(data)=> {setUserID(data)}} />
                         </label>
                       </div>
+                    </div>
+                    <div className="flex-col w-96 mb-4 ml-6 float-right">
                       <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                         <label className="block">
                           <span className="text-default">رقم الجوال</span>
@@ -186,10 +153,23 @@ const Index = () => {
                       </div>
                       <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                         <label className="block">
-                          <span className="text-default">كلمة المرور</span>
+                          <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>كلمة المرور</span>
                           <input
                             name="pwd"
                             type="password"
+                            ref={register({required: true})}
+                            className="form-input mt-1 text-xs block w-full bg-white placeholder-gray-400 mt-2"
+                            placeholder="كلمة المرور"
+                          />
+                        </label>
+                      </div>
+                      <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
+                        <label className="block">
+                          <span className="text-default"><b className="ml-1 text-s text-red-500">*</b>تأكيد كلمة المرور</span>
+                          <input
+                            name="pwdcnfrm"
+                            type="password"
+                            ref={register({required: true})}
                             className="form-input mt-1 text-xs block w-full bg-white placeholder-gray-400 mt-2"
                             placeholder="كلمة المرور"
                           />
@@ -213,7 +193,6 @@ const Index = () => {
               </form>
             </Widget>
             </div>
-          )}
         </Layout>
       )}
     </Container>

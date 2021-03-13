@@ -64,7 +64,6 @@ const PlacesWithStandaloneSearchBox = compose(
 )});
 
 const Index = ( onAddressChange ) => {
-    console.log('onAddressChange', onAddressChange);
     return (
         <PlacesWithStandaloneSearchBox onChange={onAddressChange} />
     )

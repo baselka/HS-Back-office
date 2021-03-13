@@ -147,8 +147,6 @@ const Index = () => {
   const { id } = router.query;
 
   useEffect(() => {
-    console.log('router.query', router);
-    console.log('branchData id', id);
     if(id){
       _getBrancheDetails(id);
     }else{
@@ -169,7 +167,6 @@ const Index = () => {
     setConfirmModal(false);
     var data = {branch: id, image: toDeleteID};
     Api.Branches.deleteImage(data).then((res)=>{
-      console.log('removeBranchImages', res);
       if(res.statusCode === 201){
         NotificationManager.success('تم حذف الصورة بنجاح', 'نجاح', 3000);
         let newListimgs = [];
@@ -189,7 +186,6 @@ const Index = () => {
 
   const _getBrancheDetails = ( branch_id ) => {
       Api.Branches.details(branch_id).then((res)=>{
-        console.log('_getBrancheDetails', res);
         if(res.statusCode === 200){
           const { branchDetails } = res.data;
           if(branchDetails[0].lat && branchDetails[0].lat){
@@ -232,7 +228,6 @@ const Index = () => {
         { sub_cat_id: branchData.sub_cat_id },
         { provider_id: branchData.provider_id }
       ];
-      console.log('branchCurrentData', branchCurrentData);
       setTimeout(() => {
         setValue(branchCurrentData);
       }, 500);
@@ -253,7 +248,6 @@ const Index = () => {
   };
   
   const _onPlacesChanged = (address, coords) => {
-    console.log(address, coords);
     if(coords) setLatitude(coords.latitude);
     if(coords) setLongitude(coords.longitude);
     if(address) setAddress(address);
@@ -265,7 +259,6 @@ const Index = () => {
       end: 1000
     }
     Api.Providers.all(data).then((res)=>{
-      console.log('_getProvidersList', res);
       if(res.statusCode === 200){
         let plist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -282,7 +275,6 @@ const Index = () => {
 
   const _getAllCities = () => {
     Api.Cities.all().then((res)=>{
-      console.log('_getAllCities', res);
       if(res.statusCode === 200){
         let citlist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -300,7 +292,6 @@ const Index = () => {
 
   const _getAllCategories = () => {
     Api.Categories.all().then((res)=>{
-      console.log('_getAllCategories', res);
       if(res.statusCode === 200){
         let catlist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -318,7 +309,6 @@ const Index = () => {
 
   const _getSubCategories = () => {
     Api.Categories.sub().then((res)=>{
-      console.log('_getSubCategories', res);
       if(res.statusCode === 200){
         setSubCategories(res.data);
         for (let index = 0; index < res.data.length; index++) {
@@ -353,14 +343,11 @@ const Index = () => {
   }
 
   const _setProviderID = fields => {
-    console.log('_setProviderID', fields);
     setProviderID(fields.value)
   }
 
   const _updateBranch = data => {
-    console.log('_updateBranch', data);
     Api.Branches.update(data).then((res)=>{
-      console.log('_updateBranch res', res);
       if(res.statusCode === 200){
         NotificationManager.success('تم تحديث بيانات فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
         if(imagesList && imagesList.length > 0){
@@ -383,7 +370,6 @@ const Index = () => {
   const _uploadBranchImages = branch => {
     var data = {id: branch, images: imagesList};
     Api.Branches.uploadBranchImages(data).then((res)=>{
-      console.log('uploadBranchImages', res);
       NotificationManager.success('تم إضافة فرع صور الفرع بنجاح ', 'نجاح', 3000);
       setTimeout(() => {
         setLoadingData(false);
@@ -393,7 +379,6 @@ const Index = () => {
   }
 
   const onSubmit = fields => {
-    console.log('fields', fields);
     setLoadingData(true);
     let data = {
       ...fields,

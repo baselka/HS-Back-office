@@ -15,11 +15,8 @@ export default class ImageUploadComponent extends Component {
     }
 
     remove(index) {
-        console.log('index', index);
         let newList = this.state.file;
-        console.log('fileArray1', newList);
         newList.splice(index, 1);
-        console.log('fileArray2', newList);
         this.fileArray = newList;
         this.setState({ file: this.fileArray });
         
@@ -31,12 +28,10 @@ export default class ImageUploadComponent extends Component {
 
     uploadFiles(e) {
         const fileUrl = e.target.files;
-        console.log('fileUrl', fileUrl);
         let urls = [];
         for (let i = 0; i < fileUrl.length; i++) {
             urls.push(URL.createObjectURL(fileUrl[i]))
         }
-        console.log("urls", urls);
         if(urls.length){
             this.fileArray.push(urls[0]);
             this.setState({ file: this.fileArray });

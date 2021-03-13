@@ -134,7 +134,6 @@ const Index = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('providerType', providerType);
     if(providerType.value === "Registered"){
       _getProvidersList();
     }
@@ -153,7 +152,6 @@ const Index = () => {
   };
   
   const _onPlacesChanged = (address, coords) => {
-    console.log(address, coords);
     if(coords) setLatitude(coords.latitude);
     if(coords) setLongitude(coords.longitude);
     if(address) setAddress(address);
@@ -165,7 +163,6 @@ const Index = () => {
       end: 1000
     }
     Api.Providers.all(data).then((res)=>{
-      console.log('_getProvidersList', res);
       if(res.statusCode === 200){
         let plist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -179,7 +176,6 @@ const Index = () => {
 
   const _getAllCities = () => {
     Api.Cities.all().then((res)=>{
-      console.log('_getAllCities', res);
       if(res.statusCode === 200){
         let citlist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -193,7 +189,6 @@ const Index = () => {
 
   const _getAllCategories = () => {
     Api.Categories.all().then((res)=>{
-      console.log('_getAllCategories', res);
       if(res.statusCode === 200){
         let catlist = [];
         for (let index = 0; index < res.data.length; index++) {
@@ -207,7 +202,6 @@ const Index = () => {
 
   const _getSubCategories = () => {
     Api.Categories.sub().then((res)=>{
-      console.log('_getSubCategories', res);
       if(res.statusCode === 200){
         setSubCategories(res.data);
         setLoadingData(false);
@@ -231,14 +225,11 @@ const Index = () => {
   }
 
   const _setProviderID = fields => {
-    console.log('_setProviderID', fields);
     setProviderID(fields.value)
   }
 
   const _createNewBranch = data => {
-    console.log('_createNewBranch', data);
     Api.Branches.create(data).then((res)=>{
-      console.log('_createNewBranch res', res);
       if(res.statusCode === 201){
         if(imagesList && imagesList.length > 0){
           NotificationManager.success('تم إضافة فرع '+ data.branch_name +' بنجاح ', 'نجاح', 3000);
@@ -259,7 +250,6 @@ const Index = () => {
   const _uploadBranchImages = branch => {
     var data = {id: branch, images: imagesList};
     Api.Branches.uploadBranchImages(data).then((res)=>{
-      console.log('uploadBranchImages', res);
       NotificationManager.success('تم إضافة فرع صور الفرع بنجاح ', 'نجاح', 3000);
       setTimeout(() => {
         setLoadingData(false);
@@ -269,8 +259,6 @@ const Index = () => {
   }
 
   const _createNewProvider = fields => {
-    console.log('_createNewProvider', fields);
-
     let data = {
       full_name: fields.provider_name,
       email: fields.provider_email,
@@ -278,10 +266,7 @@ const Index = () => {
       phone: fields.provider_phone,
     };
 
-    console.log('_createNewProvider data', data);
-
     Api.Providers.create(data).then((res)=>{
-      console.log('_createNewProvider res', res);
       if(res.statusCode === 201){
         let data = {
           branch_name: fields.branch_name,
@@ -314,8 +299,6 @@ const Index = () => {
     fields.city_id = cityID.value;
     fields.category_id = categoryID.value;
     fields.sub_cat_id = subCategoryID.value;
-
-    console.log('onSubmit', fields);
 
     if(providerType.value === "Registered"){
       let data = {
