@@ -34,7 +34,7 @@ const Index = ({ token }) => {
         <div className="flex items-center justify-start px-2">
           <div className="flex-shrink-0 w-24">
             <img
-              src="/assets/faces/m1.png"
+              src="/assets/faces/avatar.png"
               alt="image"
               className="shadow rounded-full h-20 w-20 border-2 border-gray-100 mb-2"
             />

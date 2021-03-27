@@ -55,12 +55,12 @@ const Simple = ( { services, deleteService } ) => {
         Cell: (props) => {
           return <div className="flex justify-center" >
             <Link href={"/services/edit/"+props.row.original.id} >
-              <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
+              <a className="float-right btn btn-default btn-blue rounded-full btn-icon mr-1 ml-1 w-22">
                 <i className="icon-note font-bold mr-1 ml-1" />
                 عرض التفاصيل
               </a>
             </Link>
-            <button className="float-right btn btn-default btn-red btn-rounded btn-icon mr-1 ml-1 w-22" onClick={()=>deleteService(props.row.original.id)} >
+            <button className="float-right btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-22" onClick={()=>deleteService(props.row.original.id)} >
               <i className="icon-trash font-bold mr-1 ml-1" />
               <span>حذف</span>
             </button>
@@ -73,6 +73,12 @@ const Simple = ( { services, deleteService } ) => {
   return <Datatable columns={columns} data={services} />
 }
 
+export async function getServerSideProps(context) {
+  return {
+    props: {}
+  };
+}
+
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
@@ -83,7 +89,7 @@ const Index = () => {
   const [alertType, setAlertType] = useState('red')
   const router = useRouter();
   const { id } = router.query;
-
+  
   useEffect(() => {
     if(id){
       _getAllServices();
@@ -97,7 +103,7 @@ const Index = () => {
   }, []);
 
   const _addNew = () => {
-    router.push('/services/addNew');
+    router.push('/services/addNew/'+id);
   }
 
   const _deleteService = ( service_id ) => {
@@ -162,7 +168,7 @@ const Index = () => {
           <>
             { services === null ? (
               <div className="flex justify-center w-11/12 content-center" style={{paddingTop:200}} > 
-                <div className="w-15 h-20 text-center text-xl text-gray-800">
+                <div className="w-15 h-20 text-center text-xl text-gray-800 bg-white">
                     {messages &&
                       <Alert color="red" closeable={true} type="warning" raised flat >
                         {messages}
@@ -177,17 +183,19 @@ const Index = () => {
                     <SectionTitle title="إدارة الخدمات" subtitle={"إدارة خدمات فرع "+ branchName } />
                   </div>
                   <div className="w-2/12">
-                    <button className="btn btn-default btn-pink btn-rounded btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
+                    <button className="btn btn-default btn-pink rounded-full btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
                       <i className="icon-plus font-bold mr-1 ml-1" />
-                      <span>إضافة خدمة جديدة</span>
+                      <span>إضافة خدمة جديدة للفرع</span>
                     </button>
                   </div>
                 </div>
 
                 {services.length === 0 ? (
-                  <Alert color="red" closeable={true} type="warning" raised flat >
-                    {"عفوا : لاتوجد خدمات للفرع "}
-                  </Alert>
+                  <div className="bg-white">
+                    <Alert color="red" closeable={true} type="warning" raised flat >
+                      {"عفوا : لاتوجد خدمات للفرع "}
+                    </Alert>
+                  </div>
                 ):(
                   <Widget title={" خدمات الفرع ( "+ services.length + " )"} >
                     <div className="">

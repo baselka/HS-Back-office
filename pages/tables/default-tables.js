@@ -40,7 +40,7 @@ const DefaultTables = () => (
           tables
         </span>
       }>
-      <table className="table">
+      <table className="table striped">
         <thead>
           <tr>
             {fields.map((field, i) => (
@@ -67,7 +67,7 @@ const DefaultTables = () => (
           Use the <code>.table-lg</code> class for larger tables
         </span>
       }>
-      <table className="table table-lg">
+      <table className="table table-lg striped">
         <thead>
           <tr>
             {fields.map((field, i) => (
@@ -94,7 +94,7 @@ const DefaultTables = () => (
           Use the <code>.no-border</code> class to remove borders
         </span>
       }>
-      <table className="table no-border">
+      <table className="table no-border striped">
         <thead>
           <tr>
             {fields.map((field, i) => (

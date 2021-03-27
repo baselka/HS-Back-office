@@ -10,7 +10,7 @@ const Table3 = ({title, subtitle}) => {
       <div className="flex items-center justify-between">
         <WidgetTitle title={title} description={subtitle} />
       </div>
-      <table className="table">
+      <table className="table striped">
         <thead>
           <tr>
             <th>Name</th>

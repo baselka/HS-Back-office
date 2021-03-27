@@ -17,6 +17,12 @@ import { compose, withProps, lifecycle } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
 const { SearchBox } = require("react-google-maps/lib/components/places/SearchBox");
 
+export async function getServerSideProps(context) {
+  return {
+    props: {}
+  };
+}
+
 const MapComponent = compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDZXyEzKc1WXdZeXh9zyWCiRJQDEJXOfPo&v=3.exp&libraries=geometry,drawing,places",
@@ -53,7 +59,7 @@ const MapComponent = compose(
               latitude: places[0].geometry.location.lat(),
               longitude: places[0].geometry.location.lng(),
             },
-            zoom: 15
+            zoom: 16
           });
         },
       })
@@ -71,7 +77,7 @@ const MapComponent = compose(
   }, [props.coords]);
   return (
   <GoogleMap
-    defaultZoom={props.zoom ? props.zoom : 7}
+    defaultZoom={props.zoom ? props.zoom : 16}
     ref={props.onMapMounted}
     defaultCenter={{ lat: props.latitude, lng: props.longitude }}
   >
@@ -185,15 +191,19 @@ const Index = () => {
   }
 
   const _getBrancheDetails = ( branch_id ) => {
+      console.log("res branch_id", branch_id);
       Api.Branches.details(branch_id).then((res)=>{
-        if(res.statusCode === 200){
+        console.log("res", res);
+        if(res.statusCode === 200 && res.data?.branchDetails?.length){
           const { branchDetails } = res.data;
-          if(branchDetails[0].lat && branchDetails[0].lat){
+          if(branchDetails[0]?.lat && branchDetails[0]?.lat){
             setLatitude(branchDetails[0].lat);
             setLongitude(branchDetails[0].lon); 
           }
           setBranchData(branchDetails[0]);
-          setDefaultImagesList(res.data.branchImages);
+          if(res.data && res.data.branchImages){
+            setDefaultImagesList(res.data.branchImages);
+          }
         }else{
           setLoadingData(false);
           setBranchData(null);
@@ -235,10 +245,13 @@ const Index = () => {
   }, [branchData])
 
   useEffect(() => {
-    if(providersList && subCategoriesList && subCategories && branchData && cityID && categoryID && subCategoryID && selectedProvider && selectedCity && selectedCat && selectedSubCat && citiesList && categoriesList){
+    if(providersList && subCategories && branchData && cityID && categoryID && subCategoryID && selectedProvider && selectedCity && citiesList && categoriesList){
       setLoadingData(false);
     }
-  }, [longitude, latitude, providersList, subCategoriesList, subCategories, defaultImagesList, imagesList, branchData, cityID, categoryID, subCategoryID, selectedProvider, selectedCity, selectedCat, selectedSubCat, citiesList, categoriesList])
+    setTimeout(() => {
+      setLoadingData(false);
+    }, 5000)
+  }, [longitude, latitude, providersList, subCategories, defaultImagesList, imagesList, branchData, cityID, categoryID, subCategoryID, selectedProvider, selectedCity, selectedCat, selectedSubCat, citiesList, categoriesList])
  
 
   const _onMarkerDragEnd = (e) => {
@@ -404,7 +417,7 @@ const Index = () => {
         <Layout>
           { branchData === null ? (
             <div className="flex justify-center w-11/12 content-center" style={{paddingTop:200}} > 
-              <div className="w-15 h-20 text-center text-xl text-gray-800">
+              <div className="w-15 h-20 text-center text-xl text-gray-800 bg-white">
                   {messages &&
                     <Alert color="red" closeable={true} type="warning" raised flat >
                       {messages}

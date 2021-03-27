@@ -23,7 +23,7 @@ const SectionTitle = ({title, subtitle}) => {
 
 const TableWidget2 = () => {
   return (
-    <table className="table">
+    <table className="table striped">
       <thead>
         <tr>
           <th>Country</th>

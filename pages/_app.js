@@ -34,6 +34,8 @@ const MyApp = ({ Component, pageProps }) => (
                     <link rel="shortcut icon" href="/public/favicon.ico" />                    
                     <meta name="viewport" content="width=device-width, target-densitydpi=device-dpi, initial-scale=0, maximum-scale=1, user-scalable=yes" />
                     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"> </script>
+                    <link rel="preconnect" href="https://fonts.gstatic.com" />
+                    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap" rel="stylesheet" />
                 </Head>
                 <PersistGate loading={null} persistor={persistor}>
                     <Component {...pageProps} />
