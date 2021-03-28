@@ -4,12 +4,12 @@ import PropTypes from 'prop-types'
 export const PageWithText = ({color, children, active = false, onClick}) => {
   if (active)
     return (
-      <button onClick={onClick} className={`btn btn-default btn-${color}`}>
+      <button onClick={onClick} className="btn btn-default btn-gray rounded-full" >
         {children}
       </button>
     )
   return (
-    <button onClick={onClick} className="btn btn-default btn-default-color">
+    <button onClick={onClick} className="btn btn-default btn-gray rounded-full" >
       {children}
     </button>
   )

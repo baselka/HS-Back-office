@@ -25,7 +25,7 @@ const Index = () => {
   // component did mount
   useEffect(() => {
     _getAllCities();
-    _addCity();
+    // _addCity();
   }, []);
 
   // const _deleteCity = id => {
@@ -187,12 +187,12 @@ const Index = () => {
         <SectionTitle title='إدارة التطبيق' subtitle='إدارة المدن' />
 
         <button
-          className='btn btn-default btn-pink btn-rounded btn-icon mr-1 ml-1 w-1/12'
+          className='btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 w-1/12'
           onClick={() => add()}>
           اضافة مدينه
         </button>
 
-        <table className='table table-lg'>
+        <table className="table table-lg striped">
           <thead>
             <tr>
               <th>
@@ -214,7 +214,7 @@ const Index = () => {
 
                     <td>
                       <button
-                        className='float-right btn btn-default btn-red btn-rounded btn-icon mr-1 ml-1 w-22'
+                        className='float-right btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-22'
                         onClick={() => remove(item)}>
                         <i className='icon-trash font-bold mr-1 ml-1' />
                         <span>حذف</span>
@@ -223,7 +223,7 @@ const Index = () => {
 
                     <th>
                       <button
-                        className='float-right btn btn-default btn-indigo btn-rounded btn-icon mr-1 ml-1 w-22'
+                        className='float-right btn btn-default btn-indigo rounded-full btn-icon mr-1 ml-1 w-22'
                         onClick={() => edit(item)}>
                         <span>تعديل</span>
                       </button>

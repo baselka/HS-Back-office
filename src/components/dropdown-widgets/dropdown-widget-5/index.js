@@ -32,8 +32,8 @@ const DropdownWidget5 = () => {
           <span className="absolute top-0 left-0 pt-4">
             <img
               className="h-8 w-8 rounded-full shadow"
-              src={`/assets/faces/${user.img}`}
-              alt={user.fullName}
+              src={`/assets/faces/${user?.img}`}
+              alt={user?.fullName}
             />
           </span>
         </button>

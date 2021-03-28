@@ -82,13 +82,13 @@ const ModalBody = prop => {
 const ModalFooter = ({ cancel, handleSubmit }) => (
   <div className='modal-footer children-x-2'>
     <button
-      className='btn btn-default btn-red btn-rounded'
+      className='btn btn-default btn-red rounded-full'
       type='submit'
       onClick={handleSubmit}>
       تاكيد
     </button>
     <button
-      className='btn btn-default btn-red btn-rounded'
+      className='btn btn-default btn-red rounded-full'
       type='button'
       onClick={cancel}>
       تراجع

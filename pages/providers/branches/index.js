@@ -3,7 +3,7 @@ import Container from '../../Container'
 import Layout from '../../../src/layouts'
 import SectionTitle from '../../../src/components/section-title'
 import LoadingModal from '../../../src/components/modals/LoadingModal'
-import Datatable from '../../../src/components/datatable'
+import Datatable from '../../../src/components/datatable/paged'
 import Widget from '../../../src/components/widget'
 import { Alert } from '../../../src/components/alerts'
 import Link from 'next/link'
@@ -64,12 +64,16 @@ const _subCategory = (category_id, branch_id, branch_name, sub_cat_id, subCatego
   }
 }
 
-const Simple = ( { branches, cities, categories, subCategories, changeStatus, changeField, deleteBranch } ) => {
+const Simple = ( { branches, cities, categories, subCategories, changeStatus, changeField, deleteBranch, pagination, goToPage } ) => {
   const columns = React.useMemo(
     () => [
       {
         Header: 'اسم الفرع',
         accessor: 'branch_name'
+      },
+      {
+        Header: 'اسم مقدم الخدمة',
+        accessor: 'full_name'
       },
       {
         Header: 'المدينة',
@@ -92,30 +96,30 @@ const Simple = ( { branches, cities, categories, subCategories, changeStatus, ch
         Cell: (props) => {
           return <div className="flex justify-center" >
             <Link href={"/services/"+props.row.original.branch_id} >
-              <a className="float-right btn btn-default btn-pink btn-rounded btn-icon mr-1 ml-1 w-22">
+              <a className="float-right btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 w-22">
                 <i className="icon-eye font-bold mr-1 ml-1" />
                 عرض الخدمات
               </a>
             </Link>
             <Link href={"/providers/branches/"+props.row.original.branch_id} >
-              <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
+              <a className="float-right btn btn-default btn-blue rounded-full btn-icon mr-1 ml-1 w-22">
                 <i className="icon-note font-bold mr-1 ml-1" />
                 تعديل
               </a>
             </Link>
             {(props.row.original.status === 1) &&
-              <button className="float-right btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 0)} >
+              <button className="float-right btn btn-default btn-orange rounded-full btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 0)} >
                 <i className="icon-ban font-bold mr-1 ml-1" />
                 <span>إلغاء التفعيل</span>
               </button>
             }
             {(props.row.original.status !== 1) &&
-              <button className="float-right btn btn-default btn-green btn-rounded btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 1)} >
+              <button className="float-right btn btn-default btn-green rounded-full btn-icon mr-1 ml-1 w-32" onClick={()=>changeStatus(props.row.original, 1)} >
                 <i className="icon-ban font-bold mr-1 ml-1" />
                 <span>تفعيل</span>
               </button>
             }
-            <button className="float-right btn btn-default btn-red btn-rounded btn-icon mr-1 ml-1 w-22" onClick={()=>deleteBranch(props.row.original.branch_id)} >
+            <button className="float-right btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-22" onClick={()=>deleteBranch(props.row.original.branch_id)} >
               <i className="icon-trash font-bold mr-1 ml-1" />
               <span>حذف</span>
             </button>
@@ -125,7 +129,7 @@ const Simple = ( { branches, cities, categories, subCategories, changeStatus, ch
     ],
     []
   )
-  return <Datatable columns={columns} data={branches} />
+  return <Datatable columns={columns} data={branches} pagination={pagination} goToPage={goToPage} />
 }
 
 const Index = () => {
@@ -133,11 +137,13 @@ const Index = () => {
   const [modal, setModal] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
   const [hasSearch, setHasSearch] = useState(false)
+  const [loadingData, setLoadingData] = useState(false)
   const [branches, setBranches] = useState([])
   const [cities, setCities] = useState([])
   const [searchCities, setSearchCities] = useState([])
   const [searchCategories, setSearchCategories] = useState([])
   const [searchSubCategories, setSearchSubCategories] = useState([])
+  const [paginationData, setPaginationData] = useState({cuurentPage: 0, pageCount: 0, pageSize: 0, rowCount: 0});
   const [searchTerm, setSearchTerm] = useState('')
   const [searchCityId, setSearchCityId] = useState('')
   const [searchCatID, setSearchCatID] = useState('')
@@ -157,7 +163,7 @@ const Index = () => {
     _getAllCities()
     _getAllCategories()
     _getSubCategories()
-    _getAllBranches(0, 1000)
+    _getAllBranches(0, 10)
   }, [])
 
   useEffect(() => {
@@ -187,7 +193,7 @@ const Index = () => {
     Api.Branches.changeStatus(data).then((res)=>{
       console.log('update res', res);
       if(res.statusCode === 200){
-        _getAllBranches(0, 1000)
+        _getAllBranches(paginationData.cuurentPage, 10);
         setAlertType('green');
         setMessages(status ? 'تم تفعيل الفرع' : 'تم إلغاء تفعيل الفرع');
         NotificationManager.success(status ? 'تم تفعيل الفرع' : 'تم إلغاء تفعيل الفرع', 'نجاح', 3000);
@@ -238,7 +244,7 @@ const Index = () => {
     Api.Branches.instantEdit({field:fieldToChange, branch_id:branchIDToChange, value}).then((res)=>{
       console.log('update res', res);
       if(res.statusCode === 200){
-        _getAllBranches(0, 1000)
+        _getAllBranches(paginationData.cuurentPage, 10);
         setAlertType('green');
         setMessages(res.message);
         NotificationManager.success(res.message, 'نجاح', 3000);
@@ -285,25 +291,25 @@ const Index = () => {
     setSearchSubCatID(data.value);
   }
 
-  const _clearSearch = () => {
-    _getAllBranches(0, 1000);
-  }
-
   const _search = () => {
     var data = {
       start: 0,
-      end: 1000,
+      end: 10,
       city: searchCityId ? searchCityId : 0,
       cat: searchCatID ? searchCatID: 0,
       subCat: searchSubCatID ? searchSubCatID: 0,
       term: searchTerm ? searchTerm : 0,
     }
-
+    setLoadingData(true);
     Api.Branches.search(data).then((res)=>{
       console.log('_search', res);
+      setLoadingData(false);
       if(res.statusCode === 200){
         if(res.rowCount !== 0){
           setBranches(res.data);
+          let resp = res;
+          delete resp.data;
+          setPaginationData(resp);
         }else{
           setMessages('عفوا : لاتوجد نتائج لعملية البحث');
           setAlertType('red');
@@ -370,11 +376,16 @@ const Index = () => {
     setBaranchToDeleteID(branch_id);
   }
 
+  const _goToPage = (page) => {
+    console.log("paginates", page);
+    _getAllBranches(page, 10);
+  }
+
   const _deleteBranchConfirmed = () => {
     setConfirmModal(false);
     Api.Branches.delete( baranchToDeleteID ).then((res)=>{
       if(res.statusCode === 202){
-        _getAllBranches(0, 1000);
+        _getAllBranches(paginationData.cuurentPage, 10);
         setMessages(res.data.message);
         setAlertType('green');
         NotificationManager.success(res.data.message, 'نجاح', 3000);
@@ -390,10 +401,16 @@ const Index = () => {
   }
 
   const _getAllBranches = ( page, counts ) => {
+    setLoadingData(true);
+    console.log('_getAllBranchesProps', page, counts);
       Api.Branches.all(page, counts).then((res)=>{
+        setLoadingData(false);
         console.log('_getAllBranches', res);
         if(res.statusCode === 200){
           setBranches(res.data);
+          let resp = res;
+          delete resp.data;
+          setPaginationData(resp);
         }else{
           if(res.statusName){
             setMessages(res.statusName);
@@ -414,6 +431,10 @@ const Index = () => {
   return (
     <Container>
       <Layout>
+        {loadingData && (
+          <LoadingModal />
+        )}
+
         {modal && (
           <Modal change={(value)=>_instantEdit(value)} cancel={()=>setModal(false)} title={modalTitle} message={modalMessage} options={modalOptions} />
         )}
@@ -422,21 +443,21 @@ const Index = () => {
           <Modal change={()=>_deleteBranchConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الفرع ؟'} options={null} />
         )}
 
-        <div className="flex text-sm mb-4">
-          <div className="w-10/12">
-            <SectionTitle title="إدارة الفروع" />
+      <div className="w-10/12 fixed bg-white pt-2 -mt-24" style={{width:"81.9%", borderTopWidth:97, borderTopStyle:'solid', borderTop:"97px solid #f3f6f9"}} >
+        <div class="w-full p-4 mb-4">
+          <div class="widget-title w-8/12 float-right">
+            <div class="title text-base font-base font-bold font-poppins">إدارة الفروع</div>
           </div>
-          <div className="w-2/12">
-            <button className="btn btn-default btn-pink btn-rounded btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
-              <i className="icon-plus font-bold mr-1 ml-1" />
-              <span>إضافة فرع جديد</span>
+          <div class="widget-title w-4/12 float-left">
+            <button className="btn btn-default btn-pink rounded-full btn-icon float-left" onClick={()=>_addNew()} >
+                <i className="icon-plus font-bold mr-1 ml-1" />
+                <span>إضافة فرع جديد</span>
             </button>
           </div>
         </div>
 
-        <Widget title="بحث" >
+        <Widget title="بحث" className={"w-full"} id={"fixedSec"} >
           <div className="flex flex-row w-full children-x-4">
-              
               <label className="block w-20 leading-8">اسم الفرع</label>
               <input
                 name="brnachname"
@@ -460,25 +481,21 @@ const Index = () => {
               <label className="block w-26 leading-8 text-left">التصنيف الفرعي</label>
               <Select options={searchSubCategories} className="w-48" placeholder={"اختر التصنيف الفرعي"} onChange={_changeSearchSubCat} />
 
-            <button className="btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1"  style={{width:80}} onClick={()=>_search()} >
+            <button className="btn btn-default btn-blue rounded-full btn-icon mr-1 ml-1"  style={{width:80}} onClick={()=>_search()} >
               <i className="icon-magnifier font-bold mr-1 ml-1" />
               <span>بحث</span>
             </button>
 
-            {/* <button className="btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1" style={{width:120}} onClick={()=>_clearSearch()} >
-              <i className="icon-close font-bold mr-1 ml-1" />
-              <span>إلغاء البحث</span>
-            </button> */}
-
           </div>
         </Widget>
+        </div>
 
         { branches.length === 0 ? (
           <LoadingModal />
         ) : (
-          <Widget title={"قائمة الفروع ( "+ branches.length + " )"} >
+          <Widget title={"قائمة الفروع ( "+ paginationData.rowCount + " )"} className={"pt52px"} >
             <div className="">
-              <Simple branches={branches} cities={cities} categories={categories} subCategories={subCategories} changeStatus={_changeStatus} changeField={_changeField} deleteBranch={_deleteBranch} />
+              <Simple branches={branches} cities={cities} categories={categories} subCategories={subCategories} changeStatus={_changeStatus} changeField={_changeField} deleteBranch={_deleteBranch} pagination={paginationData} goToPage={_goToPage} />
             </div>
           </Widget>
         )}

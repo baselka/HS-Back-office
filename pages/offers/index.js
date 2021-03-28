@@ -148,7 +148,7 @@ const Index = () => {
           />
         )}
         <button
-          className='btn btn-default btn-pink btn-rounded btn-icon mr-1 ml-1 sm:w-1/5  md:w-1/12  '
+          className='btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 sm:w-1/5  md:w-1/12  '
           onClick={() => add()}>
           اضافة عرض
         </button>
@@ -171,12 +171,12 @@ const Index = () => {
                     <div className='flex flex-row '>
                       <button
                         onClick={() => deleteCard(offer)}
-                        className='btn btn-default btn-red btn-rounded btn-icon mr-1 ml-1 w-1/2'>
+                        className='btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-trash font-bold mr-1 ml-1' />
                       </button>
                       <button
                         onClick={() => edit(offer)}
-                        className='btn btn-default btn-yellow btn-rounded btn-icon mr-1 ml-1 w-1/2'>
+                        className='btn btn-default btn-yellow rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-note font-bold mr-1 ml-1' />
                       </button>
                     </div>

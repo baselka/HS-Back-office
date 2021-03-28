@@ -90,13 +90,97 @@ const uploadDataFormApi = async data => {
     redirect: "follow"
   };
 
-  await fetch(API_ROOT + "/upload-branch-images/", requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      return { status: "success", data: result };
-    })
-    .catch(error => {
-      return { status: "error", data: error };
+  await fetch(API_ROOT + "/upload-branch-images/", requestOptions).then(response => response.text()).then(result => {
+    return { status: "success", data: result };
+  }).catch(error => {
+    return { status: "error", data: error };
+  });
+};
+
+const uploadServiceImages = async data => {
+  const authToken = cookie.get("token");
+  if (!authToken) return { status: "error", data: "Token not valid" };
+  console.log("uploadServiceImages", data);
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + authToken);
+
+  var formdata = new FormData();
+  formdata.append("service_id", data.id);
+  for (let index = 0; index < data.images.length; index++) {
+    const element = data.images[index];
+    formdata.append("images", element, element.name);
+  }
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: formdata,
+    redirect: "follow"
+  };
+
+  await fetch(API_ROOT + "/upload-service-images/", requestOptions).then(response => response.text()).then(result => {
+    console.log("service-image result", result);
+    return { status: "success", data: result };
+  }).catch(error => {
+    console.log("service-image error", error);
+    return { status: "error", data: error };
+  });
+};
+
+const deleteBody = async data => {
+  const authToken = cookie.get("token");
+  if (!authToken) return { status: "error", data: "Token not valid" };
+
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + authToken);
+  myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+  
+  var urlencoded = new URLSearchParams();
+  urlencoded.append("id", data.id);
+  urlencoded.append("catId", data.catId);
+  
+  var requestOptions = {
+    method: 'DELETE',
+    headers: myHeaders,
+    body: urlencoded,
+    redirect: 'follow'
+  };
+
+  await fetch(API_ROOT + "/delete-subcategory", requestOptions).then(response => response.text()).then(result => {
+    return result;
+  }).catch(error => {
+    return error;
+  });
+}
+
+const createNewCategory = async data => {
+  const authToken = cookie.get("token");
+  if (!authToken) return { status: "error", data: "Token not valid" };
+
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + authToken);
+
+  var formdata = new FormData();
+  formdata.append("type_name", data.type_name);
+  formdata.append("type_desc", data.type_desc);
+  for (let index = 0; index < data.images.length; index++) {
+    const element = data.images[index];
+    formdata.append("images", element, element.name);
+  }
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: formdata,
+    redirect: "follow"
+  };
+
+  await fetch(API_ROOT + "/create-category/", requestOptions).then(response => response.text()).then(result => {
+      console.log("result", result);
+      return result;
+    }).catch(error => {
+      console.log("error", error);
+      return error;
     });
 };
 
@@ -108,10 +192,7 @@ const requests = {
       .catch(handleErrors),
   post: (url, data, externalURL) =>
     createApi()
-      .post(
-        `${externalURL === undefined ? `${API_ROOT}${url}` : externalURL}`,
-        data
-      )
+      .post(`${externalURL === undefined ? `${API_ROOT}${url}` : externalURL}`, data)
       .then(handleResponse)
       .catch(handleErrors),
   patch: (url, data) =>
@@ -132,40 +213,15 @@ const Auth = {
 };
 
 const Branches = {
-  all: (data, counts) =>
-    requests.get("/branches/" + data + "/" + counts + "/0/0/0/0/", {}),
+  all: (data, counts) => requests.get("/branches/" + data + "/" + counts + "/0/0/0/0/", {}),
   delete: branch_id => requests.delete("/delete-branch/" + branch_id, {}),
   details: id => requests.get("/branch-details/" + id, {}),
-  search: data =>
-    requests.get(
-      "/branches/" +
-        data.start +
-        "/" +
-        data.end +
-        "/" +
-        data.city +
-        "/" +
-        data.cat +
-        "/" +
-        data.subCat +
-        "/" +
-        data.term +
-        "/",
-      {}
-    ),
+  search: data => requests.get( "/branches/" + data.start + "/" + data.end + "/" + data.city + "/" + data.cat + "/" + data.subCat + "/" + data.term + "/", {} ),
   create: data => requests.post("/add-branch", data),
   update: data => requests.patch("/update-branch", data),
-  deleteImage: data =>
-    requests.delete(
-      "/delete-branch-image/" + data.branch + "/" + data.image,
-      {}
-    ),
+  deleteImage: data => requests.delete("/delete-branch-image/" + data.branch + "/" + data.image, {}),
   instantEdit: data => requests.post("/instant-edit", data),
-  changeStatus: data =>
-    requests.patch(
-      "/update-branch-status/" + data.branch_id + "/" + data.status,
-      {}
-    ),
+  changeStatus: data => requests.patch("/update-branch-status/" + data.branch_id + "/" + data.status, {}),
   uploadBranchImages: data => uploadDataFormApi(data)
 };
 
@@ -177,24 +233,30 @@ const Cities = {
 };
 
 const Providers = {
-  all: data =>
-    requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
+  all: data => requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
   create: data => requests.post("/add-provider", data)
 };
 
 const Categories = {
   all: () => requests.get("/categories", {}),
-  sub: () => requests.get("/subcategories", {})
+  sub: () => requests.get("/subcategories", {}),
+  delete: id => requests.delete("/delete-category/" + id, {}),
+  deleteSub: (data) => deleteBody(data),
+  details: id => requests.get("/category-details/" + id, {}),
+  subdetails: id => requests.get("/subcategory-details/" + id, {}),
+  update: data => requests.patch("/update-category", data),
+  updateSub : data => requests.patch("/update-subcategory", data),
+  subcategory: data => requests.post("/create-subcategory", data),
+  create: data => createNewCategory(data)
 };
 
 const Users = {
   all: data => requests.get("/get-users", data),
   delete: id => requests.delete("/delete-user/" + id, {}),
-  changePassword: data =>
-    requests.patch("/change-user-password/" + data.id, data),
   update: data => requests.patch("/update-user", data),
   create: data => requests.post("/add-user", data),
-  details: id => requests.get("/user-details/" + id, {})
+  details: id => requests.get("/user-details/" + id, {}),
+  changePassword: data => requests.patch("/change-user-password/" + data.id, data)
 };
 
 const Services = {
@@ -203,12 +265,13 @@ const Services = {
   update: data => requests.patch("/update-service", data),
   images: data => requests.patch("/service-images", data),
   delete: id => requests.delete("/delete-service/" + id, {}),
-  deleteImage: data =>
-    requests.delete(
-      "/delete-service-image/" + data.service + "/" + data.image,
-      {}
-    ),
-  details: data => requests.post("/service-details", data)
+  deleteImage: data => requests.delete("/delete-service-image/" + data.service + "/" + data.image, {}),
+  details: data => requests.post("/service-details", data),
+  uploadServiceImages: data => uploadServiceImages(data)
+};
+
+const Stats = {
+  all: data => requests.get("/statistics", {}),
 };
 
 export default {
@@ -218,5 +281,6 @@ export default {
   Categories,
   Providers,
   Users,
+  Stats,
   Branches
 };

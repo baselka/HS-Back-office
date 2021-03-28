@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Cairo';
-  src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap');
-}
-
 [data-direction="ltr"] {
   * {
     direction: ltr;
@@ -39,6 +34,9 @@
 /**
  * base styles
  */
+body, *{
+  letter-spacing: 0;
+}
 h1 {
   @apply text-5xl;
 }
@@ -263,4 +261,62 @@ div.pyroundedfull:hover{
 .direction-rtl{
   direction: rtl !important;
   background-color: white !important;
+}
+table.customTableHdrs{
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+}
+table.customTableHdrs thead tr{
+  font-size: 19px !important;
+  border: 1px solid #edf2f7;
+}
+table.customTableHdrs thead tr th{
+  line-height: 35px;
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+table.customTableHdrs tbody tr{
+  border: 1px solid #edf2f7;
+  line-height: 25px;
+}
+icon.icon-arrow-down.text-xxs{
+  margin: 5px;
+}
+h1.font-poppins{
+  line-height: 45px;
+}
+ul.list-none.px-4{
+  line-height: 35px;
+}
+.w-full.shadow.widget{
+  background-color: #fff;
+}
+.py-20.px-4.min-h-screen{
+  background-color: #f3f6f9;
+}
+div.fixedSec{
+  margin: 3% 1%;
+  width: 99%;
+  border-left: 0px;
+  box-shadow: 0 0px 2px 0 rgb(0 0 0 / 10%), 0 2px 1px 0 rgb(0 0 0 / 6%);
+  margin-bottom: 0;
+}
+.pt52px{
+  padding-top: 12rem;
+}
+a.navvyLinks{
+  padding-right: 0px !important;
+  padding-left: 40px !important;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #848484;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #848484;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #848484;
 }

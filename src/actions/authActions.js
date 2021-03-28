@@ -5,7 +5,7 @@ export const authenticate = (user) => {
   return (dispatch) => {
     setCookie("token", user.accessToken);
     dispatch({ type: AUTHENTICATE, payload: user.accessToken });
-    dispatch({ type: 'LOGIN_NOW', user: { ...user, img: "m1.png" }});
+    dispatch({ type: 'LOGIN_NOW', user: { ...user, img: "avatar.png" }});
   }
 }
 

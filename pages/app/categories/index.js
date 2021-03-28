@@ -5,17 +5,15 @@ import SectionTitle from "../../../src/components/section-title";
 import LoadingModal from "../../../src/components/modals/LoadingModal";
 import Datatable from "../../../src/components/datatable";
 import Widget from "../../../src/components/widget";
+import Modal from '../../../src/components/modals'
+import Link from 'next/link'
 import Api from "../../../src/api";
 import { useRouter } from "next/router";
+import { NotificationManager } from 'react-notifications'
 
-const Simple = ({ categories }) => {
+const Simple = ({ categories, deleteCat }) => {
   const columns = React.useMemo(
     () => [
-      {
-        Header: "#",
-        accessor: "id",
-        width: 200
-      },
       {
         Header: "الصورة",
         accessor: "image_path",
@@ -40,19 +38,33 @@ const Simple = ({ categories }) => {
         accessor: "type_desc",
         Cell: props => {
           return (
-            <div className='text-right'>{props.row.original.type_desc}</div>
+            <div>
+              <p className='max-w-2xl truncate' >{props.row.original.type_desc}</p>
+            </div>
           );
         }
       },
       {
         Header: "ادوات",
-        // accessor: 'id',
         Cell: props => {
           return (
             <div className='text-right'>
-              <a href='#' className='text-pink-900'>
-                عرض الاقسام الفرعية
-              </a>
+              <Link href={"/app/categories/edit/"+props.row.original.id} >
+                <a className="float-right btn btn-default btn-blue rounded-full btn-icon inline-block w-24 mx-1">
+                  <i className="icon-note font-bold mr-1 ml-1" />
+                  تعديل
+                </a>
+              </Link>
+              <Link href={"/app/sub-categories/"+props.row.original.id} >
+                <a className="float-right btn btn-default btn-pink rounded-full btn-icon inline-block w-30 mx-1">
+                  <i className="icon-eye font-bold mr-1 ml-1" />
+                    عرض الاقسام الفرعية
+                </a>
+              </Link>
+              <button className="float-right btn btn-default btn-red rounded-full btn-icon inline-block w-24 mx-1" onClick={()=>deleteCat(props.row.original.id)} >
+                <i className="icon-trash font-bold mr-1 ml-1" />
+                <span>حذف</span>
+              </button>
             </div>
           );
         }
@@ -65,11 +77,40 @@ const Simple = ({ categories }) => {
 
 const Index = () => {
   const [categories, setCategories] = useState([]);
+  const [messages, setMessages] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [loadingData, setLoadingData] = useState(true);
+  const [catToDeleteID, setCatToDeleteID] = useState('')
   const router = useRouter();
 
   useEffect(() => {
     _getAllCategories();
   }, []);
+
+  const _deleteCat = ( s_id ) => {
+    setConfirmModal(true);
+    setCatToDeleteID(s_id);
+  }
+
+  const _deleteCatConfirmed = () => {
+    setConfirmModal(false);
+    Api.Categories.delete(catToDeleteID).then((res)=>{
+      console.log("res", res);
+      if(res.statusCode === 202){
+        _getAllCategories();
+        NotificationManager.success(res.data.message, 'نجاح', 3000);
+      }else{
+        NotificationManager.error(res.data.message, 'عفواً', 3000);
+        setTimeout(() => {
+          setMessages(false);
+        }, 3000);
+      }
+    });
+  }
+
+  const _addNew = () => {
+    router.push('/app/categories/addNew');
+  }
 
   const _getAllCategories = () => {
     Api.Categories.all().then(res => {
@@ -83,12 +124,23 @@ const Index = () => {
   return (
     <Container>
       <Layout>
-        <div className='flex text-sm mb-4'>
-          <div className='w-full'>
+
+        {confirmModal && (
+          <Modal change={()=>_deleteCatConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف التنصيف  ؟'} options={null} />
+        )}
+
+        <div className="flex text-sm mb-4">
+          <div className="w-10/12">
             <SectionTitle
               title='إدارة التطبيق'
               subtitle='إدارة الأقسام الرئيسية'
             />
+          </div>
+          <div className="w-2/12">
+            <button className="btn btn-default btn-green rounded-full btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
+              <i className="icon-plus font-bold mr-1 ml-1" />
+              <span>إضافة تصنيف جديد</span>
+            </button>
           </div>
         </div>
 
@@ -97,7 +149,7 @@ const Index = () => {
         ) : (
           <Widget title={" الأقسام الرئيسية ( " + categories.length + " )"}>
             <div className=''>
-              <Simple categories={categories} />
+              <Simple categories={categories} deleteCat={_deleteCat} />
             </div>
           </Widget>
         )}

@@ -7,6 +7,14 @@ import { connect } from "react-redux"
 import Api from '../../api'
 import { authenticate, checkServerSideCookie } from "../../actions/authActions"
 
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    checkServerSideCookie(context);
+    const token = context.store.getState().authentication.token;
+    return { props: { token } };
+  }
+);
+
 const Login1 = ({ authenticate, token }) => {
   const [messages, setMessages] = useState(false)
   const {register, handleSubmit, watch, errors} = useForm()
@@ -70,9 +78,11 @@ const Login1 = ({ authenticate, token }) => {
 
         <div className="w-full">
           {messages && (
-            <Alert color="red" raised flat >
-              {messages}
-            </Alert>
+            <div className={"bg-white"} >
+              <Alert color="red" raised flat >
+                {messages}
+              </Alert>
+            </div>
           )}
           <input
             type="submit"
@@ -85,13 +95,5 @@ const Login1 = ({ authenticate, token }) => {
     </>
   )
 }
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  async (context) => {
-    checkServerSideCookie(context);
-    const token = context.store.getState().authentication.token;
-    return { props: { token } };
-  }
-);
 
 export default connect((state) => state, { authenticate })(Login1);

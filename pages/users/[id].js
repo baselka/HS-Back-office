@@ -11,6 +11,12 @@ import { useRouter } from 'next/router'
 import Select from 'react-select'
 import LoadingModal from '../../src/components/modals/LoadingModal'
 
+export async function getServerSideProps(context) {
+  return {
+    props: {}
+  };
+}
+
 const Index = () => {
   const [messages, setMessages] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -37,6 +43,7 @@ const Index = () => {
 
   const _getUserDetails = ( user_id ) => {
       Api.Users.details(user_id).then((res)=>{
+        console.log("res", res);
         setLoadingData(false);
         if(res.statusCode === 200){
           const userDetails = res.data?.data;
@@ -107,7 +114,7 @@ const Index = () => {
         <Layout>
           { userData === null ? (
             <div className="flex justify-center w-11/12 content-center" style={{paddingTop:200}} > 
-              <div className="w-15 h-20 text-center text-xl text-gray-800">
+              <div className="w-15 h-20 text-center text-xl text-gray-800 bg-white ">
                   {messages &&
                     <Alert color="red" closeable={true} type="warning" raised flat >
                       {messages}
@@ -199,9 +206,11 @@ const Index = () => {
 
                     <div className="w-full clear-both">
                       {messages && (
-                        <Alert color="red" raised flat >
-                          {messages}
-                        </Alert>
+                        <div className={"bg-white"} >
+                          <Alert color="red" raised flat >
+                            {messages}
+                          </Alert>
+                        </div>
                       )}
                       <input
                         type="submit"

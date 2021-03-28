@@ -40,10 +40,10 @@ const Navbar = () => {
 
         <DropdownWidget5 />
         <Link href="/pages/logout">
-          <a className="btn btn-default flex lg:hidden">تسجيل الخروج</a>
+          <a className="btn btn-default flex lg:hidden navvyLinks">تسجيل الخروج</a>
         </Link>
         <Link href="/pages/logout">
-          <a className="btn btn-default hidden lg:flex">تسجيل الخروج</a>
+          <a className="btn btn-default hidden lg:flex navvyLinks">تسجيل الخروج</a>
         </Link>
       </div>
     </div>

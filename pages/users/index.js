@@ -49,16 +49,16 @@ const Simple = ( { users, updatePassword, deleteUser } ) => {
         Cell: (props) => {
           return <div className="flex justify-center" >
               <Link href={"/users/"+props.row.original.id} >
-                <a className="float-right btn btn-default btn-blue btn-rounded btn-icon mr-1 ml-1 w-22">
+                <a className="float-right btn btn-default btn-blue rounded-full btn-icon mr-1 ml-1 w-22">
                   <i className="icon-note font-bold mr-1 ml-1" />
                   تعديل
                 </a>
             </Link>
-            <button className="float-right btn btn-default btn-orange btn-rounded btn-icon mr-1 ml-1 w-22" onClick={()=>updatePassword(props.row.original.id)} >
+            <button className="float-right btn btn-default btn-orange rounded-full btn-icon mr-1 ml-1 w-22" onClick={()=>updatePassword(props.row.original.id)} >
               <i className="icon-lock font-bold mr-1 ml-1" />
               <span>تغيير كلمة المرور</span>
             </button>
-            <button className="float-right btn btn-default btn-red btn-rounded btn-icon mr-1 ml-1 w-22" onClick={()=>deleteUser(props.row.original.id)} >
+            <button className="float-right btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-22" onClick={()=>deleteUser(props.row.original.id)} >
               <i className="icon-trash font-bold mr-1 ml-1" />
               <span>حذف</span>
             </button>
@@ -169,7 +169,7 @@ const Index = () => {
             <SectionTitle title="إدارة المستخدمين" subtitle="هنا يمكنك إدارة مستخدمي التطبيق" />
           </div>
           <div className="w-2/12">
-            <button className="btn btn-default btn-pink btn-rounded btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
+            <button className="btn btn-default btn-pink rounded-full btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
               <i className="icon-plus font-bold mr-1 ml-1" />
               <span>إضافة مستخدم جديد</span>
             </button>

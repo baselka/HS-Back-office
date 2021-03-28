@@ -72,7 +72,7 @@ const ModalFooter = ( prop ) => (
   <div className="modal-footer children-x-2">
     {prop.confirm &&
       <button
-        className="btn btn-default btn-green btn-rounded float-right"
+        className="btn btn-default btn-green rounded-full float-right"
         type="button"
         onClick={prop.confirm}>
           {'تأكيد'}
@@ -80,7 +80,7 @@ const ModalFooter = ( prop ) => (
     }
     {prop.cancel &&
       <button
-        className="btn btn-default btn-red btn-rounded float-left mr-4 ml-4"
+        className="btn btn-default btn-red rounded-full float-left mr-4 ml-4"
         type="button"
         onClick={prop.cancel} >
           {'تراجع'}

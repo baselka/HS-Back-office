@@ -22,23 +22,13 @@ const IndeterminateCheckbox = React.forwardRef(
   }
 )
 
-const Datatable = ({columns, data}) => {
+const Datatable = ({columns, data, pagination, goToPage}) => {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
     page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    selectedFlatRows,
-    state: {pageIndex, pageSize, selectedRowIds}
   } = useTable(
     {
       columns,
@@ -118,57 +108,30 @@ const Datatable = ({columns, data}) => {
 
       <div className="flex flex-row items-center justify-between my-4">
 
-        <div className="items-center w-full justify-center text-center children-x-2 pagination">
-          {/* {pageIndex !== 0 && (
+      <div className="items-center w-full justify-center text-center children-x-2 pagination">
+          {(pagination.cuurentPage > 1) ? (
             <PageWithText
-              onClick={() => gotoPage(0)}
-              color="text-default">
-              الصحفة الاولى
-            </PageWithText>
-          )} */}
-          {canPreviousPage && (
-            <PageWithText
-              onClick={() => previousPage()}
+              onClick={() => goToPage(pagination.cuurentPage-2)}
               color="text-default">
               الصفحة السابقة
             </PageWithText>
-          )}
+          ): null}
 
         <span>
           <b>
-            {pageIndex + 1} من {pageOptions.length}
+            {pagination.cuurentPage} من {pagination.pageCount}
           </b>{' '}
         </span>
 
-
-          {canNextPage && (
+          {(pagination.cuurentPage < pagination.pageCount) ? (
             <PageWithText
-              onClick={() => nextPage()} disabled={!canNextPage}
-              color="text-default">
+              onClick={() => goToPage(pagination.cuurentPage)}
+              color="text-default"
+            >
               الصفحة التالية
             </PageWithText>
-          )}
-          {/* {pageIndex !== pageCount - 1 && (
-            <PageWithText
-              onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}
-              color="text-default">
-              الصحفة الاخيرة
-            </PageWithText>
-          )} */}
+          ): null}
         </div>
-{/* 
-        <select
-          className="form-select text-sm"
-          value={pageSize}
-          onChange={e => {
-            setPageSize(Number(e.target.value))
-          }}>
-          {[10, 25, 50, 100, 200].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              عرض {pageSize}
-            </option>
-          ))}
-        </select> */}
       </div>
     </>
   )

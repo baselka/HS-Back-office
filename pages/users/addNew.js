@@ -179,9 +179,11 @@ const Index = () => {
 
                     <div className="w-full clear-both">
                       {messages && (
-                        <Alert color="red" raised flat >
-                          {messages}
-                        </Alert>
+                        <div className={"bg-white"} >
+                          <Alert color="red" raised flat >
+                            {messages}
+                          </Alert>
+                        </div>
                       )}
                       <input
                         type="submit"

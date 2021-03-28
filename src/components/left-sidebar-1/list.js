@@ -28,7 +28,7 @@ const List = ({items}) => {
 
         {items.items.length === 0 && (
           <Link href={items.url}>
-            <a className={`list-item children-x-2 ${_isOpen([items]) ? 'open-active-btn' : ''}`}>
+            <a className={`list-item children-x-2 ${_isOpen([items]) ? 'open-active-btn' : ''} rounded-full `}>
               <Item {...items} />
             </a>
           </Link>
@@ -36,7 +36,7 @@ const List = ({items}) => {
 
         {items.items.length > 0 && (
           <button
-            className={`list-item children-x-2`}
+            className={`list-item children-x-2 rounded-full`}
             onClick={() => setHidden(!hidden)}>
             <Item {...items} />
           </button>
@@ -49,7 +49,7 @@ const List = ({items}) => {
               <li key={k} className="pr-2" >
                 <Link href={item.url}>
                   <a
-                    className={`list-item children-x-2 block ${_isOpen([item]) ? 'open-active-btn' : ''}`}
+                    className={`list-item children-x-2 block ${_isOpen([item]) ? 'open-active-btn' : ''} rounded-full`}
                   >
                     {item.icon &&
                       <>
