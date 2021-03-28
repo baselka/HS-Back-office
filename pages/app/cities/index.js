@@ -25,20 +25,21 @@ const Index = () => {
   // component did mount
   useEffect(() => {
     _getAllCities();
-    _addCity();
   }, []);
 
-  // const _deleteCity = id => {
-  //   // Api.Cities.delete(id).then(res => {
-  //   //   console.log("_deleteCity", res);
-  //   //   if (res.statusCode === 200) {
-  //   //     console.log(res, "res");
-  //   //     const newCities = cities.filter(city => city.id !== id);
-  //   //     setCities(newCities);
-  //   //     setDeleteModal(false);
-  //   //   }
-  //   // });
-  // };
+  const _deleteCity = id => {
+    // const data = { city_id: 3 };
+    // Api.Cities.delete(data).then(res => {
+    //   console.log("_deleteCity", res);
+    //   if (res.statusCode === 200) {
+    //     console.log(res, "res");
+    //     const newCities = cities.filter(city => city.id !== id);
+    //     setCities(newCities);
+    //     setDeleteModal(false);
+    //   }
+    // });
+    console.log(_deleteCity, id);
+  };
 
   const _getAllCities = () => {
     Api.Cities.all().then(res => {
@@ -60,7 +61,7 @@ const Index = () => {
           const newCity = inputValues;
           const newCities = [...cities, newCity];
           setCities(newCities);
-          _addCity();
+          _addCity(data);
         }
       }
     });
@@ -73,11 +74,11 @@ const Index = () => {
       city: data.city,
       region: data.region
     };
-    // console.log("newData", newData);
+    console.log("newData", newData);
     Api.Cities.update(newData).then(res => {
       console.log("_updateCity", res);
       if (res.statusCode === 200) {
-        // console.log(_updateCity, "res");
+        console.log(_updateCity, "res");
         const copyOfCities = cities.filter(city => city.id !== id);
         const city = inputValues.city;
         const region = inputValues.region;
@@ -96,6 +97,7 @@ const Index = () => {
     const newCities = cities.filter(city => city.id !== id);
     setCities(newCities);
     setDeleteModal(false);
+    _deleteCity();
   };
 
   const remove = item => {

@@ -171,9 +171,9 @@ const Branches = {
 
 const Cities = {
   all: () => requests.get("/cities", {}),
-  // delete: id => requests.post("/cities", id),
+  delete: data => requests.delete("/delete-city/", data),
   add: data => requests.post("/add-city", data),
-  update: data => requests.patch("/update-city/" + data.city_id, data)
+  update: data => requests.patch("/update-city/", data)
 };
 
 const Providers = {

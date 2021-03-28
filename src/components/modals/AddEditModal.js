@@ -23,7 +23,7 @@ const ModalHeader = ({ cancel, head }) => (
 );
 
 const ModalBody = prop => {
-  console.log("prop", prop);
+  // console.log("prop", prop);
 
   if (prop.type === "edit") {
     return (
