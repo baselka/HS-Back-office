@@ -5,12 +5,15 @@ import SectionTitle from '../../src/components/section-title'
 import LoadingModal from '../../src/components/modals/LoadingModal'
 import Widget from '../../src/components/widget'
 import Bar from '../../src/components/charts/bar'
+import BarCat from '../../src/components/charts/BarCat'
 import Api from '../../src/api'
 import { useRouter } from 'next/router'
 
 const Dashboard1 = () => {
   const [details, setDetails] = useState(null)
   const [totalBranches, setTotalBranches] = useState(null)
+  const [cities, setCities] = useState(null)
+  const [categories, setCategories] = useState(null)
   const [statistics, setStatistics] = useState(null)
   const [loadingData, setLoadingData] = useState(true)
   const router = useRouter();
@@ -26,6 +29,18 @@ const Dashboard1 = () => {
       if(res.statusCode === 200){
         setStatistics(res.data);
         setTotalBranches(res.data.totalBranches[0]);
+        var citieslist = [];
+        for (let index = 0; index < res.data.cities.length; index++) {
+          const element = res.data.cities[index];
+          citieslist.push({value:element.totalBranches, key:element.city});
+        }
+        setCities(citieslist);
+        var catlist = [];
+        for (let index = 0; index < res.data.categories.length; index++) {
+          const element = res.data.categories[index];
+          catlist.push({value:element.totalBranches, key:element.type_name});
+        }
+        setCategories(catlist);
       }
     });
   }
@@ -43,21 +58,30 @@ const Dashboard1 = () => {
           <LoadingModal />
         ) : (
           <div className="">
-            <div className="w-6/12 float-right ml-6">
+            <div className="w-5/12 float-right border-l-4 border-transparent">
               <Widget
-                title="إحصائيات"
+                title="إحصائيات عامة"
                 description={""}>
                 <div className="w-full mb-4">
                   <Bar height={400} bgColor={"bg-pink-400"} borderColor={"bg-pink-500"} stats={totalBranches} />
                 </div>
               </Widget>
             </div>
-            <div className="w-5/12 float-right mr-1">
+            <div className="w-7/12 float-right border-r-8 border-transparent">
               <Widget
-                title="حسب المدن الفروع"
+                title="الفروع حسب المدن"
                 description={""}>
                 <div className="w-full mb-4">
-                  {/* <Bar height={400} bgColor={"bg-pink-400"} borderColor={"bg-pink-500"} stats={totalBranches} /> */}
+                  <BarCat height={400} bgColor={"bg-pink-400"} borderColor={"bg-pink-500"} stats={cities} />
+                </div>
+              </Widget>
+            </div>
+            <div className="w-full float-right mr-1">
+              <Widget
+                title="الفروع حسب التصنيف"
+                description={""}>
+                <div className="w-full mb-4">
+                  <BarCat height={400} bgColor={"bg-pink-400"} borderColor={"bg-pink-500"} stats={categories} />
                 </div>
               </Widget>
             </div>
