@@ -27,7 +27,7 @@ const Index = () => {
   const [serviceImages, setServiceImages] = useState([])
   const [alertType, setAlertType] = useState('red');
   const [accountTypes, setAccountTypes] = useState([{label:"مدير لوحة التحكم", value:1},{label:"ممثل خدمة العملاء",value:2}]);
-  const {register, handleSubmit, watch, errors, setValue} = useForm();
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { id: 0, name: "", ser_desc: "", price: "" }});
   const [serviceID, setServiceID] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false)
   const [toDeleteID, setToDeleteID] = useState(null);
@@ -74,13 +74,14 @@ const Index = () => {
 
   useEffect(() => {
     if(serviceData){
-      let serviceCurrentData = [
-        { id: serviceData.id },
-        { name: serviceData.name },
-        { ser_desc: serviceData.ser_desc },
-        { price: serviceData.price }
-      ];
-      setValue(serviceCurrentData);
+      let serviceCurrentData = {
+        id: serviceData.id,
+        name: serviceData.name,
+        ser_desc: serviceData.ser_desc,
+        price: serviceData.price
+      };
+      reset(serviceCurrentData);
+      // setValue(serviceCurrentData);
     }
   }, [serviceData])
 
@@ -160,14 +161,37 @@ const Index = () => {
             {confirmModal && (
               <Modal change={()=>_confirmRemoveImage()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الصورة ؟'} options={null} />
             )}
-            <Widget title="تعديل بيانات الخدمة" description={""}>
+            <Widget className="relative" title="تعديل بيانات الخدمة" description={""}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full"
                   autoComplete="off"
                   defaultValue  
                 >
-                  <Widget title="" className="bg-gray-100 w-10/12" >
+                  
+                  <div className="customActLinks">
+                    <div
+                        className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                        onClick={()=> router.back() }
+                    >إلغاء</div>
+                    <input
+                        type="submit"
+                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                        value="تحديث الخدمة"
+                    />
+                  </div>
+                  
+                  <div className="w-full clear-both">
+                    {messages && (
+                      <div className={"bg-white"} >
+                        <Alert color="red" raised flat >
+                          {messages}
+                        </Alert>
+                      </div>
+                    )}
+                  </div>
+
+                  <Widget title="" className="mt-12 bg-gray-100 w-10/12" >
                     <div className="flex-col w-96 mb-4 ml-6 float-right">
                         <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                           <label className="block">
@@ -227,20 +251,10 @@ const Index = () => {
                       </div>
                     </div>
 
-                    <div className="w-full clear-both">
-                      {messages && (
-                        <div className={"bg-white"} >
-                          <Alert color="red" raised flat >
-                            {messages}
-                          </Alert>
-                        </div>
-                      )}
-                      <input
-                        type="submit"
-                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                        value="حفظ"
-                      />
+                  <div className="w-full clear-both">
+                    <br></br>
                   </div>
+
                 </Widget>
               </form>
             </Widget>

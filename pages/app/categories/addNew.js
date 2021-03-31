@@ -58,14 +58,25 @@ const Index = () => {
           ): null}
 
           <div>
-          <Widget title="اضافة تصنيف" description={""} >
+          <Widget className="relative" title="اضافة تصنيف" description={""} >
               <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="text-sm mb-4 w-full"
                 autoComplete="off"
                 defaultValue
               >
-                <Widget title="" className="bg-gray-100 w-10/12" >
+              <div className="customActLinks">
+                <div
+                    className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                    onClick={()=> router.back() }
+                >إلغاء</div>
+                <input
+                    type="submit"
+                    className="px-6 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                    value="إضافة"
+                />
+              </div>
+                <Widget title="" className="mt-10 bg-gray-100 w-10/12" >
                   <div className="flex-col w-6/12 mb-4 ml-6 float-right">
                       <div className="w-11/12 mb-12 p-5 bg-white border-2 border-gray-200">
                         <label className="block">
@@ -113,11 +124,7 @@ const Index = () => {
                   </div>
 
                   <div className="w-full clear-both">
-                    <input
-                      type="submit"
-                      className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                      value="إضافة"
-                    />
+                    <br></br>
                 </div>
               </Widget>
             </form>
