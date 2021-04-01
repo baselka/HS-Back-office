@@ -22,7 +22,7 @@ const Index = () => {
   const [loadingData, setLoadingData] = useState(true)
   const [categoryData, setCategoryData] = useState(null)
   const [alertType, setAlertType] = useState('red');
-  const {register, handleSubmit, watch, errors, setValue} = useForm();
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { id: 0, name: "" }});
   const [imagesList, setImagesList] = useState([])
   const [defaultImagesList, setDefaultImagesList] = useState(null)
   const [categoryID, setCategoryID] = useState(null);
@@ -59,11 +59,12 @@ const Index = () => {
 
   useEffect(() => {
     if(categoryData){
-      let categoryCurrentData = [
-        { id: categoryData.id },
-        { name: categoryData.name },
-      ];
-      setValue(categoryCurrentData);
+      let categoryCurrentData = {
+        id: categoryData.id,
+        name: categoryData.name
+      };
+      reset(categoryCurrentData);
+      // setValue(categoryCurrentData);
     }
   }, [categoryData])
 
@@ -100,7 +101,7 @@ const Index = () => {
           ): null}
 
           <div>
-            <Widget title="تعديل بيانات التصنيف الفرعي" description={""} >
+            <Widget className="relative" title="تعديل بيانات التصنيف الفرعي" description={""} >
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full"
@@ -124,11 +125,17 @@ const Index = () => {
                     </div>
 
                     <div className="w-full clear-both">
+                      <div
+                          className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-right ml-2"
+                          onClick={()=> router.back() }
+                      >إلغاء</div>
                       <input
-                        type="submit"
-                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                        value="حفظ"
+                          type="submit"
+                          className="px-6 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-right ml-2"
+                          value="حفظ"
                       />
+                  </div>
+                    <div className="w-full clear-both"><br></br>
                   </div>
                 </Widget>
               </form>

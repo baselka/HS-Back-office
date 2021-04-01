@@ -23,7 +23,7 @@ const Index = () => {
   const [loadingData, setLoadingData] = useState(true)
   const [categoryData, setCategoryData] = useState(null)
   const [alertType, setAlertType] = useState('red');
-  const {register, handleSubmit, watch, errors, setValue} = useForm();
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { id: 0, type_name: "", type_desc: "" }});
   const [imagesList, setImagesList] = useState([])
   const [defaultImagesList, setDefaultImagesList] = useState(null)
   const [categoryID, setCategoryID] = useState(null);
@@ -60,12 +60,13 @@ const Index = () => {
 
   useEffect(() => {
     if(categoryData){
-      let categoryCurrentData = [
-        { id: categoryData.id },
-        { type_name: categoryData.type_name },
-        { type_desc: categoryData.type_desc },
-      ];
-      setValue(categoryCurrentData);
+      let categoryCurrentData = {
+        id: categoryData.id,
+        type_name: categoryData.type_name,
+        type_desc: categoryData.type_desc
+      };
+      reset(categoryCurrentData);
+      // setValue(categoryCurrentData);
       setDefaultImagesList(categoryData.Image_path);
     }
   }, [categoryData])
@@ -121,14 +122,25 @@ const Index = () => {
             </div>
           ) : (
             <div>
-            <Widget title="تعديل بيانات التصنيف" description={""} >
+            <Widget className="relative" title="تعديل بيانات التصنيف" description={""} >
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full"
                   autoComplete="off"
                   defaultValue  
                 >
-                  <Widget title="" className="bg-gray-100 w-10/12" >
+                <div className="customActLinks">
+                  <div
+                      className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                      onClick={()=> router.back() }
+                  >إلغاء</div>
+                  <input
+                      type="submit"
+                      className="px-6 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                      value="حفظ"
+                  />
+                </div>
+                  <Widget title="" className="mt-10 bg-gray-100 w-10/12" >
                     <div className="flex-col w-6/12 mb-4 ml-6 float-right">
                         <div className="w-11/12 mb-12 p-5 bg-white border-2 border-gray-200">
                           <label className="block">
@@ -176,11 +188,7 @@ const Index = () => {
                     </div>
 
                     <div className="w-full clear-both">
-                      <input
-                        type="submit"
-                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                        value="حفظ"
-                      />
+                      <br></br>
                   </div>
                 </Widget>
               </form>

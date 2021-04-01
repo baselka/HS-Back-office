@@ -128,7 +128,7 @@ const Index = () => {
   const [providerType, setProviderType] = useState({label:'-- إختر نوع مقدم الخدمة --',value:"null"})
   const [providersList, setProvidersList] = useState([{label:'مقدم خدمة تجريبي',value:"1"}])
   const [providerTypeOpts, setProviderTypeOpts] = useState([{label:'-- إختر نوع مقدم الخدمة --',value:"null"},{label:'مقدم خدمة مسجل مسبقا',value:'Registered'},{label:'مقدم خدمة جديد',value:'New'}]);
-  const {register, handleSubmit, watch, errors} = useForm()
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { branch_name: "", branch_desc: "", whats: "", twitter: "", facebook: "", snapchat: "", insta: "", telephone: "", city_id: 0, category_id: 0, email: "", lat: 0, lon: 0, sub_cat_id: 0, provider_id: 0 }});
   const [latitude, setLatitude] = useState(24.7249316);
   const [longitude, setLongitude] = useState(46.5423435);
   const router = useRouter();
@@ -341,10 +341,24 @@ const Index = () => {
           </div>
         ) : (
           <div>
-            <Widget title="إضافة فرع جديد" description={<span><br />الرجاء تعبئة البيانات التالية:<br /><br /><hr /><br /></span>}>
+            <Widget title="إضافة فرع جديد" className={"relative"} description={<span><br />الرجاء تعبئة البيانات التالية:<br /><br /><hr /><br /></span>}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full">
+      
+                  <div className="customActLinks">
+                    <div
+                      className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                      onClick={()=> router.back() }
+                    >إلغاء</div>
+                    {(providerType.value !== "null") ? (
+                      <input
+                        type="submit"
+                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                        value="إضافة الفرع"
+                      />
+                    ): null}
+                  </div>
                   
                   <div className="w-4/12 mb-12 p-5 bg-gray-100 border-2 border-gray-200">
                     <label className="block">
@@ -483,7 +497,7 @@ const Index = () => {
                                 <input
                                   name="whats"
                                   type="number"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل رقم الواتس"
                                 />
@@ -498,7 +512,7 @@ const Index = () => {
                                 <input
                                   name="twitter"
                                   type="text"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب تويتر"
                                 />
@@ -510,7 +524,7 @@ const Index = () => {
                                 <input
                                   name="facebook"
                                   type="text"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب فيسبوك"
                                 />
@@ -522,7 +536,7 @@ const Index = () => {
                                 <input
                                   name="snapchat"
                                   type="text"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب سناب شات"
                                 />
@@ -534,7 +548,7 @@ const Index = () => {
                                 <input
                                   name="insta"
                                   type="text"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="ادخل حساب انستغرام"
                                 />
@@ -548,7 +562,7 @@ const Index = () => {
                                 <span className="text-default">معلومات عن الفرع</span>
                                 <textarea
                                   name="branch_desc"
-                                  ref={register({required: true})}
+                                  ref={register({required: false})}
                                   className="form-input mt-1 text-xs block w-full bg-white mt-2"
                                   placeholder="اكتب معلومات عن الفرع"
                                   style={{minHeight:110}}
@@ -580,19 +594,7 @@ const Index = () => {
                               </label>
                             </div>
                           </div>
-
-                          <div className="w-full clear-both">
-                            {messages && (
-                              <Alert color="red" raised flat >
-                                {messages}
-                              </Alert>
-                            )}
-                            <input
-                              type="submit"
-                              className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                              value="إضافة الفرع"
-                            />
-                        </div>
+                          <div className="w-full clear-both relative"><br></br></div>
                       </Widget>
                   </>
                 ):null}

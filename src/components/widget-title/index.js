@@ -2,7 +2,7 @@ import React from 'react'
 
 const WidgetTitle = ({title, description}) => (
   <div className="flex flex-col mb-4 widget-title w-full">
-    <div className="title text-base font-base font-bold font-poppins">{title}</div>
+    <div className="mt-5 title text-base font-base font-bold font-poppins">{title}</div>
     <div className="description text-sm">{description}</div>
   </div>
 )

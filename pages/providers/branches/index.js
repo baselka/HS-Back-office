@@ -138,6 +138,8 @@ const Index = () => {
   const [confirmModal, setConfirmModal] = useState(false)
   const [hasSearch, setHasSearch] = useState(false)
   const [loadingData, setLoadingData] = useState(false)
+  const [selectedSubCategory, setSelectedSubCategory] = useState({label:"كل التصنيفات", value:0})
+  const [selectedCategory, setSelectedCategory] = useState({label:"كل التصنيفات", value:0})
   const [branches, setBranches] = useState([])
   const [cities, setCities] = useState([])
   const [searchCities, setSearchCities] = useState([])
@@ -168,7 +170,19 @@ const Index = () => {
 
   useEffect(() => {
     _search();
-  }, [searchCityId, searchCatID, searchSubCatID, hasSearch])
+  }, [hasSearch])
+
+  useEffect(() => {
+    _search();
+  }, [searchSubCatID])
+
+  useEffect(() => {
+    _search();
+  }, [searchCatID])
+
+  useEffect(() => {
+    _search();
+  }, [searchCityId])
 
   const _getAllCities = () => {
     Api.Cities.all().then((res)=>{
@@ -193,7 +207,7 @@ const Index = () => {
     Api.Branches.changeStatus(data).then((res)=>{
       console.log('update res', res);
       if(res.statusCode === 200){
-        _getAllBranches(paginationData.cuurentPage, 10);
+        _getAllBranches(paginationData.cuurentPage-1, 10);
         setAlertType('green');
         setMessages(status ? 'تم تفعيل الفرع' : 'تم إلغاء تفعيل الفرع');
         NotificationManager.success(status ? 'تم تفعيل الفرع' : 'تم إلغاء تفعيل الفرع', 'نجاح', 3000);
@@ -244,7 +258,7 @@ const Index = () => {
     Api.Branches.instantEdit({field:fieldToChange, branch_id:branchIDToChange, value}).then((res)=>{
       console.log('update res', res);
       if(res.statusCode === 200){
-        _getAllBranches(paginationData.cuurentPage, 10);
+        _getAllBranches(paginationData.cuurentPage-1, 10);
         setAlertType('green');
         setMessages(res.message);
         NotificationManager.success(res.message, 'نجاح', 3000);
@@ -270,8 +284,11 @@ const Index = () => {
   }
 
   const _changeSearchCat = (data) => {
-    console.log(data);
     setSearchCatID(data.value);
+    setSelectedCategory(data);
+    setSearchSubCategories(null);
+    setSearchSubCatID(null);
+    setSelectedSubCategory({label:"كل التصنيفات", value:0});
 
     let subcat = [{label:"كل التصنيفات", value:0}];
     for (let index = 0; index < subCategories.length; index++) {
@@ -287,8 +304,8 @@ const Index = () => {
   }
 
   const _changeSearchSubCat = (data) => {
-    console.log(data);
     setSearchSubCatID(data.value);
+    setSelectedSubCategory(data);
   }
 
   const _search = () => {
@@ -302,7 +319,7 @@ const Index = () => {
     }
     setLoadingData(true);
     Api.Branches.search(data).then((res)=>{
-      console.log('_search', res);
+      // console.log('_search', res);
       setLoadingData(false);
       if(res.statusCode === 200){
         if(res.rowCount !== 0){
@@ -383,9 +400,10 @@ const Index = () => {
 
   const _deleteBranchConfirmed = () => {
     setConfirmModal(false);
+    console.log("paginationData", paginationData);
     Api.Branches.delete( baranchToDeleteID ).then((res)=>{
       if(res.statusCode === 202){
-        _getAllBranches(paginationData.cuurentPage, 10);
+        _getAllBranches(paginationData.cuurentPage-1, 10);
         setMessages(res.data.message);
         setAlertType('green');
         NotificationManager.success(res.data.message, 'نجاح', 3000);
@@ -476,10 +494,10 @@ const Index = () => {
               <Select options={searchCities} className="w-40" placeholder={"اختر المدينة"} onChange={_changeSearchCity} />
 
               <label className="block w-20 leading-8 text-left">التصنيف</label>
-              <Select options={searchCategories} className="w-40" placeholder={"اختر التصنيف"} onChange={_changeSearchCat} />
+              <Select options={searchCategories} className="w-40" placeholder={"اختر التصنيف"} onChange={_changeSearchCat} value={selectedCategory} />
               
               <label className="block w-26 leading-8 text-left">التصنيف الفرعي</label>
-              <Select options={searchSubCategories} className="w-48" placeholder={"اختر التصنيف الفرعي"} onChange={_changeSearchSubCat} />
+              <Select options={searchSubCategories} className="w-48" placeholder={"اختر التصنيف الفرعي"} onChange={_changeSearchSubCat} value={selectedSubCategory} />
 
             <button className="btn btn-default btn-blue rounded-full btn-icon mr-1 ml-1"  style={{width:80}} onClick={()=>_search()} >
               <i className="icon-magnifier font-bold mr-1 ml-1" />
