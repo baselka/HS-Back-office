@@ -12,9 +12,8 @@ import { useRouter } from 'next/router'
 const Dashboard1 = () => {
   const [details, setDetails] = useState(null)
   const [totalBranches, setTotalBranches] = useState(null)
-  const [cities, setCities] = useState(null)
-  const [categories, setCategories] = useState(null)
-  const [statistics, setStatistics] = useState(null)
+  const [cities, setCities] = useState([])
+  const [categories, setCategories] = useState([])
   const [loadingData, setLoadingData] = useState(true)
   const router = useRouter();
 
@@ -27,7 +26,6 @@ const Dashboard1 = () => {
       console.log("_getStatistics", res);
       setLoadingData(false);
       if(res.statusCode === 200){
-        setStatistics(res.data);
         setTotalBranches(res.data.totalBranches[0]);
         var citieslist = [];
         for (let index = 0; index < res.data.cities.length; index++) {
