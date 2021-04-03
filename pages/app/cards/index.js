@@ -118,9 +118,18 @@ const Index = () => {
   };
 
   const confirmDelete = () => {
-    const newCards = cards.filter(card => card.id !== id);
-    setCards(newCards);
-    setDeleteModal(false);
+      //call api
+          /*
+             api.Cards.update(inputValues).then(res => {
+              console.log("_getAllCards", res);
+              if (res.statusCode === 200) {
+                   const newCards = cards.filter(card => card.id !== id);
+                  setCards(newCards);
+                  setDeleteModal(false);
+              }
+            });
+          */
+  
   };
 
   const edit = card => {
