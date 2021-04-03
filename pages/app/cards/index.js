@@ -15,7 +15,7 @@ const Index = () => {
   const [cardsModalTitle, setCardsModalTitle] = useState("");
   const [inputValues, setInputValues] = useState({
     id: "",
-    card_type: 1,
+    card_type: 3,
     file: ""
   });
 
@@ -52,21 +52,7 @@ const Index = () => {
   };
 
   const handleCardTypeChange = e => {
-    if (e.target.value === "دعوة زفاف") {
-      setInputValues({ ...inputValues, card_type: 1 });
-    }
-    if (e.target.value === "عيد ميلاد") {
-      setInputValues({ ...inputValues, card_type: 2 });
-    }
-    if (e.target.value === "حفل خطوبه") {
-      setInputValues({ ...inputValues, card_type: 3 });
-    }
-    if (e.target.value === "حفل تخرج") {
-      setInputValues({ ...inputValues, card_type: 4 });
-    }
-    if (e.target.value === "دعوة عامه") {
-      setInputValues({ ...inputValues, card_type: 5 });
-    }
+      setInputValues({ ...inputValues, card_type: Number(e.target.value)});
   };
   const handleSubmit = e => {
     e.preventDefault();
@@ -74,30 +60,49 @@ const Index = () => {
     if (inputValues.file === "") {
       setError(true);
     } else {
-      if (type === "add") {
+      if (!inputValues.id) {
         {
           const newCard = inputValues;
           const newCards = [...cards, newCard];
           setCards(newCards);
+          // remove serCards and do this after connect to api
+        
+          //call api
+          /*
+             api.Cards.add(inputValues).then(res => {
+              console.log("_getAllCards", res);
+              if (res.statusCode === 200) {
+                 //_getAllCards();
+              }
+            });
+          */
         }
       } else {
         const copyOfCards = cards.filter(card => card.id !== id);
-        const card_type = inputValues.card_type;
-        const file = inputValues.file;
-
-        setInputValues({
-          id: id,
-          card_type,
-          file
-        });
+        // setInputValues({
+        //   id: id,
+        //   card_type,
+        //   file
+        // });
         const newCards = [...copyOfCards, inputValues];
         setCards(newCards);
+              // remove serCards and do this after connect to api
+        
+          //call api
+          /*
+             api.Cards.update(inputValues).then(res => {
+              console.log("_getAllCards", res);
+              if (res.statusCode === 200) {
+                 //_getAllCards();
+              }
+            });
+          */
       }
 
       setInputValues({
         id: "",
-        card_type: "",
-        file: null
+        card_type:1,
+        file: ''
       });
       setCardsModal(false);
       setError(false);

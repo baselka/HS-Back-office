@@ -1,3 +1,10 @@
+const cardTypeOptions = [
+  { name: 'دعوة زفاف', id: 1 },
+  { name: 'عيد ميلاد', id: 2 },
+  { name: 'حفل خطوبه', id: 3 },
+  { name: 'حفل تخرج', id: 4 },
+  { name: 'دعوة عامه', id: 5 }
+]
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -34,7 +41,18 @@ const ModalBody = prop => {
           <select
             className='text-sm form-input mt-1 block w-full border'
             onChange={prop.handleCardTypeChange}>
-            <option
+            {cardTypeOptions.map((item, i) => {
+              return (
+                <option
+                  key={i}
+                  name={item.name}
+                  value={item.id}
+                  selected={item.id === prop.inputValues.card_type}>
+                  {item.name}
+                </option>
+              )
+            })}
+            {/* <option
               value={prop.inputValues.card_type}
               id='1'
               placeholder={prop.inputValues.card_type}>
@@ -63,7 +81,7 @@ const ModalBody = prop => {
               id='5'
               placeholder={prop.inputValues.card_type}>
               دعوة عامه
-            </option>
+            </option> */}
           </select>
         </label>
         <label htmlFor='fileUpload' className='block'>
@@ -124,7 +142,18 @@ const ModalBody = prop => {
         <select
           className='text-sm form-input mt-1 block w-full border'
           onChange={prop.handleCardTypeChange}>
-          <option value={prop.card_type} id='1'>
+          {cardTypeOptions.map((item, i) => {
+            return (
+              <option
+                key={i}
+                name={item.name}
+                value={item.id}
+                selected={item.id === prop.inputValues.card_type}>
+                {item.name}
+              </option>
+            )
+          })}
+          {/* <option value={prop.card_type} id='1'>
             دعوة زفاف
           </option>
           <option value={prop.card_type} id='2'>
@@ -138,7 +167,7 @@ const ModalBody = prop => {
           </option>
           <option value={prop.card_type} id='5'>
             دعوة عامه
-          </option>
+          </option> */}
         </select>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
