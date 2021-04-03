@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
-import Container from "../../Container";
-import Layout from "../../../src/layouts";
-import SectionTitle from "../../../src/components/section-title";
-import api from "../../../src/api";
-import CardsModal from "../../../src/components/modals/CardsModal";
-import DeleteModal from "../../../src/components/modals/DeleteModal";
+import Container from "../Container";
+import Layout from "../../src/layouts";
+import SectionTitle from "../../src/components/section-title";
+import { v4 as uuidv4 } from "uuid";
+
+import AddsModal from "../../src/components/modals/AddsModal";
+import DeleteModal from "../../src/components/modals/DeleteModal";
+import api from "../../src/api";
 
 const Index = () => {
-  const [cards, setCards] = useState([]);
   const [id, setId] = useState("");
   const [type, setType] = useState("");
-
-  const [cardsModal, setCardsModal] = useState(false);
-  const [cardsModalTitle, setCardsModalTitle] = useState("");
+  const [adds, setadds] = useState([]);
+  const [addsModal, setAddsModal] = useState(false);
+  const [addsModalTitle, setaddsModalTitle] = useState("");
   const [inputValues, setInputValues] = useState({
     id: "",
-    card_type: 1,
+    name: "",
+    description: "",
     file: ""
   });
 
@@ -26,23 +28,24 @@ const Index = () => {
 
   // component did mount
   useEffect(() => {
-    _getAllCards();
+    _getAllAds();
   }, []);
 
-  const _getAllCards = () => {
-    api.Cards.all().then(res => {
-      console.log("_getAllCards", res);
+  const _getAllAds = () => {
+    api.Promos.all().then(res => {
+      console.log("_getAllAds", res);
       if (res.statusCode === 200) {
         console.log(res, "res");
-        setCards(res.data);
+        setadds(res.data);
       }
     });
   };
+  // const { image, ad_text, branch_id, redirect_url, start_date, end_date } = req.body;
 
   const add = () => {
     setType("add");
-    setCardsModalTitle("حددالمناسبه واضف الصوره");
-    setCardsModal(true);
+    setaddsModalTitle("اضف عرضك");
+    setAddsModal(true);
     setError(false);
   };
 
@@ -51,61 +54,53 @@ const Index = () => {
     setInputValues({ ...inputValues, file: file });
   };
 
-  const handleCardTypeChange = e => {
-    if (e.target.value === "دعوة زفاف") {
-      setInputValues({ ...inputValues, card_type: 1 });
-    }
-    if (e.target.value === "عيد ميلاد") {
-      setInputValues({ ...inputValues, card_type: 2 });
-    }
-    if (e.target.value === "حفل خطوبه") {
-      setInputValues({ ...inputValues, card_type: 3 });
-    }
-    if (e.target.value === "حفل تخرج") {
-      setInputValues({ ...inputValues, card_type: 4 });
-    }
-    if (e.target.value === "دعوة عامه") {
-      setInputValues({ ...inputValues, card_type: 5 });
-    }
+  const handleNameChange = e => {
+    setInputValues({ ...inputValues, name: e.target.value });
+  };
+
+  const handleDescriptionChange = e => {
+    setInputValues({ ...inputValues, description: e.target.value });
   };
   const handleSubmit = e => {
     e.preventDefault();
-
-    if (inputValues.file === "") {
+    if (
+      inputValues.name === "" ||
+      inputValues.description === "" ||
+      inputValues.file === ""
+    ) {
       setError(true);
     } else {
       if (type === "add") {
         {
-          const newCard = inputValues;
-          const newCards = [...cards, newCard];
-          setCards(newCards);
+          let valuesWithId = { ...inputValues, id: uuidv4() };
+          setadds([...adds, valuesWithId]);
         }
       } else {
-        const copyOfCards = cards.filter(card => card.id !== id);
-        const card_type = inputValues.card_type;
-        const file = inputValues.file;
-
+        const copyOfadds = adds.filter(add => add.id !== id);
+        const name = inputValues.name;
+        const description = inputValues.description;
         setInputValues({
           id: id,
-          card_type,
-          file
+          name,
+          description
         });
-        const newCards = [...copyOfCards, inputValues];
-        setCards(newCards);
+        const newadds = [...copyOfadds, inputValues];
+        setadds(newadds);
       }
 
       setInputValues({
         id: "",
-        card_type: "",
+        name: "",
+        description: "",
         file: null
       });
-      setCardsModal(false);
+      setAddsModal(false);
       setError(false);
     }
   };
 
-  const deleteCard = card => {
-    const id = card.id;
+  const deleteAdd = add => {
+    const id = add.id;
     setId(id);
     setDeleteModalTitle("حذف");
     setDeleteModal(true);
@@ -113,48 +108,52 @@ const Index = () => {
   };
 
   const confirmDelete = () => {
-    const newCards = cards.filter(card => card.id !== id);
-    setCards(newCards);
+    const newadds = adds.filter(add => add.id !== id);
+    setadds(newadds);
     setDeleteModal(false);
   };
 
-  const edit = card => {
-    console.log(card, "carrrd");
-    const id = card.id;
-    const card_type = card.card_type;
-    const file = card.img_path;
+  const edit = add => {
+    const id = add.id;
+    const name = add.name;
+    const description = add.description;
+    const file = add.file;
     setId(id);
     setInputValues({
       id,
-      card_type,
+      name,
+      description,
       file
     });
     setType("edit");
-    setCardsModalTitle("تعديل");
-    setCardsModal(true);
+    setaddsModalTitle("تعديل");
+    setAddsModal(true);
   };
-  console.log(cards, "cards");
+  console.log(adds, "adds");
 
   const deleteImage = () => {
     let file = null;
     setInputValues({ ...inputValues, file: file });
   };
-  console.log("handleEditChange", inputValues);
-
   return (
     <Container>
       <Layout>
-        <SectionTitle title='إدارة التطبيق' subtitle='كروت الدعوة' />
-        {cardsModal && (
-          <CardsModal
-            cancel={() => setCardsModal(false)}
+        <SectionTitle
+          title='إدارة الإعلانات والعروض'
+          subtitle='إدارة الإعلانات'
+        />
+
+        {addsModal && (
+          <AddsModal
+            cancel={() => setAddsModal(false)}
             type={type}
-            title={cardsModalTitle}
+            title={addsModalTitle}
             handleImageChange={e => handleImageChange(e)}
-            handleCardTypeChange={e => handleCardTypeChange(e)}
+            handleNameChange={handleNameChange}
+            handleDescriptionChange={handleDescriptionChange}
             handleSubmit={handleSubmit}
             inputValues={inputValues}
-            cards={cards}
+            adds={adds}
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
@@ -175,32 +174,32 @@ const Index = () => {
           اضافة عرض
         </button>
         <div className='flex flex-wrap  justify-start '>
-          {cards &&
-            cards.map(card => {
+          {adds &&
+            adds.map(add => {
               return (
                 <div
-                  key={card.id}
+                  key={add.id}
                   className='overflow-hidden border bg-white rounded-lg shadow-lg m-10 w-full sm:w-2/3 md:w-1/4 flex flex-col p-3'>
                   <img
                     className='bg-center object-cover w-full  h-48 '
-                    src={card.img_path}
+                    src={add.img_path}
                   />
                   <div>
-                    <h1 className='mb-4 text-2xl'>{card.promo_text}</h1>
+                    <h1 className='mb-4 text-2xl'>{add.promo_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      card_type{card.card_type}
+                      بداية العرض{add.promo_st}
                     </h2>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      id{card.id}
+                      نهاية العرض{add.promo_end}
                     </h2>
                     <div className='flex flex-row '>
                       <button
-                        onClick={() => deleteCard(card)}
+                        onClick={() => deleteAdd(add)}
                         className='btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-trash font-bold mr-1 ml-1' />
                       </button>
                       <button
-                        onClick={() => edit(card)}
+                        onClick={() => edit(add)}
                         className='btn btn-default btn-yellow rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-note font-bold mr-1 ml-1' />
                       </button>

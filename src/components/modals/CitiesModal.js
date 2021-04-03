@@ -96,7 +96,7 @@ const ModalFooter = ({ cancel, handleSubmit }) => (
   </div>
 );
 
-const AddEditModal = ({
+const CitiesModal = ({
   cancel,
   title,
   type,
@@ -126,4 +126,4 @@ const AddEditModal = ({
   );
 };
 
-export default AddEditModal;
+export default CitiesModal;

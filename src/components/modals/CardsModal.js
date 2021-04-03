@@ -29,29 +29,42 @@ const ModalBody = prop => {
             <p className='text-red-600'>البيانات غير صحيحه</p>
           </div>
         )}
-        <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
-          <input
-            required
-            maxlength='10'
-            type='text'
-            placeholder={prop.name}
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
+
+        <label htmlFor='card_type' className='block'>
+          <select
             className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
-          <input
-            required
-            maxlength='15'
-            type='text'
-            placeholder={prop.description}
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
+            onChange={prop.handleCardTypeChange}>
+            <option
+              value={prop.inputValues.card_type}
+              id='1'
+              placeholder={prop.inputValues.card_type}>
+              دعوة زفاف
+            </option>
+            <option
+              value={prop.inputValues.card_type}
+              id='2'
+              placeholder={prop.inputValues.card_type}>
+              عيد ميلاد
+            </option>
+            <option
+              value={prop.inputValues.card_type}
+              id='3'
+              placeholder={prop.inputValues.card_type}>
+              حفل خطوبه
+            </option>
+            <option
+              value={prop.inputValues.card_type}
+              id='4'
+              placeholder={prop.inputValues.card_type}>
+              حفل تخرج
+            </option>
+            <option
+              value={prop.inputValues.card_type}
+              id='5'
+              placeholder={prop.inputValues.card_type}>
+              دعوة عامه
+            </option>
+          </select>
         </label>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
@@ -60,6 +73,7 @@ const ModalBody = prop => {
               id='fileUpload'
               accept='image/*'
               type='file'
+              placeholder={prop.inputValues.file}
               value={prop.inputValues.file}
               onChange={prop.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
@@ -105,28 +119,27 @@ const ModalBody = prop => {
             <p className='text-red-600'>البيانات غير صحيحه</p>
           </div>
         )}
-        <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
-          <input
-            required
-            maxlength='10'
-            type='text'
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
-          <input
-            maxlength='15'
-            required
-            type='text'
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
+
+        <span className='text-sm text-default'>حدد المناسبه</span>
+        <select
+          className='text-sm form-input mt-1 block w-full border'
+          onChange={prop.handleCardTypeChange}>
+          <option value={prop.card_type} id='1'>
+            دعوة زفاف
+          </option>
+          <option value={prop.card_type} id='2'>
+            عيد ميلاد
+          </option>
+          <option value={prop.card_type} id='3'>
+            حفل خطوبه
+          </option>
+          <option value={prop.card_type} id='4'>
+            حفل تخرج
+          </option>
+          <option value={prop.card_type} id='5'>
+            دعوة عامه
+          </option>
+        </select>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
           {!prop.inputValues.file && (
@@ -189,15 +202,15 @@ const ModalFooter = ({ cancel, handleSubmit }) => (
   </div>
 );
 
-const OfferModal = ({
+const CardsModal = ({
   cancel,
   title,
   type,
   message,
   inputValues,
   handleSubmit,
-  handleNameChange,
-  handleDescriptionChange,
+
+  handleCardTypeChange,
   handleImageChange,
   deleteImage,
   error
@@ -212,8 +225,7 @@ const OfferModal = ({
             <ModalBody
               body={message}
               inputValues={inputValues}
-              handleNameChange={handleNameChange}
-              handleDescriptionChange={handleDescriptionChange}
+              handleCardTypeChange={handleCardTypeChange}
               handleImageChange={handleImageChange}
               type={type}
               deleteImage={deleteImage}
@@ -227,4 +239,4 @@ const OfferModal = ({
   );
 };
 
-export default OfferModal;
+export default CardsModal;

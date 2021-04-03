@@ -3,7 +3,7 @@ import Container from "../../Container";
 import Layout from "../../../src/layouts";
 import SectionTitle from "../../../src/components/section-title";
 import Api from "../../../src/api";
-import AddEditModal from "../../../src/components/modals/AddEditModal";
+import CitiesModal from "../../../src/components/modals/CitiesModal";
 import DeleteModal from "../../../src/components/modals/DeleteModal";
 
 const Index = () => {
@@ -16,7 +16,7 @@ const Index = () => {
 
   const [type, setType] = useState("");
   const [cities, setCities] = useState([]);
-  const [addEditModal, setModal] = useState(false);
+  const [citiesModal, setModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
 
   const [deleteModal, setDeleteModal] = useState(false);
@@ -25,7 +25,6 @@ const Index = () => {
   // component did mount
   useEffect(() => {
     _getAllCities();
-    // _addCity();
   }, []);
 
   // const _deleteCity = id => {
@@ -59,8 +58,8 @@ const Index = () => {
         if (inputValues.city !== "" || inputValues.region !== "") {
           const newCity = inputValues;
           const newCities = [...cities, newCity];
-          setCities(newCities);
           _addCity();
+          setCities(newCities);
         }
       }
     });
@@ -162,8 +161,8 @@ const Index = () => {
   return (
     <Container>
       <Layout>
-        {addEditModal && (
-          <AddEditModal
+        {citiesModal && (
+          <CitiesModal
             cancel={() => setModal(false)}
             title={modalTitle}
             type={type}
@@ -192,7 +191,7 @@ const Index = () => {
           اضافة مدينه
         </button>
 
-        <table className="table table-lg striped">
+        <table className='table table-lg striped'>
           <thead>
             <tr>
               <th>

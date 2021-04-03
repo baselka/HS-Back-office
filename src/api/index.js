@@ -90,11 +90,14 @@ const uploadDataFormApi = async data => {
     redirect: "follow"
   };
 
-  await fetch(API_ROOT + "/upload-branch-images/", requestOptions).then(response => response.text()).then(result => {
-    return { status: "success", data: result };
-  }).catch(error => {
-    return { status: "error", data: error };
-  });
+  await fetch(API_ROOT + "/upload-branch-images/", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      return { status: "success", data: result };
+    })
+    .catch(error => {
+      return { status: "error", data: error };
+    });
 };
 
 const uploadServiceImages = async data => {
@@ -118,13 +121,16 @@ const uploadServiceImages = async data => {
     redirect: "follow"
   };
 
-  await fetch(API_ROOT + "/upload-service-images/", requestOptions).then(response => response.text()).then(result => {
-    console.log("service-image result", result);
-    return { status: "success", data: result };
-  }).catch(error => {
-    console.log("service-image error", error);
-    return { status: "error", data: error };
-  });
+  await fetch(API_ROOT + "/upload-service-images/", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log("service-image result", result);
+      return { status: "success", data: result };
+    })
+    .catch(error => {
+      console.log("service-image error", error);
+      return { status: "error", data: error };
+    });
 };
 
 const deleteBody = async data => {
@@ -134,24 +140,27 @@ const deleteBody = async data => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", "Bearer " + authToken);
   myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-  
+
   var urlencoded = new URLSearchParams();
   urlencoded.append("id", data.id);
   urlencoded.append("catId", data.catId);
-  
+
   var requestOptions = {
-    method: 'DELETE',
+    method: "DELETE",
     headers: myHeaders,
     body: urlencoded,
-    redirect: 'follow'
+    redirect: "follow"
   };
 
-  await fetch(API_ROOT + "/delete-subcategory", requestOptions).then(response => response.text()).then(result => {
-    return result;
-  }).catch(error => {
-    return error;
-  });
-}
+  await fetch(API_ROOT + "/delete-subcategory", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      return result;
+    })
+    .catch(error => {
+      return error;
+    });
+};
 
 const createNewCategory = async data => {
   const authToken = cookie.get("token");
@@ -175,10 +184,13 @@ const createNewCategory = async data => {
     redirect: "follow"
   };
 
-  await fetch(API_ROOT + "/create-category/", requestOptions).then(response => response.text()).then(result => {
+  await fetch(API_ROOT + "/create-category/", requestOptions)
+    .then(response => response.text())
+    .then(result => {
       console.log("result", result);
       return result;
-    }).catch(error => {
+    })
+    .catch(error => {
       console.log("error", error);
       return error;
     });
@@ -192,7 +204,10 @@ const requests = {
       .catch(handleErrors),
   post: (url, data, externalURL) =>
     createApi()
-      .post(`${externalURL === undefined ? `${API_ROOT}${url}` : externalURL}`, data)
+      .post(
+        `${externalURL === undefined ? `${API_ROOT}${url}` : externalURL}`,
+        data
+      )
       .then(handleResponse)
       .catch(handleErrors),
   patch: (url, data) =>
@@ -213,15 +228,40 @@ const Auth = {
 };
 
 const Branches = {
-  all: (data, counts) => requests.get("/branches/" + data + "/" + counts + "/0/0/0/0/", {}),
+  all: (data, counts) =>
+    requests.get("/branches/" + data + "/" + counts + "/0/0/0/0/", {}),
   delete: branch_id => requests.delete("/delete-branch/" + branch_id, {}),
   details: id => requests.get("/branch-details/" + id, {}),
-  search: data => requests.get( "/branches/" + data.start + "/" + data.end + "/" + data.city + "/" + data.cat + "/" + data.subCat + "/" + data.term + "/", {} ),
+  search: data =>
+    requests.get(
+      "/branches/" +
+        data.start +
+        "/" +
+        data.end +
+        "/" +
+        data.city +
+        "/" +
+        data.cat +
+        "/" +
+        data.subCat +
+        "/" +
+        data.term +
+        "/",
+      {}
+    ),
   create: data => requests.post("/add-branch", data),
   update: data => requests.patch("/update-branch", data),
-  deleteImage: data => requests.delete("/delete-branch-image/" + data.branch + "/" + data.image, {}),
+  deleteImage: data =>
+    requests.delete(
+      "/delete-branch-image/" + data.branch + "/" + data.image,
+      {}
+    ),
   instantEdit: data => requests.post("/instant-edit", data),
-  changeStatus: data => requests.patch("/update-branch-status/" + data.branch_id + "/" + data.status, {}),
+  changeStatus: data =>
+    requests.patch(
+      "/update-branch-status/" + data.branch_id + "/" + data.status,
+      {}
+    ),
   uploadBranchImages: data => uploadDataFormApi(data)
 };
 
@@ -233,7 +273,8 @@ const Cities = {
 };
 
 const Providers = {
-  all: data => requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
+  all: data =>
+    requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
   create: data => requests.post("/add-provider", data)
 };
 
@@ -241,11 +282,11 @@ const Categories = {
   all: () => requests.get("/categories", {}),
   sub: () => requests.get("/subcategories", {}),
   delete: id => requests.delete("/delete-category/" + id, {}),
-  deleteSub: (data) => deleteBody(data),
+  deleteSub: data => deleteBody(data),
   details: id => requests.get("/category-details/" + id, {}),
   subdetails: id => requests.get("/subcategory-details/" + id, {}),
   update: data => requests.patch("/update-category", data),
-  updateSub : data => requests.patch("/update-subcategory", data),
+  updateSub: data => requests.patch("/update-subcategory", data),
   subcategory: data => requests.post("/create-subcategory", data),
   create: data => createNewCategory(data)
 };
@@ -256,7 +297,8 @@ const Users = {
   update: data => requests.patch("/update-user", data),
   create: data => requests.post("/add-user", data),
   details: id => requests.get("/user-details/" + id, {}),
-  changePassword: data => requests.patch("/change-user-password/" + data.id, data)
+  changePassword: data =>
+    requests.patch("/change-user-password/" + data.id, data)
 };
 
 const Services = {
@@ -265,13 +307,38 @@ const Services = {
   update: data => requests.patch("/update-service", data),
   images: data => requests.patch("/service-images", data),
   delete: id => requests.delete("/delete-service/" + id, {}),
-  deleteImage: data => requests.delete("/delete-service-image/" + data.service + "/" + data.image, {}),
+  deleteImage: data =>
+    requests.delete(
+      "/delete-service-image/" + data.service + "/" + data.image,
+      {}
+    ),
   details: data => requests.post("/service-details", data),
   uploadServiceImages: data => uploadServiceImages(data)
 };
 
 const Stats = {
-  all: data => requests.get("/statistics", {}),
+  all: data => requests.get("/statistics", {})
+};
+
+const Promos = {
+  all: () => requests.get("/promos", {}),
+  delete: id => requests.post("/promo/" + id, {}),
+  add: data => requests.post("/add-promo", data),
+  update: data => requests.patch("/update-promo", data)
+};
+
+const Cards = {
+  all: () => requests.get("/cards", {}),
+  delete: id => requests.post("/card/" + id, {}),
+  add: data => requests.post("/add-card", data),
+  update: data => requests.patch("/update-card", data)
+};
+
+const Ads = {
+  all: () => requests.get("/ads", {}),
+  delete: id => requests.post("/ad/" + id, {}),
+  add: data => requests.post("/add-ad", data),
+  update: data => requests.patch("/update-ad", data)
 };
 
 export default {
@@ -282,5 +349,8 @@ export default {
   Providers,
   Users,
   Stats,
-  Branches
+  Branches,
+  Promos,
+  Cards,
+  Ads
 };

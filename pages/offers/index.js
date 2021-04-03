@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import Container from "../Container";
 import Layout from "../../src/layouts";
 import SectionTitle from "../../src/components/section-title";
-import OfferModal from "../../src/components/modals/OfferModal";
+import OfferModal from "../../src/components/modals/AddsModal";
 import DeleteModal from "../../src/components/modals/DeleteModal";
 
 const Index = () => {
