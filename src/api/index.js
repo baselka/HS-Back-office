@@ -329,7 +329,7 @@ const Promos = {
 
 const Cards = {
   all: () => requests.get("/cards", {}),
-  delete: id => requests.post("/card/" + id, {}),
+  delete: id => requests.delete("/delete-card/" + id, {}),
   add: data => requests.post("/add-card", data),
   update: data => requests.patch("/update-card", data)
 };

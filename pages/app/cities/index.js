@@ -60,6 +60,7 @@ const Index = () => {
           const newCities = [...cities, newCity];
           _addCity();
           setCities(newCities);
+          _getAllCities();
         }
       }
     });
@@ -87,6 +88,7 @@ const Index = () => {
         });
         const newCities = [...copyOfCities, inputValues];
         setCities(newCities);
+        _getAllCities();
       }
     });
   };

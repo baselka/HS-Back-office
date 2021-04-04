@@ -15,7 +15,7 @@ const Index = () => {
   const [cardsModalTitle, setCardsModalTitle] = useState("");
   const [inputValues, setInputValues] = useState({
     id: "",
-    card_type: 3,
+    card_type: 1,
     file: ""
   });
 
@@ -52,7 +52,7 @@ const Index = () => {
   };
 
   const handleCardTypeChange = e => {
-      setInputValues({ ...inputValues, card_type: Number(e.target.value)});
+    setInputValues({ ...inputValues, card_type: Number(e.target.value) });
   };
   const handleSubmit = e => {
     e.preventDefault();
@@ -62,47 +62,38 @@ const Index = () => {
     } else {
       if (!inputValues.id) {
         {
-          const newCard = inputValues;
-          const newCards = [...cards, newCard];
-          setCards(newCards);
-          // remove serCards and do this after connect to api
-        
-          //call api
-          /*
-             api.Cards.add(inputValues).then(res => {
-              console.log("_getAllCards", res);
-              if (res.statusCode === 200) {
-                 //_getAllCards();
-              }
-            });
-          */
+          var formdata = new FormData();
+          formdata.append("card_type", inputValues.card_type);
+          formdata.append("images", inputValues.file);
+
+          api.Cards.add(formdata).then(res => {
+            console.log("_getAllCards", res);
+            if (res.statusCode === 200) {
+              _getAllCards();
+            }
+          });
         }
       } else {
         const copyOfCards = cards.filter(card => card.id !== id);
-        // setInputValues({
-        //   id: id,
-        //   card_type,
-        //   file
-        // });
+
         const newCards = [...copyOfCards, inputValues];
-        setCards(newCards);
-              // remove serCards and do this after connect to api
-        
-          //call api
-          /*
-             api.Cards.update(inputValues).then(res => {
-              console.log("_getAllCards", res);
-              if (res.statusCode === 200) {
-                 //_getAllCards();
-              }
-            });
-          */
+        setInputValues(newCards);
+        var formdata = new FormData();
+        formdata.append("card_type", inputValues.card_type);
+        formdata.append("images", inputValues.file);
+
+        api.Cards.update(formdata).then(res => {
+          console.log("_getAllCards", res);
+          if (res.statusCode === 200) {
+            _getAllCards();
+          }
+        });
       }
 
       setInputValues({
         id: "",
-        card_type:1,
-        file: ''
+        card_type: 1,
+        file: ""
       });
       setCardsModal(false);
       setError(false);
@@ -118,18 +109,15 @@ const Index = () => {
   };
 
   const confirmDelete = () => {
-      //call api
-          /*
-             api.Cards.update(inputValues).then(res => {
-              console.log("_getAllCards", res);
-              if (res.statusCode === 200) {
-                   const newCards = cards.filter(card => card.id !== id);
-                  setCards(newCards);
-                  setDeleteModal(false);
-              }
-            });
-          */
-  
+    //call api
+    api.Cards.delete(id).then(res => {
+      console.log("_getAllCards", res);
+      if (res.statusCode === 200) {
+        const newCards = cards.filter(card => card.id !== id);
+        setCards(newCards);
+        setDeleteModal(false);
+      }
+    });
   };
 
   const edit = card => {
@@ -150,10 +138,25 @@ const Index = () => {
   console.log(cards, "cards");
 
   const deleteImage = () => {
-    let file = null;
+    let file = "";
     setInputValues({ ...inputValues, file: file });
   };
   console.log("handleEditChange", inputValues);
+
+  const cardTypes = [
+    { name: "دعوة زفاف", id: 1 },
+    { name: "عيد ميلاد", id: 2 },
+    { name: "حفل خطوبه", id: 3 },
+    { name: "حفل تخرج", id: 4 },
+    { name: "دعوة عامه", id: 5 }
+  ];
+  const getCardName = cardType => {
+    // here u do ur filter based on ur param (cardType)and return the name
+
+    const nameArray = cardTypes.filter(item => item.id === cardType);
+
+    return nameArray[0].name;
+  };
 
   return (
     <Container>
@@ -186,7 +189,7 @@ const Index = () => {
         <button
           className='btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 sm:w-1/5  md:w-1/12  '
           onClick={() => add()}>
-          اضافة عرض
+          اضافة كرت دعوه
         </button>
         <div className='flex flex-wrap  justify-start '>
           {cards &&
@@ -202,11 +205,10 @@ const Index = () => {
                   <div>
                     <h1 className='mb-4 text-2xl'>{card.promo_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      card_type{card.card_type}
+                      {/* {card.card_type} */}
+                      <span> {getCardName(card.card_type)} </span>
                     </h2>
-                    <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      id{card.id}
-                    </h2>
+
                     <div className='flex flex-row '>
                       <button
                         onClick={() => deleteCard(card)}

@@ -1,10 +1,10 @@
 const cardTypeOptions = [
-  { name: 'دعوة زفاف', id: 1 },
-  { name: 'عيد ميلاد', id: 2 },
-  { name: 'حفل خطوبه', id: 3 },
-  { name: 'حفل تخرج', id: 4 },
-  { name: 'دعوة عامه', id: 5 }
-]
+  { name: "دعوة زفاف", id: 1 },
+  { name: "عيد ميلاد", id: 2 },
+  { name: "حفل خطوبه", id: 3 },
+  { name: "حفل تخرج", id: 4 },
+  { name: "دعوة عامه", id: 5 }
+];
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -33,7 +33,7 @@ const ModalBody = prop => {
       <form className=' p-4 flex-auto'>
         {prop.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>اضف صوره</p>
           </div>
         )}
 
@@ -50,38 +50,8 @@ const ModalBody = prop => {
                   selected={item.id === prop.inputValues.card_type}>
                   {item.name}
                 </option>
-              )
+              );
             })}
-            {/* <option
-              value={prop.inputValues.card_type}
-              id='1'
-              placeholder={prop.inputValues.card_type}>
-              دعوة زفاف
-            </option>
-            <option
-              value={prop.inputValues.card_type}
-              id='2'
-              placeholder={prop.inputValues.card_type}>
-              عيد ميلاد
-            </option>
-            <option
-              value={prop.inputValues.card_type}
-              id='3'
-              placeholder={prop.inputValues.card_type}>
-              حفل خطوبه
-            </option>
-            <option
-              value={prop.inputValues.card_type}
-              id='4'
-              placeholder={prop.inputValues.card_type}>
-              حفل تخرج
-            </option>
-            <option
-              value={prop.inputValues.card_type}
-              id='5'
-              placeholder={prop.inputValues.card_type}>
-              دعوة عامه
-            </option> */}
           </select>
         </label>
         <label htmlFor='fileUpload' className='block'>
@@ -134,7 +104,7 @@ const ModalBody = prop => {
       <form className=' p-4 flex-auto'>
         {prop.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>اضف صوره</p>
           </div>
         )}
 
@@ -151,23 +121,8 @@ const ModalBody = prop => {
                 selected={item.id === prop.inputValues.card_type}>
                 {item.name}
               </option>
-            )
+            );
           })}
-          {/* <option value={prop.card_type} id='1'>
-            دعوة زفاف
-          </option>
-          <option value={prop.card_type} id='2'>
-            عيد ميلاد
-          </option>
-          <option value={prop.card_type} id='3'>
-            حفل خطوبه
-          </option>
-          <option value={prop.card_type} id='4'>
-            حفل تخرج
-          </option>
-          <option value={prop.card_type} id='5'>
-            دعوة عامه
-          </option> */}
         </select>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
