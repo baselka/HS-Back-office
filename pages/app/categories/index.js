@@ -39,7 +39,7 @@ const Simple = ({ categories, deleteCat }) => {
         Cell: props => {
           return (
             <div>
-              <p className='max-w-2xl truncate' >{props.row.original.type_desc}</p>
+              <p className='max-w-xl truncate' >{props.row.original.type_desc}</p>
             </div>
           );
         }
@@ -59,6 +59,12 @@ const Simple = ({ categories, deleteCat }) => {
                 <a className="float-right btn btn-default btn-pink rounded-full btn-icon inline-block w-30 mx-1">
                   <i className="icon-eye font-bold mr-1 ml-1" />
                     عرض الاقسام الفرعية
+                </a>
+              </Link>
+              <Link href={"/app/features/"+props.row.original.id} >
+                <a className="float-right btn btn-default btn-green rounded-full btn-icon inline-block w-24 mx-1">
+                  <i className="icon-trophy font-bold mr-1 ml-1" />
+                  المزايا
                 </a>
               </Link>
               <button className="float-right btn btn-default btn-red rounded-full btn-icon inline-block w-24 mx-1" onClick={()=>deleteCat(props.row.original.id)} >

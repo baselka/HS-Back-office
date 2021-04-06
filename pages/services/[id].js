@@ -136,7 +136,7 @@ const Index = () => {
         setLoadingData(false);
         console.log('_getAllServices', res);
         if(res.statusCode === 200){
-          setServices(res.data);
+          setServices(res?.data);
         }else{
           if(res.statusName){
             setMessages(res.statusName);

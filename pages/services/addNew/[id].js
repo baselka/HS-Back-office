@@ -29,25 +29,84 @@ const Index = () => {
   const [modal, setModal] = useState(false)
   const [serviceImages, setServiceImages] = useState([])
   const [imagesList, setImagesList] = useState([])
+  const [featureList, setFeatureList] = useState([])
+  const [featureValues, setFeatureValues] = useState([])
   const router = useRouter();
   const { id } = router.query;
+  
+  useEffect(() => {
+    _getBrachDataAndServices(id);
+  }, []);
 
+  const _getFeaturesList = ( cat_id ) => {
+    console.log("category_id", cat_id);
+    Api.Features.all(cat_id).then((res)=>{
+      console.log("_getFeaturesList", res);
+      setFeatureList(res?.data);
+    });
+  }
+
+  const _getBrachDataAndServices = ( branch_id ) => {
+    Api.Branches.details(branch_id).then((res)=>{
+      console.log("_getBrachDataAndServices", res);
+      if(res?.statusCode === 200 && res?.data?.branchDetails?.length){
+        const { branchDetails } = res?.data;
+        if(branchDetails[0]?.category_id){
+          _getFeaturesList(branchDetails[0]?.category_id);
+        }
+      }
+    });
+  }
+
+  const _updateFeatureValue = async (feature, event) => {
+    console.log("feature", feature);
+    console.log("event", event.target.value);
+    const vals = event.target.value;
+    let tempValues = featureValues;    
+    let avail = false;
+    for (let index = 0; index < tempValues.length; index++) {
+      const element = tempValues[index];
+      if(element.feature_id == feature.id){
+        avail = true;
+      }
+    }
+
+    if(avail){
+      for (let index = 0; index < tempValues.length; index++) {
+        const featValue = tempValues[index];
+        if(featValue.feature_id == feature.id){
+          featValue.value = vals;
+        }
+        tempValues[index] = featValue;
+      }
+    }else{
+      tempValues.push({feature_id: feature.id, value: vals});
+    }
+    setFeatureValues(tempValues);
+  }
+
+  useEffect(() => {
+    console.log("tempValues", featureValues);
+  }, [featureValues])
+  
   const _createService = data => {
     Api.Services.create(data).then((res)=>{
-      if(res.statusCode === 201){
+      if(res?.statusCode === 201){
         NotificationManager.success('تم إضافة بيانات الخدمة', 'نجاح', 3000);
         if(imagesList && imagesList.length > 0){
-          let imgData = { id: res.data.id, images: imagesList };
+          let imgData = { id: res?.data?.id, images: imagesList };
           Api.Services.uploadServiceImages({data:imgData}).then((res)=>{
             setLoadingData(false);
-            if(res.statusCode === 201){
+            if(res?.statusCode === 201){
               NotificationManager.success('تم إضافة صور الخدمة', 'نجاح', 3000);
             }else{
               NotificationManager.error('حدث خطأ اثناء إضافة صور الخدمة', 'عفواً', 3000);
             }
+            router.back();
           });
         }else{
           setLoadingData(false);
+          router.back();
         }
       }else{
         setLoadingData(false);
@@ -63,6 +122,11 @@ const Index = () => {
       branch_id: id,
       ser_desc: fields.ser_desc,
       price: fields.price,
+    }
+    if(featureValues){
+      data.features = featureValues;
+    }else{
+      data.features = [];
     }
     _createService(data);
   }
@@ -120,20 +184,39 @@ const Index = () => {
                       />
                     </label>
                   </div>
-                </div>
-                <div className="flex-col w-8/12 mb-4 ml-6 float-right">
                   <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                     <label className="block">
                       <span className="text-default">الوصف</span>
                       <textarea
                         name="ser_desc"
-                        ref={register({required: false})}
+                        ref={register({required: true})}
                         className="form-input mt-1 text-xs block w-full bg-white mt-2"
                         placeholder="اكتب معلومات عن الخدمة"
                         style={{minHeight:169}}
                       />
                     </label>
                   </div>
+                </div>
+
+                <div className="flex-col w-8/12 mb-4 ml-0 float-right">
+                  {featureList.map((feature, index) => (
+                    <div key={index} className={index%2 ? "w-6/12 mb-6 p-5 bg-white border-2 border-gray-200 float-right" : "w-6/12 mb-6 p-5 bg-white border-2 border-gray-200 float-right ml-3 -mr-3" } >
+                      <div key={index} className="row">
+                        <img src={feature.image} className="w-5 float-right" alt="..." />
+                        <span className="text-default m-3">{feature.name}</span>
+                      </div>
+                      <label className="block">
+                        <input
+                          name={"id"+feature.id}
+                          type="text"
+                          // ref={register({required: true})}
+                          onChange={(e)=>_updateFeatureValue(feature, e)}
+                          className="form-input mt-1 text-xs block w-full bg-white mt-2"
+                          placeholder={feature.description}
+                        />
+                      </label>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="flex-col w-full mb-2 ml-6 float-right">
