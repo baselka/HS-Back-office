@@ -24,7 +24,7 @@ const Index = () => {
   const [imagesList, setImagesList] = useState([])
   const [alertType, setAlertType] = useState('red');
   const [accountTypes, setAccountTypes] = useState([{label:"مدير لوحة التحكم", value:1},{label:"ممثل خدمة العملاء",value:2}]);
-  const {register, handleSubmit, watch, errors, setValue} = useForm();
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { id: 0, username: "", full_name: "", email: "", phone: "", acc_type: "" }});
   const [userID, setUserID] = useState(null);
   const router = useRouter();
   const { id } = router.query;
@@ -59,20 +59,21 @@ const Index = () => {
 
   useEffect(() => {
     if(userData){
-      let userCurrentData = [
-        { id: userData.id },
-        { username: userData.username },
-        { full_name: userData.full_name },
-        { email: userData.email },
-        { phone: userData.phone },
-        { acc_type: userData.acc_type }
-      ];
+      let userCurrentData = { 
+        id: userData.id,
+        username: userData.username,
+        full_name: userData.full_name,
+        email: userData.email,
+        phone: userData.phone,
+        acc_type: userData.acc_type
+      };
       if(userData.acc_type === 1){
         setUserID({label:"مدير لوحة التحكم", value:1});
       }else{
         setUserID({label:"ممثل خدمة العملاء",value:2});
       }
-      setValue(userCurrentData);
+      reset(userCurrentData);
+      // setValue(userCurrentData);
     }
   }, [userData])
 
@@ -124,14 +125,34 @@ const Index = () => {
             </div>
           ) : (
             <div>
-            <Widget title="تعديل بيانات المستخدم" description={""}>
+            <Widget className="relative" title="تعديل بيانات المستخدم" description={""}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="text-sm mb-4 w-full"
                   autoComplete="off"
                   defaultValue  
                 >
-                  <Widget title="" className="bg-gray-100 w-10/12" >
+                <div className="customActLinks">
+                  <div
+                      className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                      onClick={()=> router.back() }
+                  >إلغاء</div>
+                  <input
+                      type="submit"
+                      className="px-6 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                      value="حفظ"
+                  />
+                </div>
+                  <div className="w-full clear-both">
+                    {messages && (
+                      <div className={"bg-white"} >
+                        <Alert color="red" raised flat >
+                          {messages}
+                        </Alert>
+                      </div>
+                    )}
+                  </div>
+                  <Widget title="" className="mt-10 bg-gray-100 w-10/12" >
                     <div className="flex-col w-96 mb-4 ml-6 float-right">
                         <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                           <label className="block">
@@ -205,18 +226,7 @@ const Index = () => {
                     </div>
 
                     <div className="w-full clear-both">
-                      {messages && (
-                        <div className={"bg-white"} >
-                          <Alert color="red" raised flat >
-                            {messages}
-                          </Alert>
-                        </div>
-                      )}
-                      <input
-                        type="submit"
-                        className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                        value="حفظ"
-                      />
+                      <br></br>
                   </div>
                 </Widget>
               </form>

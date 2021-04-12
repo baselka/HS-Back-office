@@ -39,7 +39,7 @@ const Simple = ({ categories, deleteCat }) => {
         Cell: props => {
           return (
             <div>
-              <p className='max-w-2xl truncate' >{props.row.original.type_desc}</p>
+              <p className='max-w-xl truncate' >{props.row.original.type_desc}</p>
             </div>
           );
         }
@@ -59,6 +59,12 @@ const Simple = ({ categories, deleteCat }) => {
                 <a className="float-right btn btn-default btn-pink rounded-full btn-icon inline-block w-30 mx-1">
                   <i className="icon-eye font-bold mr-1 ml-1" />
                     عرض الاقسام الفرعية
+                </a>
+              </Link>
+              <Link href={"/app/features/"+props.row.original.id} >
+                <a className="float-right btn btn-default btn-green rounded-full btn-icon inline-block w-24 mx-1">
+                  <i className="icon-trophy font-bold mr-1 ml-1" />
+                  المزايا
                 </a>
               </Link>
               <button className="float-right btn btn-default btn-red rounded-full btn-icon inline-block w-24 mx-1" onClick={()=>deleteCat(props.row.original.id)} >
@@ -129,18 +135,21 @@ const Index = () => {
           <Modal change={()=>_deleteCatConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف التنصيف  ؟'} options={null} />
         )}
 
-        <div className="flex text-sm mb-4">
+        <div className="relative flex text-sm mb-4">
           <div className="w-10/12">
             <SectionTitle
               title='إدارة التطبيق'
               subtitle='إدارة الأقسام الرئيسية'
             />
           </div>
-          <div className="w-2/12">
-            <button className="btn btn-default btn-green rounded-full btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
-              <i className="icon-plus font-bold mr-1 ml-1" />
+          <div className="customActLinks">
+            <div
+                className="px-10 py-3 mt-1 uppercase font-bold text-white bg-pink-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                onClick={()=> _addNew() }
+            >
+              <i className="icon-plus font-bold mr-1 ml-1 mt-1" />
               <span>إضافة تصنيف جديد</span>
-            </button>
+            </div>
           </div>
         </div>
 

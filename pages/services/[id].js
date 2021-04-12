@@ -136,7 +136,7 @@ const Index = () => {
         setLoadingData(false);
         console.log('_getAllServices', res);
         if(res.statusCode === 200){
-          setServices(res.data);
+          setServices(res?.data);
         }else{
           if(res.statusName){
             setMessages(res.statusName);
@@ -178,16 +178,24 @@ const Index = () => {
               </div>
             ) : (
               <>
-                <div className="flex text-sm mb-4">
+                <div className="flex text-sm mb-4 relative">
                   <div className="w-10/12">
                     <SectionTitle title="إدارة الخدمات" subtitle={"إدارة خدمات فرع "+ branchName } />
                   </div>
-                  <div className="w-2/12">
-                    <button className="btn btn-default btn-pink rounded-full btn-icon float-left ml-10 mt-3" onClick={()=>_addNew()} >
+
+                  
+                  <div className="customActLinks">
+                    <div
+                        className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                        onClick={()=> router.back() }
+                    >تراجع</div>
+                    
+                    <button className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2" onClick={()=>_addNew()} >
                       <i className="icon-plus font-bold mr-1 ml-1" />
                       <span>إضافة خدمة جديدة للفرع</span>
                     </button>
                   </div>
+
                 </div>
 
                 {services.length === 0 ? (

@@ -148,7 +148,7 @@ const Index = () => {
   const [latitude, setLatitude] = useState(24.7249316);
   const [longitude, setLongitude] = useState(46.5423435);
   const [toDeleteID, setToDeleteID] = useState(null);
-  const {register, handleSubmit, watch, errors, setValue} = useForm();
+  const {register, handleSubmit, watch, errors, setValue, reset} = useForm({defaultValues: { branch_name: "", branch_desc: "", whats: "", twitter: "", facebook: "", snapchat: "", insta: "", telephone: 0, city_id: 0, category_id: 0, email: "", lat: 0, lon: 0, sub_cat_id: 0, provider_id: 0 }});
   const router = useRouter();
   const { id } = router.query;
 
@@ -191,9 +191,7 @@ const Index = () => {
   }
 
   const _getBrancheDetails = ( branch_id ) => {
-      console.log("res branch_id", branch_id);
       Api.Branches.details(branch_id).then((res)=>{
-        console.log("res", res);
         if(res.statusCode === 200 && res.data?.branchDetails?.length){
           const { branchDetails } = res.data;
           if(branchDetails[0]?.lat && branchDetails[0]?.lat){
@@ -221,26 +219,28 @@ const Index = () => {
       _getSubCategories();
       _getProvidersList();
 
-      let branchCurrentData = [
-        { branch_name: branchData.branch_name },
-        { branch_desc: branchData.branch_desc },
-        { whats: branchData.whats },
-        { twitter: branchData.twitter },
-        { facebook: branchData.facebook },
-        { snapchat: branchData.snapchat },
-        { insta: branchData.insta },
-        { telephone: branchData.telephone },
-        { city_id: branchData.city_id },
-        { category_id: branchData.category_id },
-        { email: branchData.email },
-        { lat: branchData.lat },
-        { lon: branchData.lon },
-        { sub_cat_id: branchData.sub_cat_id },
-        { provider_id: branchData.provider_id }
-      ];
-      setTimeout(() => {
-        setValue(branchCurrentData);
-      }, 500);
+      let branchCurrentData = { 
+        branch_name: branchData.branch_name,
+        branch_desc: branchData.branch_desc,
+        whats: branchData.whats,
+        twitter: branchData.twitter,
+        facebook: branchData.facebook,
+        snapchat: branchData.snapchat,
+        insta: branchData.insta,
+        telephone: branchData.telephone,
+        city_id: branchData.city_id,
+        category_id: branchData.category_id,
+        email: branchData.email,
+        lat: branchData.lat,
+        lon: branchData.lon,
+        sub_cat_id: branchData.sub_cat_id,
+        provider_id: branchData.provider_id
+      };
+      reset(branchCurrentData);
+      console.log("BranchData", branchCurrentData);
+      // setTimeout(() => {
+      //   setValue(branchCurrentData);
+      // }, 500);
     }
   }, [branchData])
 
@@ -250,7 +250,7 @@ const Index = () => {
     }
     setTimeout(() => {
       setLoadingData(false);
-    }, 5000)
+    }, 3000)
   }, [longitude, latitude, providersList, subCategories, defaultImagesList, imagesList, branchData, cityID, categoryID, subCategoryID, selectedProvider, selectedCity, selectedCat, selectedSubCat, citiesList, categoriesList])
  
 
@@ -276,9 +276,11 @@ const Index = () => {
         let plist = [];
         for (let index = 0; index < res.data.length; index++) {
           const element = res.data[index];
-          plist.push({label:element.full_name, value:element.provider_id});
-          if(element.provider_id == branchData.provider_id){
-            setSelectedProvider({label:element.full_name, value:element.provider_id});
+          if(element.full_name){
+            plist.push({label:element.full_name, value:element.provider_id});
+            if(element.provider_id == branchData.provider_id){
+              setSelectedProvider({label:element.full_name, value:element.provider_id});
+            }
           }
         }
         setProvidersList(plist);
@@ -430,13 +432,29 @@ const Index = () => {
               {confirmModal && (
                 <Modal change={()=>_confirmRemoveBranchImage()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الصورة ؟'} options={null} />
               )}
-              <Widget title="تعديل بيانات الفرع" description={""}>
+              <Widget className="relative" title="تعديل بيانات الفرع" description={""}>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
                     className="text-sm mb-4 w-full"
                     defaultValue  
                   >
-                  <Widget title="" className="bg-gray-100 w-10/12" >
+                  <div className="customActLinks">
+                    <div
+                      className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                      onClick={()=> router.back() }
+                    >إلغاء</div>
+                    <input
+                      type="submit"
+                      className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none float-left ml-2"
+                      value="تحديث الفرع"
+                    />
+                  </div>
+                  {messages && (
+                    <Alert color="red" raised flat >
+                        {messages}
+                    </Alert>
+                  )}
+                  <Widget title="" className="mt-10 bg-gray-100 w-10/12" >
                       <div className="flex-col w-96 mb-4 ml-6 float-right">
                           <div className="w-full mb-6 p-5 bg-white border-2 border-gray-200">
                             <label className="block">
@@ -614,16 +632,7 @@ const Index = () => {
                       </div>
 
                       <div className="w-full clear-both">
-                        {messages && (
-                          <Alert color="red" raised flat >
-                            {messages}
-                          </Alert>
-                        )}
-                        <input
-                          type="submit"
-                          className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
-                          value="حفظ"
-                        />
+                        <br></br>
                     </div>
                   </Widget>
                 </form>

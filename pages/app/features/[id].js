@@ -18,17 +18,31 @@ export async function getServerSideProps(context) {
   };
 }
 
-const Simple = ({ categories, deleteSubCat }) => {
+const Simple = ({ features, deletec }) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "#",
-        accessor: "id",
-        width: 200
+        Header: "الصورة",
+        accessor: "image",
+        Cell: props => {
+          return (
+            <div className='flex justify-center'>
+              <img
+                src={props.row.original.image}
+                alt='image'
+                className={`w-8 shadow rounded max-w-full border-none`}
+              />
+            </div>
+          );
+        }
       },
       {
-        Header: "اسم التصنيف",
+        Header: "الاسم",
         accessor: "name"
+      },
+      {
+        Header: "الوصف",
+        accessor: "description"
       },
       {
         Header: "ادوات",
@@ -37,7 +51,7 @@ const Simple = ({ categories, deleteSubCat }) => {
           return (
             <div className={"flex-row "} >
               <div className={"inline-block"} >
-                <Link href={"/app/sub-categories/edit/"+props.row.original.id} >
+                <Link href={"/app/features/edit/"+props.row.original.id} >
                   <a className="btn btn-default btn-blue rounded-full btn-icon inline-block w-24 mx-2">
                     <i className="icon-note font-bold mr-1 ml-1" />
                     تعديل
@@ -45,7 +59,7 @@ const Simple = ({ categories, deleteSubCat }) => {
                 </Link>
               </div>
               <div className={"inline-block"} >
-                <button className="btn btn-default btn-red rounded-full btn-icon inline-block w-24 mx-2" onClick={()=>deleteSubCat(props.row.original.id)} >
+                <button className="btn btn-default btn-red rounded-full btn-icon inline-block w-24 mx-2" onClick={()=>deletec(props.row.original.id)} >
                   <i className="icon-trash font-bold mr-1 ml-1" />
                   <span>حذف</span>
                 </button>
@@ -57,80 +71,71 @@ const Simple = ({ categories, deleteSubCat }) => {
     ],
     []
   );
-  return <Datatable columns={columns} data={categories} />;
+  return <Datatable columns={columns} data={features} />;
 };
 
 const Index = () => {
-  const [categories, setCategories] = useState([]);
   const [messages, setMessages] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
   const [loadingData, setLoadingData] = useState(true);
   const [catToDeleteID, setCatToDeleteID] = useState('')
-  const [catName, setCatName] = useState('')
+  const [featureList, setFeatureList] = useState([])
   const [alertType, setAlertType] = useState('red')
   const router = useRouter();
   const { id } = router.query;
 
   useEffect(() => {
     if(id){
-      _getSubCategories();
+      _getFeatures(id);
     }else{
       setLoadingData(false);
-      setCategories(null);
-      setMessages("عفوا : رقم التصنيف غير صحيح");
+      setFeatureList(null);
+      setMessages("عفوا : رقم الميزة غير صحيح");
       setAlertType('red');
-      NotificationManager.error("رقم التصنيف غير صحيح", 'عفواً', 3000);
+      NotificationManager.error("رقم الميزة غير صحيح", 'عفواً', 3000);
     }
   }, []);
 
-  const _deleteSubCat = ( s_id ) => {
+  const _deleteFeat = ( s_id ) => {
     setConfirmModal(true);
     setCatToDeleteID(s_id);
   }
 
-  const _deleteSubcatConfirmed = () => {
+  const _deleteFeatureConfirmed = () => {
     setConfirmModal(false);
-    let data = {catId:Number(id), id:catToDeleteID};
-    console.log("_deleteSubcatConfirmed", data);
-    Api.Categories.deleteSub(data).then((res)=>{
-      _getSubCategories();
-      NotificationManager.success("تم حذف التصنيف الفرعي بنجاح", 'نجاح', 3000);
+    Api.Features.delete(catToDeleteID).then((res)=>{
+      _getFeatures(id);
+      console.log("res", res);
+      NotificationManager.success("تم حذف الميزة بنجاح", 'نجاح', 3000);
     });
   }
 
   const _addNew = () => {
-    router.push('/app/sub-categories/addNew/'+id);
+    router.push('/app/features/addNew/'+id);
   }
 
-  const _getSubCategories = () => {
-    Api.Categories.sub().then(res => {
-      console.log("_getSubCategories", res);
-      if (res.statusCode === 200) {
-        for (let index = 0; index < res.data.length; index++) {
-          const element = res.data[index];
-          if(element.id == id){
-            setLoadingData(false);
-            setCatName(element.type_name);
-            setCategories(element.sub_categories);
-          }
-        }
-      }
+  const _getFeatures = ( cat_id ) => {
+    console.log("category_id", cat_id);
+    Api.Features.all(cat_id).then((res)=>{
+      console.log("_getFeaturesList", res);
+      setFeatureList(res?.data);
+      setLoadingData(false);
     });
-  };
+  }
 
   return (
     <Container>
       <Layout>
 
         {confirmModal && (
-          <Modal change={()=>_deleteSubcatConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف التنصيف الفرعي ؟'} options={null} />
+          <Modal change={()=>_deleteFeatureConfirmed()} cancel={()=>setConfirmModal(false)} title={'تأكيد'} message={'هل تريد فعلا حذف الميزة ؟'} options={null} />
         )}
 
         { loadingData ? (
           <LoadingModal />
         ) : (
           <>
-            { categories === null ? (
+            { featureList === null ? (
               <div className="flex justify-center w-11/12 content-center" style={{paddingTop:200}} > 
                 <div className="w-15 h-20 text-center text-xl text-gray-800 bg-white">
                     {messages &&
@@ -146,7 +151,7 @@ const Index = () => {
                   <div className="w-10/12">
                     <SectionTitle
                       title='إدارة الأقسام'
-                      subtitle='إدارة الأقسام الفرعية'
+                      subtitle='إدارة مزايا الاقسام'
                     />
                   </div>
                   <div className="customActLinks">
@@ -155,21 +160,27 @@ const Index = () => {
                         onClick={()=> _addNew() }
                     >
                       <i className="icon-plus font-bold mr-1 ml-1 mt-1" />
-                      <span>إضافة تصنيف فرعي جديد</span>
+                      <span>إضافة ميزة جديدة</span>
+                    </div>
+                    <div
+                        className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-left mr-2"
+                        onClick={()=> router.back() }
+                    >
+                      <span>عودة</span>
                     </div>
                   </div>
                 </div>
 
-                {categories.length === 0 ? (
+                {featureList.length === 0 ? (
                   <div className={"bg-white"} >
                     <Alert color="red" closeable={true} type="warning" raised flat >
-                      {"عفوا : لاتوجد اقسام فرعية لهذا التصنيف "}
+                      {"عفوا : لاتوجد مزايا حاليا لهذا التصنيف"}
                     </Alert>
                   </div>
                 ):(
-                  <Widget title={" الأقسام الفرعية لفرع " + catName }>
+                  <Widget title={"قائمة المزايا" }>
                     <div className="">
-                      <Simple categories={categories} deleteSubCat={_deleteSubCat} />
+                      <Simple features={featureList} deletec={_deleteFeat} />
                     </div>
                   </Widget>
                 )}

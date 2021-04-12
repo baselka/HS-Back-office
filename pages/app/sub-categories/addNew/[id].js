@@ -74,9 +74,13 @@ const Index = () => {
                   <div className="w-full clear-both">
                     <input
                       type="submit"
-                      className="px-4 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-lg cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
+                      className="px-10 py-3 mt-1 uppercase font-bold text-white bg-pink-700 rounded-full cursor-pointer hover:bg-pink-800 focus:outline-none active:outline-none"
                       value="إضافة"
                     />
+                    <div
+                        className="px-10 py-3 mt-1 uppercase font-bold text-white bg-gray-600 rounded-full cursor-pointer hover:bg-grey-800 focus:outline-none active:outline-none float-right ml-2"
+                        onClick={()=> router.back() }
+                    >إلغاء</div>
                 </div>
               </Widget>
             </form>

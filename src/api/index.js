@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const handleErrors = async error => {
-  console.log("error", error);
+  console.log("error", Object.assign({}, error));
   let result = {};
   if (error === "Network Error") {
     result = {
@@ -27,7 +27,7 @@ const handleErrors = async error => {
 
   result = {
     statusCode: status,
-    statusName: data ? data.statusName : "Responce Error",
+    statusName: data ? data?.statusName : "Responce Error",
     data
   };
   return result;
@@ -37,7 +37,7 @@ const handleResponse = res => {
   return res && res.data;
 };
 
-const createApi = () => {
+const createApi = type => {
   const authToken = cookie.get("token"); // localStorage.getItem('persist:auth') && localStorage.getItem('persist:auth').authToken
   if (authToken) {
     headers = {
@@ -45,13 +45,27 @@ const createApi = () => {
       "Content-Type": "application/json",
       Authorization: authToken !== "null" ? `Bearer ${authToken}` : ""
     };
+
+    if (type) {
+      headers = {
+        "Content-Type": "multipart/form-data",
+        Authorization: authToken !== "null" ? `Bearer ${authToken}` : ""
+      };
+    }
   } else {
     headers = {
       "Content-Type": "application/x-www-form-urlencoded",
       "Content-Type": "application/json"
     };
+
+    if (type) {
+      headers = {
+        "Content-Type": "multipart/form-data"
+      };
+    }
   }
 
+  console.log("headers", headers);
   const api = axios.create({
     baseURL: API_ROOT,
     responseType: "json",
@@ -77,9 +91,9 @@ const uploadDataFormApi = async data => {
   myHeaders.append("Authorization", "Bearer " + authToken);
 
   var formdata = new FormData();
-  formdata.append("branch_id", data.id);
-  for (let index = 0; index < data.images.length; index++) {
-    const element = data.images[index];
+  formdata.append("branch_id", data?.id);
+  for (let index = 0; index < data?.images?.length; index++) {
+    const element = data?.images[index];
     formdata.append("images", element, element.name);
   }
 
@@ -108,9 +122,9 @@ const uploadServiceImages = async data => {
   myHeaders.append("Authorization", "Bearer " + authToken);
 
   var formdata = new FormData();
-  formdata.append("service_id", data.id);
-  for (let index = 0; index < data.images.length; index++) {
-    const element = data.images[index];
+  formdata.append("service_id", data?.id);
+  for (let index = 0; index < data?.images?.length; index++) {
+    const element = data?.images[index];
     formdata.append("images", element, element.name);
   }
 
@@ -142,8 +156,8 @@ const deleteBody = async data => {
   myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
   var urlencoded = new URLSearchParams();
-  urlencoded.append("id", data.id);
-  urlencoded.append("catId", data.catId);
+  urlencoded.append("id", data?.id);
+  urlencoded.append("catId", data?.catId);
 
   var requestOptions = {
     method: "DELETE",
@@ -170,10 +184,10 @@ const createNewCategory = async data => {
   myHeaders.append("Authorization", "Bearer " + authToken);
 
   var formdata = new FormData();
-  formdata.append("type_name", data.type_name);
-  formdata.append("type_desc", data.type_desc);
-  for (let index = 0; index < data.images.length; index++) {
-    const element = data.images[index];
+  formdata.append("type_name", data?.type_name);
+  formdata.append("type_desc", data?.type_desc);
+  for (let index = 0; index < data?.images?.length; index++) {
+    const element = data?.images[index];
     formdata.append("images", element, element.name);
   }
 
@@ -202,12 +216,9 @@ const requests = {
       .get(`${API_ROOT}${url}`, data)
       .then(handleResponse)
       .catch(handleErrors),
-  post: (url, data, externalURL) =>
-    createApi()
-      .post(
-        `${externalURL === undefined ? `${API_ROOT}${url}` : externalURL}`,
-        data
-      )
+  post: (url, data, type) =>
+    createApi(type)
+      .post(`${API_ROOT}${url}`, data)
       .then(handleResponse)
       .catch(handleErrors),
   patch: (url, data) =>
@@ -235,17 +246,17 @@ const Branches = {
   search: data =>
     requests.get(
       "/branches/" +
-        data.start +
+        data?.start +
         "/" +
-        data.end +
+        data?.end +
         "/" +
-        data.city +
+        data?.city +
         "/" +
-        data.cat +
+        data?.cat +
         "/" +
-        data.subCat +
+        data?.subCat +
         "/" +
-        data.term +
+        data?.term +
         "/",
       {}
     ),
@@ -253,13 +264,13 @@ const Branches = {
   update: data => requests.patch("/update-branch", data),
   deleteImage: data =>
     requests.delete(
-      "/delete-branch-image/" + data.branch + "/" + data.image,
+      "/delete-branch-image/" + data?.branch + "/" + data?.image,
       {}
     ),
   instantEdit: data => requests.post("/instant-edit", data),
   changeStatus: data =>
     requests.patch(
-      "/update-branch-status/" + data.branch_id + "/" + data.status,
+      "/update-branch-status/" + data?.branch_id + "/" + data?.status,
       {}
     ),
   uploadBranchImages: data => uploadDataFormApi(data)
@@ -274,7 +285,7 @@ const Cities = {
 
 const Providers = {
   all: data =>
-    requests.get("/providers/" + data.start + "/" + data.end + "/0", {}),
+    requests.get("/providers/" + data?.start + "/" + data?.end + "/0", {}),
   create: data => requests.post("/add-provider", data)
 };
 
@@ -298,7 +309,7 @@ const Users = {
   create: data => requests.post("/add-user", data),
   details: id => requests.get("/user-details/" + id, {}),
   changePassword: data =>
-    requests.patch("/change-user-password/" + data.id, data)
+    requests.patch("/change-user-password/" + data?.id, data)
 };
 
 const Services = {
@@ -309,11 +320,18 @@ const Services = {
   delete: id => requests.delete("/delete-service/" + id, {}),
   deleteImage: data =>
     requests.delete(
-      "/delete-service-image/" + data.service + "/" + data.image,
+      "/delete-service-image/" + data?.service + "/" + data?.image,
       {}
     ),
   details: data => requests.post("/service-details", data),
   uploadServiceImages: data => uploadServiceImages(data)
+};
+
+const Features = {
+  all: id => requests.get("/features/" + id, {}),
+  create: data => requests.post("/add-feature", data, true),
+  update: data => requests.patch("/update-feature", data, true),
+  delete: id => requests.delete("/delete-feature/" + id, {})
 };
 
 const Stats = {
@@ -346,6 +364,7 @@ export default {
   Cities,
   Services,
   Categories,
+  Features,
   Providers,
   Users,
   Stats,
