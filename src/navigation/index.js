@@ -1,37 +1,37 @@
-import React from 'react'
-import * as Icon from 'react-feather'
+import React from "react";
+import * as Icon from "react-feather";
 
 const navigation = [
   {
-    title: '',
+    title: "",
     items: [
       {
-        url: '/dashboards',
+        url: "/dashboards",
         icon: <Icon.Home size={20} />,
-        title: 'الرئيسية',
+        title: "الرئيسية",
         items: []
       },
       {
-        url: '/users',
+        url: "/users",
         icon: <Icon.Users size={20} />,
-        title: 'إدارة المستخدمين',
+        title: "إدارة المستخدمين",
         items: []
       },
       {
-        url: '/app/cities',
+        url: "/app/cities",
         icon: <Icon.Smartphone size={20} />,
-        title: 'إدارة التطبيق',
+        title: "إدارة التطبيق",
         items: [
           {
-            url: '/app/cities',
+            url: "/app/cities",
             icon: <Icon.CornerDownLeft size={20} />,
-            title: 'إدارة المدن',
+            title: "إدارة المدن",
             items: []
           },
           {
-            url: '/app/categories',
+            url: "/app/categories",
             icon: <Icon.CornerDownLeft size={20} />,
-            title: 'إدارة الأقسام الرئيسية',
+            title: "إدارة الأقسام الرئيسية",
             items: []
           },
           // {
@@ -41,51 +41,51 @@ const navigation = [
           //   items: []
           // },
           {
-            url: '/app/cards',
+            url: "/app/cards",
             icon: <Icon.CornerDownLeft size={20} />,
-            title: 'كروت الدعوة',
+            title: "كروت الدعوة",
             items: []
-          },
+          }
         ]
       },
       {
-        url: '/providers/branches',
+        url: "/providers/branches",
         icon: <Icon.Briefcase size={20} />,
-        title: 'إدارة الفروع والخدمات',
+        title: "إدارة الفروع والخدمات",
         items: []
       },
       {
-        url: '/providers',
+        url: "/providers",
         icon: <Icon.Settings size={20} />,
-        title: 'مقدمي الخدمات',
+        title: "مقدمي الخدمات",
         items: []
       },
       {
-        url: '/advertisements',
+        url: "/advertisement",
         icon: <Icon.Monitor size={20} />,
-        title: 'إدارة الإعلانات والعروض',
+        title: "إدارة الإعلانات والعروض",
         items: [
           {
-            url: '/advertisements',
+            url: "/advertisement",
             icon: <Icon.CornerDownLeft size={20} />,
-            title: 'الإعلانات',
+            title: "الإعلانات",
             items: []
           },
           {
-            url: '/offers',
+            url: "/offers",
             icon: <Icon.CornerDownLeft size={20} />,
-            title: 'العروض',
+            title: "العروض",
             items: []
-          },
+          }
         ]
       },
       {
-        url: '/suggestions',
+        url: "/suggestions",
         icon: <Icon.MessageCircle size={20} />,
-        title: 'إقتراحات وشكاوى',
+        title: "إقتراحات وشكاوى",
         items: []
-      },
+      }
     ]
-  },
-]
-export default navigation
+  }
+];
+export default navigation;

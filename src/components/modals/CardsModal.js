@@ -1,3 +1,10 @@
+const cardTypeOptions = [
+  { name: "دعوة زفاف", id: 1 },
+  { name: "عيد ميلاد", id: 2 },
+  { name: "حفل خطوبه", id: 3 },
+  { name: "حفل تخرج", id: 4 },
+  { name: "دعوة عامه", id: 5 }
+];
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -26,32 +33,26 @@ const ModalBody = prop => {
       <form className=' p-4 flex-auto'>
         {prop.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>اضف صوره</p>
           </div>
         )}
-        <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
-          <input
-            required
-            maxlength='10'
-            type='text'
-            placeholder={prop.name}
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
+
+        <label htmlFor='card_type' className='block'>
+          <select
             className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
-          <input
-            required
-            maxlength='15'
-            type='text'
-            placeholder={prop.description}
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
+            onChange={prop.handleCardTypeChange}>
+            {cardTypeOptions.map((item, i) => {
+              return (
+                <option
+                  key={i}
+                  name={item.name}
+                  value={item.id}
+                  selected={item.id === prop.inputValues.card_type}>
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
         </label>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
@@ -60,6 +61,7 @@ const ModalBody = prop => {
               id='fileUpload'
               accept='image/*'
               type='file'
+              placeholder={prop.inputValues.file}
               value={prop.inputValues.file}
               onChange={prop.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
@@ -102,31 +104,26 @@ const ModalBody = prop => {
       <form className=' p-4 flex-auto'>
         {prop.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>اضف صوره</p>
           </div>
         )}
-        <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
-          <input
-            required
-            maxlength='10'
-            type='text'
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
-          <input
-            maxlength='15'
-            required
-            type='text'
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
+
+        <span className='text-sm text-default'>حدد المناسبه</span>
+        <select
+          className='text-sm form-input mt-1 block w-full border'
+          onChange={prop.handleCardTypeChange}>
+          {cardTypeOptions.map((item, i) => {
+            return (
+              <option
+                key={i}
+                name={item.name}
+                value={item.id}
+                selected={item.id === prop.inputValues.card_type}>
+                {item.name}
+              </option>
+            );
+          })}
+        </select>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
           {!prop.inputValues.file && (
@@ -163,7 +160,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+              src={URL.createObjectURL(prop.inputValues.file)}
             />
           </div>
         )}
@@ -189,15 +186,15 @@ const ModalFooter = ({ cancel, handleSubmit }) => (
   </div>
 );
 
-const OfferModal = ({
+const CardsModal = ({
   cancel,
   title,
   type,
   message,
   inputValues,
   handleSubmit,
-  handleNameChange,
-  handleDescriptionChange,
+
+  handleCardTypeChange,
   handleImageChange,
   deleteImage,
   error
@@ -212,8 +209,7 @@ const OfferModal = ({
             <ModalBody
               body={message}
               inputValues={inputValues}
-              handleNameChange={handleNameChange}
-              handleDescriptionChange={handleDescriptionChange}
+              handleCardTypeChange={handleCardTypeChange}
               handleImageChange={handleImageChange}
               type={type}
               deleteImage={deleteImage}
@@ -227,4 +223,4 @@ const OfferModal = ({
   );
 };
 
-export default OfferModal;
+export default CardsModal;

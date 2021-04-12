@@ -1,22 +1,24 @@
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState, useEffect } from "react";
 import Container from "../Container";
 import Layout from "../../src/layouts";
 import SectionTitle from "../../src/components/section-title";
-import OfferModal from "../../src/components/modals/AddsModal";
+
+import AdsModal from "../../src/components/modals/AdsModal";
 import DeleteModal from "../../src/components/modals/DeleteModal";
+import api from "../../src/api";
 
 const Index = () => {
   const [id, setId] = useState("");
   const [type, setType] = useState("");
-  const [offers, setOffers] = useState([]);
-  const [offerModal, setOfferModal] = useState(false);
-  const [offermodalTitle, setOfferModalTitle] = useState("");
+  const [ads, setAds] = useState([]);
+  const [adsModal, setAdsModal] = useState(false);
+  const [adsModalTitle, setAdsModalTitle] = useState("");
   const [inputValues, setInputValues] = useState({
     id: "",
     name: "",
-    description: "",
-    file: ""
+    file: "",
+    // branch_id: 1,
+    redirectUrl: ""
   });
 
   const [deleteModalMessage, setDeleteModalMessage] = useState("");
@@ -24,11 +26,46 @@ const Index = () => {
   const [deleteModal, setDeleteModal] = useState("");
   const [error, setError] = useState(false);
 
+  // component did mount
+  useEffect(() => {
+    _getAllAds();
+  }, []);
+
+  const _getAllAds = () => {
+    api.Ads.all().then(res => {
+      console.log("_getAllAds", res);
+      if (res.statusCode === 200) {
+        console.log(res, "res");
+        setAds(res.data);
+      }
+    });
+  };
+
   const add = () => {
-    setType("add");
-    setOfferModalTitle("اضف عرضك");
-    setOfferModal(true);
+    setType("ad");
+    setAdsModalTitle("اضف اعلانك");
+    setAdsModal(true);
     setError(false);
+  };
+
+  const edit = ad => {
+    const id = ad.id;
+    const name = ad.name;
+    const redirectUrl = ad.redirectUrl;
+    const file = ad.file;
+    const branch_id = ad.branch_id;
+    setId(id);
+    setInputValues({
+      id,
+      name,
+      redirectUrl,
+      file,
+      branch_id
+    });
+    setType("edit");
+    setError(false);
+    setAdsModalTitle("تعديل");
+    setAdsModal(true);
   };
 
   const handleImageChange = e => {
@@ -40,49 +77,54 @@ const Index = () => {
     setInputValues({ ...inputValues, name: e.target.value });
   };
 
-  const handleDescriptionChange = e => {
-    setInputValues({ ...inputValues, description: e.target.value });
+  const handlerediRectUrlChange = e => {
+    setInputValues({ ...inputValues, redirectUrl: e.target.value });
   };
+
+  const handleBranchChange = e => {
+    setInputValues({ ...inputValues, branch_id: Number(e.target.value) });
+  };
+
   const handleSubmit = e => {
     e.preventDefault();
     if (
       inputValues.name === "" ||
-      inputValues.description === "" ||
+      inputValues.redirectUrl === "" ||
       inputValues.file === ""
     ) {
       setError(true);
     } else {
-      if (type === "add") {
-        {
-          let valuesWithId = { ...inputValues, id: uuidv4() };
-          setOffers([...offers, valuesWithId]);
-        }
+      if (!inputValues.id) {
+        console.log("adddddddddddddddddddddddddd", inputValues);
       } else {
-        const copyOfOffers = offers.filter(offer => offer.id !== id);
+        console.log("updateeeeeeeeeeeeeeeeee", inputValues);
+        const copyOfads = ads.filter(ad => ad.id !== id);
         const name = inputValues.name;
-        const description = inputValues.description;
+        const redirectUrl = inputValues.redirectUrl;
         setInputValues({
           id: id,
           name,
-          description
+          redirectUrl,
+          branch_id
         });
-        const newOffers = [...copyOfOffers, inputValues];
-        setOffers(newOffers);
+        const newAds = [...copyOfads, inputValues];
+        setAds(newAds);
       }
 
       setInputValues({
         id: "",
         name: "",
-        description: "",
-        file: null
+        redirectUrl: "",
+        file: null,
+        branch_id: 1
       });
-      setOfferModal(false);
+      setAdsModal(false);
       setError(false);
     }
   };
 
-  const deleteCard = offer => {
-    const id = offer.id;
+  const deleteAd = ad => {
+    const id = ad.id;
     setId(id);
     setDeleteModalTitle("حذف");
     setDeleteModal(true);
@@ -90,28 +132,19 @@ const Index = () => {
   };
 
   const confirmDelete = () => {
-    const newOffers = offers.filter(offer => offer.id !== id);
-    setOffers(newOffers);
-    setDeleteModal(false);
+    //call api
+    api.Ads.delete(id).then(res => {
+      console.log(id);
+      console.log("_getAllAds", res);
+      if (res.statusCode === 202) {
+        console.log("deleted");
+        _getAllAds();
+      }
+      setDeleteModal(false);
+    });
   };
 
-  const edit = offer => {
-    const id = offer.id;
-    const name = offer.name;
-    const description = offer.description;
-    const file = offer.file;
-    setId(id);
-    setInputValues({
-      id,
-      name,
-      description,
-      file
-    });
-    setType("edit");
-    setOfferModalTitle("تعديل");
-    setOfferModal(true);
-  };
-  console.log(offers, "offers");
+  console.log(ads, "ads");
 
   const deleteImage = () => {
     let file = null;
@@ -120,19 +153,23 @@ const Index = () => {
   return (
     <Container>
       <Layout>
-        <SectionTitle title='إدارة الإعلانات والعروض' subtitle='إدارة العروض' />
+        <SectionTitle
+          title='إدارة الإعلانات والعروض'
+          subtitle='إدارة الإعلانات'
+        />
 
-        {offerModal && (
-          <OfferModal
-            cancel={() => setOfferModal(false)}
+        {adsModal && (
+          <AdsModal
+            cancel={() => setAdsModal(false)}
             type={type}
-            title={offermodalTitle}
+            title={adsModalTitle}
             handleImageChange={e => handleImageChange(e)}
+            handleBranchChange={e => handleBranchChange(e)}
             handleNameChange={handleNameChange}
-            handleDescriptionChange={handleDescriptionChange}
+            handlerediRectUrlChange={handlerediRectUrlChange}
             handleSubmit={handleSubmit}
             inputValues={inputValues}
-            offers={offers}
+            ads={ads}
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
@@ -150,32 +187,34 @@ const Index = () => {
         <button
           className='btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 sm:w-1/5  md:w-1/12  '
           onClick={() => add()}>
-          اضافة عرض
+          اضافة اعلان
         </button>
         <div className='flex flex-wrap  justify-start '>
-          {offers &&
-            offers.map(offer => {
+          {ads &&
+            ads.map(ad => {
+              console.log("add.image", ad.ad_img);
               return (
                 <div
-                  key={offer.id}
+                  key={ad.id}
                   className='overflow-hidden border bg-white rounded-lg shadow-lg m-10 w-full sm:w-2/3 md:w-1/4 flex flex-col p-3'>
                   <img
                     className='bg-center object-cover w-full  h-48 '
-                    src={offer.file}
+                    src={ad.ad_img}
                   />
                   <div>
-                    <h1 className='mb-4 text-2xl'>{offer.name}</h1>
+                    <h1 className='mb-4 text-2xl'>{ad.ad_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      {offer.description}
+                      LINK{ad.redirect_url}
                     </h2>
+
                     <div className='flex flex-row '>
                       <button
-                        onClick={() => deleteCard(offer)}
+                        onClick={() => deleteAd(ad)}
                         className='btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-trash font-bold mr-1 ml-1' />
                       </button>
                       <button
-                        onClick={() => edit(offer)}
+                        onClick={() => edit(ad)}
                         className='btn btn-default btn-yellow rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-note font-bold mr-1 ml-1' />
                       </button>
