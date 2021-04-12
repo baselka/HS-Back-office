@@ -2,23 +2,23 @@ import React, { useState, useEffect } from "react";
 import Container from "../Container";
 import Layout from "../../src/layouts";
 import SectionTitle from "../../src/components/section-title";
-import { v4 as uuidv4 } from "uuid";
 
-import AddsModal from "../../src/components/modals/AddsModal";
+import AdsModal from "../../src/components/modals/AdsModal";
 import DeleteModal from "../../src/components/modals/DeleteModal";
 import api from "../../src/api";
 
 const Index = () => {
   const [id, setId] = useState("");
   const [type, setType] = useState("");
-  const [adds, setadds] = useState([]);
-  const [addsModal, setAddsModal] = useState(false);
-  const [addsModalTitle, setaddsModalTitle] = useState("");
+  const [ads, setAds] = useState([]);
+  const [adsModal, setAdsModal] = useState(false);
+  const [adsModalTitle, setAdsModalTitle] = useState("");
   const [inputValues, setInputValues] = useState({
     id: "",
     name: "",
-    description: "",
-    file: ""
+    file: "",
+    // branch_id: 1,
+    redirectUrl: ""
   });
 
   const [deleteModalMessage, setDeleteModalMessage] = useState("");
@@ -32,21 +32,40 @@ const Index = () => {
   }, []);
 
   const _getAllAds = () => {
-    api.Promos.all().then(res => {
+    api.Ads.all().then(res => {
       console.log("_getAllAds", res);
       if (res.statusCode === 200) {
         console.log(res, "res");
-        setadds(res.data);
+        setAds(res.data);
       }
     });
   };
-  // const { image, ad_text, branch_id, redirect_url, start_date, end_date } = req.body;
 
   const add = () => {
-    setType("add");
-    setaddsModalTitle("اضف عرضك");
-    setAddsModal(true);
+    setType("ad");
+    setAdsModalTitle("اضف اعلانك");
+    setAdsModal(true);
     setError(false);
+  };
+
+  const edit = ad => {
+    const id = ad.id;
+    const name = ad.name;
+    const redirectUrl = ad.redirectUrl;
+    const file = ad.file;
+    const branch_id = ad.branch_id;
+    setId(id);
+    setInputValues({
+      id,
+      name,
+      redirectUrl,
+      file,
+      branch_id
+    });
+    setType("edit");
+    setError(false);
+    setAdsModalTitle("تعديل");
+    setAdsModal(true);
   };
 
   const handleImageChange = e => {
@@ -58,49 +77,54 @@ const Index = () => {
     setInputValues({ ...inputValues, name: e.target.value });
   };
 
-  const handleDescriptionChange = e => {
-    setInputValues({ ...inputValues, description: e.target.value });
+  const handlerediRectUrlChange = e => {
+    setInputValues({ ...inputValues, redirectUrl: e.target.value });
   };
+
+  const handleBranchChange = e => {
+    setInputValues({ ...inputValues, branch_id: Number(e.target.value) });
+  };
+
   const handleSubmit = e => {
     e.preventDefault();
     if (
       inputValues.name === "" ||
-      inputValues.description === "" ||
+      inputValues.redirectUrl === "" ||
       inputValues.file === ""
     ) {
       setError(true);
     } else {
-      if (type === "add") {
-        {
-          let valuesWithId = { ...inputValues, id: uuidv4() };
-          setadds([...adds, valuesWithId]);
-        }
+      if (!inputValues.id) {
+        console.log("adddddddddddddddddddddddddd", inputValues);
       } else {
-        const copyOfadds = adds.filter(add => add.id !== id);
+        console.log("updateeeeeeeeeeeeeeeeee", inputValues);
+        const copyOfads = ads.filter(ad => ad.id !== id);
         const name = inputValues.name;
-        const description = inputValues.description;
+        const redirectUrl = inputValues.redirectUrl;
         setInputValues({
           id: id,
           name,
-          description
+          redirectUrl,
+          branch_id
         });
-        const newadds = [...copyOfadds, inputValues];
-        setadds(newadds);
+        const newAds = [...copyOfads, inputValues];
+        setAds(newAds);
       }
 
       setInputValues({
         id: "",
         name: "",
-        description: "",
-        file: null
+        redirectUrl: "",
+        file: null,
+        branch_id: 1
       });
-      setAddsModal(false);
+      setAdsModal(false);
       setError(false);
     }
   };
 
-  const deleteAdd = add => {
-    const id = add.id;
+  const deleteAd = ad => {
+    const id = ad.id;
     setId(id);
     setDeleteModalTitle("حذف");
     setDeleteModal(true);
@@ -108,28 +132,19 @@ const Index = () => {
   };
 
   const confirmDelete = () => {
-    const newadds = adds.filter(add => add.id !== id);
-    setadds(newadds);
-    setDeleteModal(false);
+    //call api
+    api.Ads.delete(id).then(res => {
+      console.log(id);
+      console.log("_getAllAds", res);
+      if (res.statusCode === 202) {
+        console.log("deleted");
+        _getAllAds();
+      }
+      setDeleteModal(false);
+    });
   };
 
-  const edit = add => {
-    const id = add.id;
-    const name = add.name;
-    const description = add.description;
-    const file = add.file;
-    setId(id);
-    setInputValues({
-      id,
-      name,
-      description,
-      file
-    });
-    setType("edit");
-    setaddsModalTitle("تعديل");
-    setAddsModal(true);
-  };
-  console.log(adds, "adds");
+  console.log(ads, "ads");
 
   const deleteImage = () => {
     let file = null;
@@ -143,17 +158,18 @@ const Index = () => {
           subtitle='إدارة الإعلانات'
         />
 
-        {addsModal && (
-          <AddsModal
-            cancel={() => setAddsModal(false)}
+        {adsModal && (
+          <AdsModal
+            cancel={() => setAdsModal(false)}
             type={type}
-            title={addsModalTitle}
+            title={adsModalTitle}
             handleImageChange={e => handleImageChange(e)}
+            handleBranchChange={e => handleBranchChange(e)}
             handleNameChange={handleNameChange}
-            handleDescriptionChange={handleDescriptionChange}
+            handlerediRectUrlChange={handlerediRectUrlChange}
             handleSubmit={handleSubmit}
             inputValues={inputValues}
-            adds={adds}
+            ads={ads}
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
@@ -171,35 +187,34 @@ const Index = () => {
         <button
           className='btn btn-default btn-pink rounded-full btn-icon mr-1 ml-1 sm:w-1/5  md:w-1/12  '
           onClick={() => add()}>
-          اضافة عرض
+          اضافة اعلان
         </button>
         <div className='flex flex-wrap  justify-start '>
-          {adds &&
-            adds.map(add => {
+          {ads &&
+            ads.map(ad => {
+              console.log("add.image", ad.ad_img);
               return (
                 <div
-                  key={add.id}
+                  key={ad.id}
                   className='overflow-hidden border bg-white rounded-lg shadow-lg m-10 w-full sm:w-2/3 md:w-1/4 flex flex-col p-3'>
                   <img
                     className='bg-center object-cover w-full  h-48 '
-                    src={add.img_path}
+                    src={ad.ad_img}
                   />
                   <div>
-                    <h1 className='mb-4 text-2xl'>{add.promo_text}</h1>
+                    <h1 className='mb-4 text-2xl'>{ad.ad_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      بداية العرض{add.promo_st}
+                      LINK{ad.redirect_url}
                     </h2>
-                    <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      نهاية العرض{add.promo_end}
-                    </h2>
+
                     <div className='flex flex-row '>
                       <button
-                        onClick={() => deleteAdd(add)}
+                        onClick={() => deleteAd(ad)}
                         className='btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-trash font-bold mr-1 ml-1' />
                       </button>
                       <button
-                        onClick={() => edit(add)}
+                        onClick={() => edit(ad)}
                         className='btn btn-default btn-yellow rounded-full btn-icon mr-1 ml-1 w-1/2'>
                         <i className='icon-note font-bold mr-1 ml-1' />
                       </button>

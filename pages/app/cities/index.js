@@ -4,7 +4,6 @@ import Layout from "../../../src/layouts";
 import SectionTitle from "../../../src/components/section-title";
 import Api from "../../../src/api";
 import CitiesModal from "../../../src/components/modals/CitiesModal";
-import DeleteModal from "../../../src/components/modals/DeleteModal";
 
 const Index = () => {
   const [inputValues, setInputValues] = useState({
@@ -19,25 +18,10 @@ const Index = () => {
   const [citiesModal, setModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
 
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteModalTitle, setDeleteModalTitle] = useState("");
-  const [deleteModalMessage, setDeleteModalMessage] = useState("");
   // component did mount
   useEffect(() => {
     _getAllCities();
   }, []);
-
-  // const _deleteCity = id => {
-  //   // Api.Cities.delete(id).then(res => {
-  //   //   console.log("_deleteCity", res);
-  //   //   if (res.statusCode === 200) {
-  //   //     console.log(res, "res");
-  //   //     const newCities = cities.filter(city => city.id !== id);
-  //   //     setCities(newCities);
-  //   //     setDeleteModal(false);
-  //   //   }
-  //   // });
-  // };
 
   const _getAllCities = () => {
     Api.Cities.all().then(res => {
@@ -53,15 +37,9 @@ const Index = () => {
     console.log("data", data);
     Api.Cities.add(data).then(res => {
       console.log("_addCity", res);
-      if (res.statusCode === 200) {
+      if (res.statusCode === 201) {
         console.log(_addCity, "res");
-        if (inputValues.city !== "" || inputValues.region !== "") {
-          const newCity = inputValues;
-          const newCities = [...cities, newCity];
-          _addCity();
-          setCities(newCities);
-          _getAllCities();
-        }
+        _getAllCities();
       }
     });
   };
@@ -73,38 +51,13 @@ const Index = () => {
       city: data.city,
       region: data.region
     };
-    // console.log("newData", newData);
     Api.Cities.update(newData).then(res => {
       console.log("_updateCity", res);
       if (res.statusCode === 200) {
-        // console.log(_updateCity, "res");
-        const copyOfCities = cities.filter(city => city.id !== id);
-        const city = inputValues.city;
-        const region = inputValues.region;
-        setInputValues({
-          id: id,
-          city,
-          region
-        });
-        const newCities = [...copyOfCities, inputValues];
-        setCities(newCities);
+        console.log(_updateCity, "res");
         _getAllCities();
       }
     });
-  };
-
-  const confirmDelete = () => {
-    const newCities = cities.filter(city => city.id !== id);
-    setCities(newCities);
-    setDeleteModal(false);
-  };
-
-  const remove = item => {
-    const id = item.id;
-    setId(id);
-    setDeleteModalTitle("حذف");
-    setDeleteModalMessage("هل انت متاكد تريد الحذف؟");
-    setDeleteModal(true);
   };
 
   const edit = item => {
@@ -176,15 +129,6 @@ const Index = () => {
           />
         )}
 
-        {deleteModal && (
-          <DeleteModal
-            cancel={() => setDeleteModal(false)}
-            deleteConfirm={() => confirmDelete(id)}
-            title={deleteModalTitle}
-            message={deleteModalMessage}
-            id={id}
-          />
-        )}
         <SectionTitle title='إدارة التطبيق' subtitle='إدارة المدن' />
 
         <button
@@ -212,15 +156,6 @@ const Index = () => {
                   <tr key={i}>
                     <td>{item.city}</td>
                     <td>{item.region}</td>
-
-                    <td>
-                      <button
-                        className='float-right btn btn-default btn-red rounded-full btn-icon mr-1 ml-1 w-22'
-                        onClick={() => remove(item)}>
-                        <i className='icon-trash font-bold mr-1 ml-1' />
-                        <span>حذف</span>
-                      </button>
-                    </td>
 
                     <th>
                       <button

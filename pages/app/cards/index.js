@@ -47,7 +47,7 @@ const Index = () => {
   };
 
   const handleImageChange = e => {
-    const file = URL.createObjectURL(e.target.files[0]);
+    const file = e.target.files[0];
     setInputValues({ ...inputValues, file: file });
   };
 
@@ -68,23 +68,30 @@ const Index = () => {
 
           api.Cards.add(formdata).then(res => {
             console.log("_getAllCards", res);
-            if (res.statusCode === 200) {
+            if (res.statusCode === 201) {
+              console.log("added");
               _getAllCards();
             }
           });
         }
       } else {
+        console.log("updateId", id);
         const copyOfCards = cards.filter(card => card.id !== id);
 
         const newCards = [...copyOfCards, inputValues];
         setInputValues(newCards);
-        var formdata = new FormData();
-        formdata.append("card_type", inputValues.card_type);
-        formdata.append("images", inputValues.file);
-
-        api.Cards.update(formdata).then(res => {
+        // var formdata = new FormData();
+        // formdata.append("id", inputValues.id);
+        // formdata.append("card_type", inputValues.card_type);
+        // formdata.append("images", inputValues.file);
+        const data = {
+          id: inputValues.id,
+          card_type: inputValues.card_type
+        };
+        api.Cards.update(data).then(res => {
           console.log("_getAllCards", res);
           if (res.statusCode === 200) {
+            console.log("updated");
             _getAllCards();
           }
         });
@@ -113,10 +120,10 @@ const Index = () => {
     api.Cards.delete(id).then(res => {
       console.log("_getAllCards", res);
       if (res.statusCode === 200) {
-        const newCards = cards.filter(card => card.id !== id);
-        setCards(newCards);
-        setDeleteModal(false);
+        console.log("deleted");
+        _getAllCards();
       }
+      setDeleteModal(false);
     });
   };
 
@@ -155,7 +162,7 @@ const Index = () => {
 
     const nameArray = cardTypes.filter(item => item.id === cardType);
 
-    return nameArray[0].name;
+    return nameArray[0] && nameArray[0].name;
   };
 
   return (

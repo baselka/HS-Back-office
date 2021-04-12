@@ -160,7 +160,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+              src={URL.createObjectURL(prop.inputValues.file)}
             />
           </div>
         )}

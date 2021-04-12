@@ -267,9 +267,9 @@ const Branches = {
 
 const Cities = {
   all: () => requests.get("/cities", {}),
-  // delete: id => requests.post("/cities", id),
+  delete: id => requests.delete("/delete-city/" + id, {}),
   add: data => requests.post("/add-city", data),
-  update: data => requests.patch("/update-city/" + data.city_id, data)
+  update: data => requests.patch("/update-city/", data)
 };
 
 const Providers = {
@@ -336,9 +336,9 @@ const Cards = {
 
 const Ads = {
   all: () => requests.get("/ads", {}),
-  delete: id => requests.post("/ad/" + id, {}),
-  add: data => requests.post("/add-ad", data),
-  update: data => requests.patch("/update-ad", data)
+  delete: id => requests.delete("/delete-advertisement/" + id, {}),
+  add: data => requests.post("/add-advertisement", data),
+  update: data => requests.patch("/update-advertisement", data)
 };
 
 export default {

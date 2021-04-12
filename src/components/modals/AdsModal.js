@@ -1,3 +1,10 @@
+const branchesOptions = [
+  { name: "دعوة زفاف", id: 1 },
+  { name: "عيد ميلاد", id: 2 },
+  { name: "حفل خطوبه", id: 3 },
+  { name: "حفل تخرج", id: 4 },
+  { name: "دعوة عامه", id: 5 }
+];
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -29,11 +36,28 @@ const ModalBody = prop => {
             <p className='text-red-600'>البيانات غير صحيحه</p>
           </div>
         )}
+        <span className='text-sm text-default'>حدد الفرع</span>
+        <select
+          className='text-sm form-input mt-1 block w-full border'
+          onChange={prop.handleBranchChange}>
+          {branchesOptions.map((item, i) => {
+            return (
+              <option
+                key={i}
+                name={item.name}
+                value={item.id}
+                selected={item.id === prop.inputValues.branch_id}>
+                {item.name}
+              </option>
+            );
+          })}
+        </select>
+
         <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
+          <span className='text-sm text-default'>الاعلان</span>
           <input
             required
-            maxlength='10'
+            maxlength='30'
             type='text'
             placeholder={prop.name}
             value={prop.inputValues.name}
@@ -41,20 +65,20 @@ const ModalBody = prop => {
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
+        <label htmlFor='redirectUrl' className='block'>
+          <span className='text-sm text-default'>لينك الاعلان</span>
           <input
             required
-            maxlength='15'
+            maxlength='30'
             type='text'
-            placeholder={prop.description}
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
+            placeholder={prop.redirectUrl}
+            value={prop.inputValues.redirectUrl}
+            onChange={prop.handleRedirectUrlChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
         <label htmlFor='fileUpload' className='block'>
-          <span className='text-sm text-default'>اضف صورة العرض</span>
+          <span className='text-sm text-default'>اضف صورة الاعلان</span>
           {!prop.inputValues.file && (
             <input
               id='fileUpload'
@@ -105,8 +129,24 @@ const ModalBody = prop => {
             <p className='text-red-600'>البيانات غير صحيحه</p>
           </div>
         )}
+        <span className='text-sm text-default'>حدد الفرع</span>
+        <select
+          className='text-sm form-input mt-1 block w-full border'
+          onChange={prop.handleBranchChange}>
+          {branchesOptions.map((item, i) => {
+            return (
+              <option
+                key={i}
+                name={item.name}
+                value={item.id}
+                selected={item.id === prop.inputValues.branch_id}>
+                {item.name}
+              </option>
+            );
+          })}
+        </select>
         <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>العرض</span>
+          <span className='text-sm text-default'>الاعلان</span>
           <input
             required
             maxlength='10'
@@ -116,19 +156,19 @@ const ModalBody = prop => {
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <label htmlFor='description' className='block'>
-          <span className='text-sm text-default'>وصف</span>
+        <label htmlFor='redirectUrl' className='block'>
+          <span className='text-sm text-default'>اللينك</span>
           <input
             maxlength='15'
             required
             type='text'
-            value={prop.inputValues.description}
-            onChange={prop.handleDescriptionChange}
+            value={prop.inputValues.redirectUrl}
+            onChange={prop.handleRedirectUrlChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
         <label htmlFor='fileUpload' className='block'>
-          <span className='text-sm text-default'>اضف صورة العرض</span>
+          <span className='text-sm text-default'>اضف صورة الاعلان</span>
           {!prop.inputValues.file && (
             <input
               id='fileUpload'
@@ -197,7 +237,7 @@ const AddsModal = ({
   inputValues,
   handleSubmit,
   handleNameChange,
-  handleDescriptionChange,
+  handleRedirectUrlChange,
   handleImageChange,
   deleteImage,
   error
@@ -213,7 +253,7 @@ const AddsModal = ({
               body={message}
               inputValues={inputValues}
               handleNameChange={handleNameChange}
-              handleDescriptionChange={handleDescriptionChange}
+              handleRedirectUrlChange={handleRedirectUrlChange}
               handleImageChange={handleImageChange}
               type={type}
               deleteImage={deleteImage}
