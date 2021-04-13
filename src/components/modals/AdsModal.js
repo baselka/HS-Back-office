@@ -1,10 +1,3 @@
-const branchesOptions = [
-  { name: "دعوة زفاف", id: 1 },
-  { name: "عيد ميلاد", id: 2 },
-  { name: "حفل خطوبه", id: 3 },
-  { name: "حفل تخرج", id: 4 },
-  { name: "دعوة عامه", id: 5 }
-];
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -40,14 +33,14 @@ const ModalBody = prop => {
         <select
           className='text-sm form-input mt-1 block w-full border'
           onChange={prop.handleBranchChange}>
-          {branchesOptions.map((item, i) => {
+          {prop.branches.map((item, i) => {
             return (
               <option
                 key={i}
-                name={item.name}
-                value={item.id}
-                selected={item.id === prop.inputValues.branch_id}>
-                {item.name}
+                name={item.branch_name}
+                value={item.branch_id}
+                selected={item.branch_id === prop.inputValues.branch_id}>
+                {item.branch_name}
               </option>
             );
           })}
@@ -133,14 +126,14 @@ const ModalBody = prop => {
         <select
           className='text-sm form-input mt-1 block w-full border'
           onChange={prop.handleBranchChange}>
-          {branchesOptions.map((item, i) => {
+          {prop.branches.map((item, i) => {
             return (
               <option
                 key={i}
-                name={item.name}
-                value={item.id}
-                selected={item.id === prop.inputValues.branch_id}>
-                {item.name}
+                name={item.branch_name}
+                value={item.branch_id}
+                selected={item.branch_id === prop.inputValues.branch_id}>
+                {item.branch_name}
               </option>
             );
           })}
@@ -240,7 +233,8 @@ const AddsModal = ({
   handleRedirectUrlChange,
   handleImageChange,
   deleteImage,
-  error
+  error,
+  branches
 }) => {
   return (
     <>
@@ -256,6 +250,7 @@ const AddsModal = ({
               handleRedirectUrlChange={handleRedirectUrlChange}
               handleImageChange={handleImageChange}
               type={type}
+              branches={branches}
               deleteImage={deleteImage}
               error={error}
             />

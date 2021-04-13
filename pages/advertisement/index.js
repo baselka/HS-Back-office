@@ -25,17 +25,23 @@ const Index = () => {
   const [deleteModalTitle, setDeleteModalTitle] = useState("");
   const [deleteModal, setDeleteModal] = useState("");
   const [error, setError] = useState(false);
-
+  const [branches, setBranches] = useState([]);
   // component did mount
   useEffect(() => {
     _getAllAds();
+    _getAllBranches()
   }, []);
 
+  const _getAllBranches = ( ) => {
+      api.Branches.all(0, 1000).then((res)=>{
+        if(res.statusCode === 200){
+          setBranches(res.data);
+        }
+      });
+  }
   const _getAllAds = () => {
     api.Ads.all().then(res => {
-      console.log("_getAllAds", res);
       if (res.statusCode === 200) {
-        console.log(res, "res");
         setAds(res.data);
       }
     });
@@ -95,9 +101,7 @@ const Index = () => {
       setError(true);
     } else {
       if (!inputValues.id) {
-        console.log("adddddddddddddddddddddddddd", inputValues);
       } else {
-        console.log("updateeeeeeeeeeeeeeeeee", inputValues);
         const copyOfads = ads.filter(ad => ad.id !== id);
         const name = inputValues.name;
         const redirectUrl = inputValues.redirectUrl;
@@ -168,6 +172,7 @@ const Index = () => {
             handleNameChange={handleNameChange}
             handlerediRectUrlChange={handlerediRectUrlChange}
             handleSubmit={handleSubmit}
+            branches={branches}
             inputValues={inputValues}
             ads={ads}
             deleteImage={() => deleteImage()}
