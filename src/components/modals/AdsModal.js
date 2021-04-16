@@ -1,3 +1,6 @@
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -20,76 +23,101 @@ const ModalHeader = ({ cancel, head }) => (
   </div>
 );
 
-const ModalBody = prop => {
-  if (prop.type === "edit") {
+const ModalBody = props => {
+  if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
-        {prop.error && (
+        {props.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>تاكد من كتابة بياناتك كامله</p>
           </div>
         )}
         <span className='text-sm text-default'>حدد الفرع</span>
-        <select
-          className='text-sm form-input mt-1 block w-full border'
-          onChange={prop.handleBranchChange}>
-          {prop.branches.map((item, i) => {
-            return (
-              <option
-                key={i}
-                name={item.branch_name}
-                value={item.branch_id}
-                selected={item.branch_id === prop.inputValues.branch_id}>
-                {item.branch_name}
-              </option>
-            );
-          })}
-        </select>
+
+        <div>
+          <select
+            className='text-sm form-input mt-1 block w-full border'
+            onChange={props.handleBranchChange}>
+            {props.branches.map((item, i) => {
+              return (
+                <option
+                  onChange={props.handleBranchChange}
+                  key={i}
+                  name={item.branch_name}
+                  value={item.branch_id}
+                  selected={item.branch_id === props.inputValues.branch_id}>
+                  {item.branch_name}
+                </option>
+              );
+            })}
+          </select>
+          <input
+            type='search'
+            placeholder='start typing ...'
+            onChange={props.handleBranchChange}
+          />
+        </div>
 
         <label htmlFor='offer' className='block'>
           <span className='text-sm text-default'>الاعلان</span>
           <input
             required
-            maxlength='30'
+            maxLength='30'
             type='text'
-            placeholder={prop.name}
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
+            placeholder={props.inputValues.name}
+            value={props.inputValues.name}
+            onChange={props.handleNameChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
         <label htmlFor='redirectUrl' className='block'>
           <span className='text-sm text-default'>لينك الاعلان</span>
           <input
-            required
-            maxlength='30'
+            maxLength='30'
             type='text'
-            placeholder={prop.redirectUrl}
-            value={prop.inputValues.redirectUrl}
-            onChange={prop.handleRedirectUrlChange}
+            placeholder={props.inputValues.redirectUrl}
+            value={props.inputValues.redirectUrl}
+            onChange={props.handleRedirectUrlChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
+        <div className='text-sm form-input mt-1 block w-full border'>
+          <span className='text-sm text-default'>start</span>
+          <DatePicker
+            selected={props.inputValues.start}
+            onChange={props.startCalenderChange}
+          />
+        </div>
+        <div className='text-sm form-input mt-1 block w-full border'>
+          <span className='text-sm text-default'>end</span>
+          <DatePicker
+            selected={props.inputValues.end}
+            onChange={props.endCalenderChange}
+            minDate={new Date()}
+            dateFormat='dd/MM/yyyy'
+          />
+        </div>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة الاعلان</span>
-          {!prop.inputValues.file && (
+          {!props.inputValues.file && (
             <input
               id='fileUpload'
               accept='image/*'
               type='file'
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
+              placeholder={props.inputValues.file}
+              value={props.inputValues.file}
+              onChange={props.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
               required
             />
           )}
         </label>
 
-        {prop.inputValues.file && (
+        {props.inputValues.file && (
           <div className='relative'>
             <span
               className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
+              onClick={props.deleteImage}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -107,7 +135,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+              src={props.inputValues.file}
             />
           </div>
         )}
@@ -117,68 +145,96 @@ const ModalBody = prop => {
   return (
     <div className='relative p-4 flex-auto'>
       <form className=' p-4 flex-auto'>
-        {prop.error && (
+        {props.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'> تاكد من تكملة جميع الحقول!</p>
           </div>
         )}
         <span className='text-sm text-default'>حدد الفرع</span>
-        <select
-          className='text-sm form-input mt-1 block w-full border'
-          onChange={prop.handleBranchChange}>
-          {prop.branches.map((item, i) => {
-            return (
-              <option
-                key={i}
-                name={item.branch_name}
-                value={item.branch_id}
-                selected={item.branch_id === prop.inputValues.branch_id}>
-                {item.branch_name}
-              </option>
-            );
-          })}
-        </select>
+        <div>
+          <select
+            className='text-sm form-input mt-1 block w-full border'
+            onChange={props.handleBranchChange}>
+            {props.branches.map((item, i) => {
+              return (
+                <option
+                  onChange={props.handleBranchChange}
+                  key={i}
+                  name={item.branch_name}
+                  value={item.branch_id}
+                  selected={item.branch_id === props.inputValues.branch_id}>
+                  {item.branch_name}
+                </option>
+              );
+            })}
+          </select>
+          <input
+            type='search'
+            placeholder='start typing ...'
+            onChange={props.handleBranchChange}
+          />
+        </div>
         <label htmlFor='offer' className='block'>
           <span className='text-sm text-default'>الاعلان</span>
           <input
             required
-            maxlength='10'
+            maxLength='10'
             type='text'
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
+            value={props.inputValues.name}
+            onChange={props.handleNameChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
         <label htmlFor='redirectUrl' className='block'>
-          <span className='text-sm text-default'>اللينك</span>
+          <span className='text-sm text-default'>لينك الاعلان</span>
           <input
-            maxlength='15'
-            required
+            maxLength='30'
             type='text'
-            value={prop.inputValues.redirectUrl}
-            onChange={prop.handleRedirectUrlChange}
+            placeholder={props.inputValues.redirectUrl}
+            value={props.inputValues.redirectUrl}
+            onChange={props.handleRedirectUrlChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
+
+        <div className='text-sm form-input mt-1 block w-full border'>
+          <span className='text-sm text-default'>start_date</span>{" "}
+          <DatePicker
+            onChange={props.startCalenderChange}
+            selected={props.inputValues.start}
+            minDate={new Date()}
+            dateFormat='dd/MM/yyyy'
+          />
+        </div>
+        <div className='text-sm form-input mt-1 block w-full border'>
+          <span className='text-sm text-default'>end_date</span>{" "}
+          <DatePicker
+            onChange={props.endCalenderChange}
+            selected={props.inputValues.end}
+            minDate={new Date()}
+            dateFormat='dd/MM/yyyy'
+          />
+        </div>
+
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة الاعلان</span>
-          {!prop.inputValues.file && (
+          {!props.inputValues.file && (
             <input
               id='fileUpload'
               accept='image/*'
               type='file'
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
+              value={props.inputValues.file}
+              onChange={props.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
               required
             />
           )}
         </label>
-        {prop.inputValues.file && (
+        {props.inputValues.file && (
           <div className='relative'>
             <span
               className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
+              onClick={props.deleteImage}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -196,7 +252,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+              src={URL.createObjectURL(props.inputValues.file)}
             />
           </div>
         )}
@@ -232,6 +288,9 @@ const AddsModal = ({
   handleNameChange,
   handleRedirectUrlChange,
   handleImageChange,
+  handleBranchChange,
+  startCalenderChange,
+  endCalenderChange,
   deleteImage,
   error,
   branches
@@ -246,9 +305,12 @@ const AddsModal = ({
             <ModalBody
               body={message}
               inputValues={inputValues}
+              handleBranchChange={handleBranchChange}
               handleNameChange={handleNameChange}
               handleRedirectUrlChange={handleRedirectUrlChange}
               handleImageChange={handleImageChange}
+              startCalenderChange={startCalenderChange}
+              endCalenderChange={endCalenderChange}
               type={type}
               branches={branches}
               deleteImage={deleteImage}

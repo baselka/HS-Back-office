@@ -22,19 +22,19 @@ const ModalHeader = ({ cancel, head }) => (
   </div>
 );
 
-const ModalBody = prop => {
-  console.log("prop", prop);
+const ModalBody = props => {
+  console.log("props", props);
 
-  if (prop.type === "edit") {
+  if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
         <label className='block'>
           <span className='text-sm text-default'>المدينه</span>
           <input
             type='text'
-            placeholder={prop.city}
-            value={prop.inputValues.city}
-            onChange={prop.handleCityChange}
+            placeholder={props.city}
+            value={props.inputValues.city}
+            onChange={props.handleCityChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
@@ -42,9 +42,9 @@ const ModalBody = prop => {
           <span className='text-sm text-default'>المنطقه</span>
           <input
             type='text'
-            placeholder={prop.region}
-            value={prop.inputValues.region}
-            onChange={prop.handleRegionChange}
+            placeholder={props.region}
+            value={props.inputValues.region}
+            onChange={props.handleRegionChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
@@ -57,8 +57,8 @@ const ModalBody = prop => {
         <span className='text-sm text-default'>المدينه</span>
         <input
           name='city'
-          onChange={prop.handleCityChange}
-          value={prop.inputValues.city}
+          onChange={props.handleCityChange}
+          value={props.inputValues.city}
           type='text'
           placeholder='اكتب إسم المدينه'
           className='text-sm form-input mt-1 block w-full border'
@@ -68,8 +68,8 @@ const ModalBody = prop => {
         <span className='text-sm text-default'>المنطقه</span>
         <input
           name='region'
-          onChange={prop.handleRegionChange}
-          value={prop.inputValues.region}
+          onChange={props.handleRegionChange}
+          value={props.inputValues.region}
           type='text'
           placeholder='اكتب إسم المنطقه'
           className='text-sm form-input mt-1 block w-full border'

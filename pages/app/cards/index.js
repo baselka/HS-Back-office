@@ -69,21 +69,14 @@ const Index = () => {
           api.Cards.add(formdata).then(res => {
             console.log("_getAllCards", res);
             if (res.statusCode === 201) {
-              console.log("added");
               _getAllCards();
             }
           });
         }
       } else {
-        console.log("updateId", id);
         const copyOfCards = cards.filter(card => card.id !== id);
-
         const newCards = [...copyOfCards, inputValues];
         setInputValues(newCards);
-        // var formdata = new FormData();
-        // formdata.append("id", inputValues.id);
-        // formdata.append("card_type", inputValues.card_type);
-        // formdata.append("images", inputValues.file);
         const data = {
           id: inputValues.id,
           card_type: inputValues.card_type
@@ -91,7 +84,6 @@ const Index = () => {
         api.Cards.update(data).then(res => {
           console.log("_getAllCards", res);
           if (res.statusCode === 200) {
-            console.log("updated");
             _getAllCards();
           }
         });
@@ -118,7 +110,6 @@ const Index = () => {
   const confirmDelete = () => {
     //call api
     api.Cards.delete(id).then(res => {
-      console.log("_getAllCards", res);
       if (res.statusCode === 200) {
         console.log("deleted");
         _getAllCards();
@@ -128,7 +119,6 @@ const Index = () => {
   };
 
   const edit = card => {
-    console.log(card, "carrrd");
     const id = card.id;
     const card_type = card.card_type;
     const file = card.img_path;
@@ -142,13 +132,11 @@ const Index = () => {
     setCardsModalTitle("تعديل");
     setCardsModal(true);
   };
-  console.log(cards, "cards");
 
   const deleteImage = () => {
     let file = "";
     setInputValues({ ...inputValues, file: file });
   };
-  console.log("handleEditChange", inputValues);
 
   const cardTypes = [
     { name: "دعوة زفاف", id: 1 },
@@ -161,7 +149,6 @@ const Index = () => {
     // here u do ur filter based on ur param (cardType)and return the name
 
     const nameArray = cardTypes.filter(item => item.id === cardType);
-
     return nameArray[0] && nameArray[0].name;
   };
 
@@ -212,7 +199,6 @@ const Index = () => {
                   <div>
                     <h1 className='mb-4 text-2xl'>{card.promo_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      {/* {card.card_type} */}
                       <span> {getCardName(card.card_type)} </span>
                     </h2>
 

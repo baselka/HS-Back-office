@@ -27,11 +27,11 @@ const ModalHeader = ({ cancel, head }) => (
   </div>
 );
 
-const ModalBody = prop => {
-  if (prop.type === "edit") {
+const ModalBody = props => {
+  if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
-        {prop.error && (
+        {props.error && (
           <div>
             <p className='text-red-600'>اضف صوره</p>
           </div>
@@ -40,14 +40,14 @@ const ModalBody = prop => {
         <label htmlFor='card_type' className='block'>
           <select
             className='text-sm form-input mt-1 block w-full border'
-            onChange={prop.handleCardTypeChange}>
+            onChange={props.handleCardTypeChange}>
             {cardTypeOptions.map((item, i) => {
               return (
                 <option
                   key={i}
                   name={item.name}
                   value={item.id}
-                  selected={item.id === prop.inputValues.card_type}>
+                  selected={item.id === props.inputValues.card_type}>
                   {item.name}
                 </option>
               );
@@ -56,25 +56,25 @@ const ModalBody = prop => {
         </label>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
-          {!prop.inputValues.file && (
+          {!props.inputValues.file && (
             <input
               id='fileUpload'
               accept='image/*'
               type='file'
-              placeholder={prop.inputValues.file}
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
+              placeholder={props.inputValues.file}
+              value={props.inputValues.file}
+              onChange={props.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
               required
             />
           )}
         </label>
 
-        {prop.inputValues.file && (
+        {props.inputValues.file && (
           <div className='relative'>
             <span
               className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
+              onClick={props.deleteImage}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -92,7 +92,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+              src={props.inputValues.file}
             />
           </div>
         )}
@@ -102,7 +102,7 @@ const ModalBody = prop => {
   return (
     <div className='relative p-4 flex-auto'>
       <form className=' p-4 flex-auto'>
-        {prop.error && (
+        {props.error && (
           <div>
             <p className='text-red-600'>اضف صوره</p>
           </div>
@@ -111,14 +111,14 @@ const ModalBody = prop => {
         <span className='text-sm text-default'>حدد المناسبه</span>
         <select
           className='text-sm form-input mt-1 block w-full border'
-          onChange={prop.handleCardTypeChange}>
+          onChange={props.handleCardTypeChange}>
           {cardTypeOptions.map((item, i) => {
             return (
               <option
                 key={i}
                 name={item.name}
                 value={item.id}
-                selected={item.id === prop.inputValues.card_type}>
+                selected={item.id === props.inputValues.card_type}>
                 {item.name}
               </option>
             );
@@ -126,23 +126,24 @@ const ModalBody = prop => {
         </select>
         <label htmlFor='fileUpload' className='block'>
           <span className='text-sm text-default'>اضف صورة العرض</span>
-          {!prop.inputValues.file && (
+          {!props.inputValues.file && (
             <input
               id='fileUpload'
               accept='image/*'
               type='file'
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
+              placeholder={props.inputValues.file}
+              value={props.inputValues.file}
+              onChange={props.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
               required
             />
           )}
         </label>
-        {prop.inputValues.file && (
+        {props.inputValues.file && (
           <div className='relative'>
             <span
               className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
+              onClick={props.deleteImage}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
@@ -160,7 +161,7 @@ const ModalBody = prop => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={URL.createObjectURL(prop.inputValues.file)}
+              src={URL.createObjectURL(props.inputValues.file)}
             />
           </div>
         )}
