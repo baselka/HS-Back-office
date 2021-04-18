@@ -19,7 +19,7 @@
     "lodash": "^4.17.15",
     "madge": "^3.8.0",
     "micro-cors": "^0.1.1",
-    "moment": "^2.25.1",
+    "moment": "^2.29.1",
     "next": "^9.3.6",
     "next-redux-wrapper": "^6.0.2",
     "nprogress": "^0.2.0",

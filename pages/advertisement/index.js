@@ -6,6 +6,7 @@ import SectionTitle from "../../src/components/section-title";
 import AdsModal from "../../src/components/modals/AdsModal";
 import DeleteModal from "../../src/components/modals/DeleteModal";
 import api from "../../src/api";
+import moment from "moment";
 
 const Index = () => {
   const [id, setId] = useState("");
@@ -18,11 +19,10 @@ const Index = () => {
     name: "",
     file: "",
     branch_id: 1,
-    redirectUrl: "",
-    start: null,
-    end: null
+    redirectUrl: ""
   });
-
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [deleteModalMessage, setDeleteModalMessage] = useState("");
   const [deleteModalTitle, setDeleteModalTitle] = useState("");
   const [deleteModal, setDeleteModal] = useState("");
@@ -59,7 +59,6 @@ const Index = () => {
 
   const edit = ad => {
     setType("edit");
-    console.log(id, ad, "id", "ad");
     const id = ad.id;
     const name = ad.ad_text;
     const redirectUrl = ad.redirect_url;
@@ -97,16 +96,20 @@ const Index = () => {
 
   const handleBranchChange = e => {
     setSearchfield(e.target.value);
+  };
+  const handleDropDownChange = e => {
     setInputValues({ ...inputValues, branch_id: Number(e.target.value) });
   };
   const filteredBranches = branches.filter(branch => {
     return branch.branch_name.toLowerCase().includes(searchfield.toLowerCase());
   });
-  const startCalenderChange = date => {
-    setInputValues({ ...inputValues, start: date });
+  const startDateChange = date => {
+    setStartDate(date);
+    console.log(" startDateChange ", date);
   };
-  const endCalenderChange = date => {
-    setInputValues({ ...inputValues, end: date });
+  const endDateChange = date => {
+    setEndDate(date);
+    console.log("endDateChange", date);
   };
 
   const handleSubmit = e => {
@@ -120,6 +123,8 @@ const Index = () => {
       setError(true);
     } else {
       if (!inputValues.id) {
+        const newstartDate = moment(startDate).format("YYYY-MM-DD");
+        const newendDate = moment(endDate).format("YYYY-MM-DD");
         setType("add");
         console.log("add", "inputValues", inputValues);
         var formdata = new FormData();
@@ -127,8 +132,8 @@ const Index = () => {
         formdata.append("ad_text", inputValues.name);
         formdata.append("redirect_url", inputValues.redirectUrl);
         formdata.append("images", inputValues.file);
-        formdata.append("start_date", inputValues.start);
-        formdata.append("end_date", inputValues.end);
+        formdata.append("start_date", newstartDate);
+        formdata.append("end_date", newendDate);
 
         api.Ads.add(formdata).then(res => {
           console.log("_getAllAds", res);
@@ -139,12 +144,16 @@ const Index = () => {
         });
       } else {
         setType("edit");
+        const newstartDate = moment(startDate).format("YYYY-MM-DD");
+        const newendDate = moment(endDate).format("YYYY-MM-DD");
         const data = {
-          id: id,
-          name: inputValues.name,
-          redirectUrl: inputValues.redirectUrl,
+          id: inputValues.id,
+          ad_text: inputValues.name,
+          redirect_url: inputValues.redirectUrl,
           branch_id: inputValues.branch_id,
-          file: inputValues.file
+          file: inputValues.file,
+          start_date: newstartDate,
+          end_date: newendDate
         };
         api.Ads.update(data).then(res => {
           console.log("_getAllAds", res);
@@ -160,7 +169,9 @@ const Index = () => {
         name: "",
         redirectUrl: "",
         file: null,
-        branch_id: 1
+        branch_id: 1,
+        start: null,
+        end: null
       });
       setAdsModal(false);
       setError(false);
@@ -209,14 +220,17 @@ const Index = () => {
             title={adsModalTitle}
             handleImageChange={e => handleImageChange(e)}
             handleBranchChange={e => handleBranchChange(e)}
+            handleDropDownChange={handleDropDownChange}
             handleNameChange={handleNameChange}
             handleRedirectUrlChange={handleRedirectUrlChange}
-            startCalenderChange={startCalenderChange}
-            endCalenderChange={endCalenderChange}
+            startDateChange={date => startDateChange(date)}
+            endDateChange={date => endDateChange(date)}
             handleSubmit={handleSubmit}
             branches={filteredBranches}
             inputValues={inputValues}
             ads={ads}
+            startDate={startDate}
+            endDate={endDate}
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
@@ -258,8 +272,15 @@ const Index = () => {
                       {ad.redirect_url}
                     </h2>
                     <div className='mb-4 text-grey-darker text-sm flex-1'>
-                      <h6> بداية العرض {ad.start_date}</h6>
-                      <h6> نهاية العرض {ad.end_date}</h6>
+                      <h6>
+                        {" "}
+                        بداية العرض {moment(ad.start_date).format("YYYY-MM-DD")}
+                      </h6>
+
+                      <h6>
+                        {" "}
+                        نهاية العرض {moment(ad.end_date).format("YYYY-MM-DD")}
+                      </h6>
                     </div>
 
                     <div className='flex flex-row '>

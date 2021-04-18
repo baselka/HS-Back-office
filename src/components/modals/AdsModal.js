@@ -24,6 +24,9 @@ const ModalHeader = ({ cancel, head }) => (
 );
 
 const ModalBody = props => {
+  const urlImage =
+    !props.inputValues.file && URL.createObjectURL(props.inputValues.file);
+  console.log(props, "props");
   if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
@@ -32,33 +35,22 @@ const ModalBody = props => {
             <p className='text-red-600'>تاكد من كتابة بياناتك كامله</p>
           </div>
         )}
-        <span className='text-sm text-default'>حدد الفرع</span>
-
         <div>
-          <select
-            className='text-sm form-input mt-1 block w-full border'
-            onChange={props.handleBranchChange}>
-            {props.branches.map((item, i) => {
-              return (
-                <option
-                  onChange={props.handleBranchChange}
-                  key={i}
-                  name={item.branch_name}
-                  value={item.branch_id}
-                  selected={item.branch_id === props.inputValues.branch_id}>
-                  {item.branch_name}
-                </option>
-              );
-            })}
-          </select>
           <input
-            type='search'
-            placeholder='start typing ...'
+            className='w-full text-lg m-2 outline-none'
+            type='text'
+            list='branches'
+            placeholder='حدد الفرع هنا .....'
             onChange={props.handleBranchChange}
           />
+          <datalist id='branches' className='w-full text-lg m-2 outline-none'>
+            {props.branches.map((item, i) => {
+              return <option key={i} value={item.branch_name} />;
+            })}
+          </datalist>
         </div>
 
-        <label htmlFor='offer' className='block'>
+        <label htmlFor='offer' className='block m-2'>
           <span className='text-sm text-default'>الاعلان</span>
           <input
             required
@@ -70,7 +62,7 @@ const ModalBody = props => {
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <label htmlFor='redirectUrl' className='block'>
+        <label htmlFor='redirectUrl' className='block m-2'>
           <span className='text-sm text-default'>لينك الاعلان</span>
           <input
             maxLength='30'
@@ -81,23 +73,37 @@ const ModalBody = props => {
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <div className='text-sm form-input mt-1 block w-full border'>
-          <span className='text-sm text-default'>start</span>
-          <DatePicker
-            selected={props.inputValues.start}
-            onChange={props.startCalenderChange}
-          />
+        <div className='flex'>
+          <div className='text-sm form-input mt-1 flex-1 w-full border'>
+            <span className='text-sm text-default'>ادخل موعد بداية العرض </span>
+            <label htmlFor='DatePicker' className='block m-2 w-full'>
+              <DatePicker
+                className='outline-none w-full'
+                selected={props.startDate}
+                onChange={props.startDateChange}
+                minDate={new Date()}
+                dateFormat='yyyy-MM-dd'
+              />
+            </label>
+          </div>
+
+          <div className='text-sm form-input mt-1 flex-1 w-full border'>
+            <span className='text-sm text-default'>
+              ادخل موعد انتهاء العرض{" "}
+            </span>
+            <label htmlFor='DatePicker' className='block m-2 w-full'>
+              <DatePicker
+                className='outline-none w-full'
+                selected={props.endDate}
+                onChange={props.endDateChange} //only when value has changed
+                minDate={new Date()}
+                dateFormat='yyyy-MM-dd'
+              />
+            </label>
+          </div>
         </div>
-        <div className='text-sm form-input mt-1 block w-full border'>
-          <span className='text-sm text-default'>end</span>
-          <DatePicker
-            selected={props.inputValues.end}
-            onChange={props.endCalenderChange}
-            minDate={new Date()}
-            dateFormat='dd/MM/yyyy'
-          />
-        </div>
-        <label htmlFor='fileUpload' className='block'>
+
+        <label htmlFor='fileUpload' className='block p-4'>
           <span className='text-sm text-default'>اضف صورة الاعلان</span>
           {!props.inputValues.file && (
             <input
@@ -154,11 +160,10 @@ const ModalBody = props => {
         <div>
           <select
             className='text-sm form-input mt-1 block w-full border'
-            onChange={props.handleBranchChange}>
+            onChange={props.handleDropDownChange}>
             {props.branches.map((item, i) => {
               return (
                 <option
-                  onChange={props.handleBranchChange}
                   key={i}
                   name={item.branch_name}
                   value={item.branch_id}
@@ -169,7 +174,8 @@ const ModalBody = props => {
             })}
           </select>
           <input
-            type='search'
+            className='w-full text-lg'
+            type='text'
             placeholder='start typing ...'
             onChange={props.handleBranchChange}
           />
@@ -200,19 +206,19 @@ const ModalBody = props => {
         <div className='text-sm form-input mt-1 block w-full border'>
           <span className='text-sm text-default'>start_date</span>{" "}
           <DatePicker
-            onChange={props.startCalenderChange}
-            selected={props.inputValues.start}
+            selected={props.startDate}
+            onChange={props.startDateChange}
             minDate={new Date()}
-            dateFormat='dd/MM/yyyy'
+            dateFormat='yyyy-MM-dd'
           />
         </div>
         <div className='text-sm form-input mt-1 block w-full border'>
           <span className='text-sm text-default'>end_date</span>{" "}
           <DatePicker
-            onChange={props.endCalenderChange}
-            selected={props.inputValues.end}
+            selected={props.endDate}
+            onChange={props.endDateChange}
             minDate={new Date()}
-            dateFormat='dd/MM/yyyy'
+            dateFormat='yyyy-MM-dd'
           />
         </div>
 
@@ -252,7 +258,7 @@ const ModalBody = props => {
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
-              src={URL.createObjectURL(props.inputValues.file)}
+              src={urlImage}
             />
           </div>
         )}
@@ -289,11 +295,14 @@ const AddsModal = ({
   handleRedirectUrlChange,
   handleImageChange,
   handleBranchChange,
-  startCalenderChange,
-  endCalenderChange,
+  handleDropDownChange,
+  startDateChange,
+  endDateChange,
   deleteImage,
   error,
-  branches
+  branches,
+  startDate,
+  endDate
 }) => {
   return (
     <>
@@ -306,15 +315,18 @@ const AddsModal = ({
               body={message}
               inputValues={inputValues}
               handleBranchChange={handleBranchChange}
+              handleDropDownChange={handleDropDownChange}
               handleNameChange={handleNameChange}
               handleRedirectUrlChange={handleRedirectUrlChange}
               handleImageChange={handleImageChange}
-              startCalenderChange={startCalenderChange}
-              endCalenderChange={endCalenderChange}
+              startDateChange={date => startDateChange(date)}
+              endDateChange={date => endDateChange(date)}
               type={type}
               branches={branches}
               deleteImage={deleteImage}
               error={error}
+              startDate={startDate}
+              endDate={endDate}
             />
             <ModalFooter cancel={() => cancel()} handleSubmit={handleSubmit} />
           </div>
