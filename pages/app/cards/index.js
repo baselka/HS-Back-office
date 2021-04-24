@@ -131,6 +131,7 @@ const Index = () => {
     setType("edit");
     setCardsModalTitle("تعديل");
     setCardsModal(true);
+    setError(false);
   };
 
   const deleteImage = () => {

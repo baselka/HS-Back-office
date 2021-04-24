@@ -23,11 +23,14 @@ const ModalHeader = ({ cancel, head }) => (
 );
 
 const ModalBody = props => {
-  console.log("props", props);
-
   if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
+        {props.error && (
+          <div>
+            <p className='text-red-600'>ادخل المدينه والمنطقه</p>
+          </div>
+        )}
         <label className='block'>
           <span className='text-sm text-default'>المدينه</span>
           <input
@@ -35,6 +38,7 @@ const ModalBody = props => {
             placeholder={props.city}
             value={props.inputValues.city}
             onChange={props.handleCityChange}
+            maxLength='10'
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
@@ -45,6 +49,7 @@ const ModalBody = props => {
             placeholder={props.region}
             value={props.inputValues.region}
             onChange={props.handleRegionChange}
+            maxLength='10'
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
@@ -53,6 +58,11 @@ const ModalBody = props => {
   }
   return (
     <form className=' p-4 flex-auto'>
+      {props.error && (
+        <div>
+          <p className='text-red-600'>ادخل المدينه والمنطقه</p>
+        </div>
+      )}
       <label className='block'>
         <span className='text-sm text-default'>المدينه</span>
         <input
@@ -61,6 +71,7 @@ const ModalBody = props => {
           value={props.inputValues.city}
           type='text'
           placeholder='اكتب إسم المدينه'
+          maxLength='10'
           className='text-sm form-input mt-1 block w-full border'
         />
       </label>
@@ -72,6 +83,7 @@ const ModalBody = props => {
           value={props.inputValues.region}
           type='text'
           placeholder='اكتب إسم المنطقه'
+          maxLength='10'
           className='text-sm form-input mt-1 block w-full border'
         />
       </label>
@@ -103,7 +115,8 @@ const CitiesModal = ({
   inputValues,
   handleSubmit,
   handleCityChange,
-  handleRegionChange
+  handleRegionChange,
+  error
 }) => {
   return (
     <>
@@ -117,6 +130,7 @@ const CitiesModal = ({
               handleRegionChange={handleRegionChange}
               type={type}
               inputValues={inputValues}
+              error={error}
             />
             <ModalFooter cancel={() => cancel()} handleSubmit={handleSubmit} />
           </div>
