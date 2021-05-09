@@ -75,7 +75,7 @@ const ModalBody = props => {
             <span
               className='modal-close btn btn-transparent absolute'
               onClick={props.deleteImage}>
-              <svg
+              {/* <svg
                 xmlns='http://www.w3.org/2000/svg'
                 width='24'
                 height='24'
@@ -88,7 +88,7 @@ const ModalBody = props => {
                 className={`text-secondary stroke-current inline-block h-5 w-5`}>
                 <line x1='18' y1='6' x2='6' y2='18'></line>
                 <line x1='6' y1='6' x2='18' y2='18'></line>
-              </svg>
+              </svg> */}
             </span>
             <img
               className=' bg-center object-cover w-full  h-48 '
