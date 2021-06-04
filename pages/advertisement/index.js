@@ -10,14 +10,16 @@ import moment from "moment";
 
 const Index = () => {
   const [id, setId] = useState("");
+  // const [adsData, setAdsData] = useState(null);
   const [type, setType] = useState("");
   const [ads, setAds] = useState([]);
   const [adsModal, setAdsModal] = useState(false);
   const [adsModalTitle, setAdsModalTitle] = useState("");
+  const [imagesList, setImagesList] = useState([]);
+  const [defaultImagesList, setDefaultImagesList] = useState(null);
   const [inputValues, setInputValues] = useState({
     id: "",
     name: "",
-    file: "",
     branch_id: 1,
     redirectUrl: ""
   });
@@ -62,29 +64,34 @@ const Index = () => {
     const id = ad.id;
     const name = ad.ad_text;
     const redirectUrl = ad.redirect_url;
-    const file = ad.ad_img;
     const branch_id = ad.branch_id;
+    const imagesList = ad.ad_img;
     const start = ad.start_date;
     const end = ad.end_date;
-
+    console.log("start", start);
+    console.log("end", end);
     setInputValues({
       id,
       name,
       redirectUrl,
-      file,
-      branch_id,
-      start,
-      end
+      branch_id
     });
+    setImagesList(imagesList);
+    setDefaultImagesList(imagesList);
     setType("edit");
     setError(false);
     setAdsModalTitle("تعديل");
     setAdsModal(true);
   };
 
-  const handleImageChange = e => {
-    setInputValues({ ...inputValues, file: e.target.files[0] });
-  };
+  // const handleImageChange = e => {
+  //   setInputValues({ ...inputValues, file: e.target.files[0] });
+  // };
+
+  // const deleteImage = () => {
+  //   let file = "";
+  //   setInputValues({ ...inputValues, file: file });
+  // };
 
   const handleNameChange = e => {
     setInputValues({ ...inputValues, name: e.target.value });
@@ -117,23 +124,27 @@ const Index = () => {
     if (
       inputValues.name === "" ||
       inputValues.redirectUrl === "" ||
-      inputValues.file === "" ||
+      imagesList === [] ||
       inputValues.branch_id === ""
     ) {
       setError(true);
     } else {
       if (!inputValues.id) {
-        const newstartDate = moment(startDate).format("YYYY-MM-DD");
-        const newendDate = moment(endDate).format("YYYY-MM-DD");
+        console.log("startDate", startDate);
+        console.log("endDate", endDate);
+        const newStartDate = moment(startDate).format("YYYY-MM-DD");
+        const newEndDate = moment(endDate).format("YYYY-MM-DD");
+        console.log("newStartDate", newStartDate);
+        console.log("newEndDate", newEndDate);
         setType("add");
         console.log("add", "inputValues", inputValues);
         var formdata = new FormData();
         formdata.append("branch_id", inputValues.branch_id);
         formdata.append("ad_text", inputValues.name);
         formdata.append("redirect_url", inputValues.redirectUrl);
-        formdata.append("images", inputValues.file);
-        formdata.append("start_date", newstartDate);
-        formdata.append("end_date", newendDate);
+        formdata.append("images", imagesList[0]);
+        formdata.append("start_date", newStartDate);
+        formdata.append("end_date", newEndDate);
 
         api.Ads.add(formdata).then(res => {
           console.log("_getAllAds", res);
@@ -144,17 +155,25 @@ const Index = () => {
         });
       } else {
         setType("edit");
-        const newstartDate = moment(startDate).format("YYYY-MM-DD");
-        const newendDate = moment(endDate).format("YYYY-MM-DD");
+        const newStartDate = moment(startDate).format("YYYY-MM-DD");
+        const newEndDate = moment(endDate).format("YYYY-MM-DD");
+
         const data = {
           id: inputValues.id,
           ad_text: inputValues.name,
           redirect_url: inputValues.redirectUrl,
           branch_id: inputValues.branch_id,
-          file: inputValues.file,
-          start_date: newstartDate,
-          end_date: newendDate
+          images: imagesList[0],
+          start_date: newStartDate,
+          end_date: newEndDate
         };
+        if (imagesList[0]) {
+          data.images = imagesList[0];
+        } else {
+          data.images = ad.ad.Image_path;
+          setImagesList(data.images);
+        }
+
         api.Ads.update(data).then(res => {
           console.log("_getAllAds", res);
           if (res.statusCode === 200) {
@@ -168,11 +187,11 @@ const Index = () => {
         id: "",
         name: "",
         redirectUrl: "",
-        file: null,
-        branch_id: 1,
-        start: null,
-        end: null
+        branch_id: 1
       });
+      setStartDate(null);
+      setEndDate(null);
+      setImagesList([]);
       setAdsModal(false);
       setError(false);
     }
@@ -201,10 +220,6 @@ const Index = () => {
 
   // console.log(ads, "ads");
 
-  const deleteImage = () => {
-    let file = null;
-    setInputValues({ ...inputValues, file: file });
-  };
   return (
     <Container>
       <Layout>
@@ -234,6 +249,10 @@ const Index = () => {
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
+            defaultImagesList={defaultImagesList}
+            setDefaultImagesList={setDefaultImagesList}
+            imagesList={imagesList}
+            setImagesList={setImagesList}
           />
         )}
         {deleteModal && (

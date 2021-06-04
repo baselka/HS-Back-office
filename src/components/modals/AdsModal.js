@@ -1,5 +1,6 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ImageSelector from "../../../pages/app/categories/imageSelector";
 
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
@@ -102,9 +103,9 @@ const ModalBody = props => {
           </div>
         </div>
 
-        <label htmlFor='fileUpload' className='block p-4'>
+        {/* <label htmlFor='fileUpload' className='block p-4'>
           <span className='text-sm text-default'>اضف صورة الاعلان</span>
-          {!props.inputValues.file && (
+          {props.defaultImagesList === null && (
             <input
               id='fileUpload'
               accept='image/*'
@@ -116,34 +117,29 @@ const ModalBody = props => {
               required
             />
           )}
-        </label>
+        </label> */}
 
-        {props.inputValues.file && (
-          <div className='relative'>
-            {/* <span
-              className='modal-close btn btn-transparent absolute'
-              onClick={props.deleteImage}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className={`text-secondary stroke-current inline-block h-5 w-5`}>
-                <line x1='18' y1='6' x2='6' y2='18'></line>
-                <line x1='6' y1='6' x2='18' y2='18'></line>
-              </svg>
-            </span> */}
-            <img
-              className=' bg-center object-cover w-full  h-48 '
-              src={props.inputValues.file}
-            />
+        <div className=' mb-12 p-5 mt-5 bg-white border-2 border-gray-200'>
+          <label className='block'>
+            <span className='text-default mb-2 block'>صورة الاعلان</span>
+          </label>
+
+          <div className='form-group multi-preview addNewImageCont'>
+            {props.defaultImagesList !== null ? (
+              <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+                <img src={props.defaultImagesList} className='' alt='...' />
+                <i
+                  className='w-34 h-34 p-0 cursor-pointer rounded-full icon-close text-xl absolute right-0 top-0 text-white z-0'
+                  onClick={() => props.setDefaultImagesList(null)}
+                />
+              </div>
+            ) : (
+              <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+                <ImageSelector uploadImages={props.setImagesList} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </form>
     );
   }
@@ -220,7 +216,7 @@ const ModalBody = props => {
         </div>
       </div>
 
-      <label htmlFor='fileUpload' className='block p-4'>
+      {/* <label htmlFor='fileUpload' className='block p-4'>
         <span className='text-sm text-default'>اضف صورة الاعلان</span>
         {!props.inputValues.file && (
           <input
@@ -234,9 +230,9 @@ const ModalBody = props => {
             required
           />
         )}
-      </label>
+      </label> */}
 
-      {props.inputValues.file && (
+      {/* {props.inputValues.file && (
         <div className='relative'>
           <span
             className='modal-close btn btn-transparent absolute'
@@ -261,7 +257,28 @@ const ModalBody = props => {
             src={URL.createObjectURL(props.inputValues.file)}
           />
         </div>
-      )}
+      )} */}
+      <div className=' mb-12 p-5 mt-5 bg-white border-2 border-gray-200'>
+        <label className='block'>
+          <span className='text-default mb-2 block'>صورة الاعلان</span>
+        </label>
+        <div className='form-group multi-preview addNewImageCont'>
+          {props.defaultImagesList !== null ? (
+            <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+              <img src={props.defaultImagesList} className='' alt='...' />
+              <i
+                className='w-34 h-34 p-0 cursor-pointer rounded-full icon-close text-xl absolute right-0 top-0 text-white z-0'
+                onClick={() => props.setDefaultImagesList(null)}
+              />
+            </div>
+          ) : (
+            <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+              <ImageSelector uploadImages={props.setImagesList} />
+            </div>
+          )}
+        </div>
+        <div className={"clearfix"}></div>
+      </div>
     </form>
   );
 };
@@ -301,7 +318,11 @@ const AddsModal = ({
   error,
   branches,
   startDate,
-  endDate
+  endDate,
+  defaultImagesList,
+  setDefaultImagesList,
+  imagesList,
+  setImagesList
 }) => {
   return (
     <>
@@ -326,6 +347,10 @@ const AddsModal = ({
               error={error}
               startDate={startDate}
               endDate={endDate}
+              defaultImagesList={defaultImagesList}
+              setDefaultImagesList={setDefaultImagesList}
+              imagesList={imagesList}
+              setImagesList={setImagesList}
             />
             <ModalFooter cancel={() => cancel()} handleSubmit={handleSubmit} />
           </div>
