@@ -12,3 +12,4 @@ else
   echo "Creating ${DIR} directory"
   mkdir ${DIR}
 fi
+sudo chmod -R 777 /var/www/staging.happy-season.com/html/HS-Back-office
