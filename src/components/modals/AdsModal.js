@@ -1,10 +1,7 @@
-const branchesOptions = [
-  { name: "دعوة زفاف", id: 1 },
-  { name: "عيد ميلاد", id: 2 },
-  { name: "حفل خطوبه", id: 3 },
-  { name: "حفل تخرج", id: 4 },
-  { name: "دعوة عامه", id: 5 }
-];
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import ImageSelector from "../../../pages/app/categories/imageSelector";
+
 const ModalHeader = ({ cancel, head }) => (
   <div className='modal-header'>
     <h4 className='text-xl font-semibold'>{head}</h4>
@@ -27,188 +24,262 @@ const ModalHeader = ({ cancel, head }) => (
   </div>
 );
 
-const ModalBody = prop => {
-  if (prop.type === "edit") {
+const ModalBody = props => {
+  console.log(props, "props", props.inputValues);
+
+  if (props.type === "edit") {
     return (
       <form className=' p-4 flex-auto'>
-        {prop.error && (
+        {props.error && (
           <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
+            <p className='text-red-600'>تاكد من كتابة بياناتك كامله</p>
           </div>
         )}
-        <span className='text-sm text-default'>حدد الفرع</span>
-        <select
-          className='text-sm form-input mt-1 block w-full border'
-          onChange={prop.handleBranchChange}>
-          {branchesOptions.map((item, i) => {
-            return (
-              <option
-                key={i}
-                name={item.name}
-                value={item.id}
-                selected={item.id === prop.inputValues.branch_id}>
-                {item.name}
-              </option>
-            );
-          })}
-        </select>
+        <div>
+          <input
+            className='w-full text-lg m-2 outline-none'
+            type='text'
+            list='branches'
+            placeholder='حدد الفرع هنا .....'
+            onChange={props.handleBranchChange}
+          />
+          <datalist id='branches' className='w-full text-lg m-2 outline-none'>
+            {props.branches.map((item, i) => {
+              return <option key={i} value={item.branch_name} />;
+            })}
+          </datalist>
+        </div>
 
-        <label htmlFor='offer' className='block'>
+        <label htmlFor='offer' className='block m-2'>
           <span className='text-sm text-default'>الاعلان</span>
           <input
             required
-            maxlength='30'
+            maxLength='30'
             type='text'
-            placeholder={prop.name}
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
+            placeholder={props.inputValues.name}
+            value={props.inputValues.name}
+            onChange={props.handleNameChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <label htmlFor='redirectUrl' className='block'>
+        <label htmlFor='redirectUrl' className='block m-2'>
           <span className='text-sm text-default'>لينك الاعلان</span>
           <input
-            required
-            maxlength='30'
+            maxLength='30'
             type='text'
-            placeholder={prop.redirectUrl}
-            value={prop.inputValues.redirectUrl}
-            onChange={prop.handleRedirectUrlChange}
+            placeholder={props.inputValues.redirectUrl}
+            value={props.inputValues.redirectUrl}
+            onChange={props.handleRedirectUrlChange}
             className='text-sm form-input mt-1 block w-full border'
           />
         </label>
-        <label htmlFor='fileUpload' className='block'>
+        <div className='flex'>
+          <div className='text-sm form-input mt-1 flex-1 w-full border'>
+            <span className='text-sm text-default'>ادخل موعد بداية العرض </span>
+            <label htmlFor='DatePicker' className='block m-2 w-full'>
+              <DatePicker
+                className='outline-none w-full'
+                selected={props.startDate}
+                onChange={props.startDateChange}
+                minDate={new Date()}
+                dateFormat='yyyy-MM-dd'
+              />
+            </label>
+          </div>
+
+          <div className='text-sm form-input mt-1 flex-1 w-full border'>
+            <span className='text-sm text-default'>
+              ادخل موعد انتهاء العرض{" "}
+            </span>
+            <label htmlFor='DatePicker' className='block m-2 w-full'>
+              <DatePicker
+                className='outline-none w-full'
+                selected={props.endDate}
+                onChange={props.endDateChange} //only when value has changed
+                minDate={new Date()}
+                dateFormat='yyyy-MM-dd'
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* <label htmlFor='fileUpload' className='block p-4'>
           <span className='text-sm text-default'>اضف صورة الاعلان</span>
-          {!prop.inputValues.file && (
+          {props.defaultImagesList === null && (
             <input
               id='fileUpload'
               accept='image/*'
               type='file'
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
+              placeholder={props.inputValues.file}
+              value={props.inputValues.file}
+              onChange={props.handleImageChange}
               className='text-sm form-input mt-1 block w-full border'
               required
             />
           )}
-        </label>
+        </label> */}
 
-        {prop.inputValues.file && (
-          <div className='relative'>
-            <span
-              className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className={`text-secondary stroke-current inline-block h-5 w-5`}>
-                <line x1='18' y1='6' x2='6' y2='18'></line>
-                <line x1='6' y1='6' x2='18' y2='18'></line>
-              </svg>
-            </span>
-            <img
-              className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
-            />
+        <div className=' mb-12 p-5 mt-5 bg-white border-2 border-gray-200'>
+          <label className='block'>
+            <span className='text-default mb-2 block'>صورة الاعلان</span>
+          </label>
+
+          <div className='form-group multi-preview addNewImageCont'>
+            {props.defaultImagesList !== null ? (
+              <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+                <img src={props.defaultImagesList} className='' alt='...' />
+                <i
+                  className='w-34 h-34 p-0 cursor-pointer rounded-full icon-close text-xl absolute right-0 top-0 text-white z-0'
+                  onClick={() => props.setDefaultImagesList(null)}
+                />
+              </div>
+            ) : (
+              <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+                <ImageSelector uploadImages={props.setImagesList} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </form>
     );
   }
   return (
-    <div className='relative p-4 flex-auto'>
-      <form className=' p-4 flex-auto'>
-        {prop.error && (
-          <div>
-            <p className='text-red-600'>البيانات غير صحيحه</p>
-          </div>
-        )}
-        <span className='text-sm text-default'>حدد الفرع</span>
-        <select
-          className='text-sm form-input mt-1 block w-full border'
-          onChange={prop.handleBranchChange}>
-          {branchesOptions.map((item, i) => {
-            return (
-              <option
-                key={i}
-                name={item.name}
-                value={item.id}
-                selected={item.id === prop.inputValues.branch_id}>
-                {item.name}
-              </option>
-            );
+    <form className=' p-4 flex-auto'>
+      {props.error && (
+        <div>
+          <p className='text-red-600'>تاكد من كتابة بياناتك كامله</p>
+        </div>
+      )}
+      <div>
+        <input
+          className='w-full text-lg m-2 outline-none'
+          type='text'
+          list='branches'
+          placeholder='حدد الفرع هنا .....'
+          onChange={props.handleBranchChange}
+        />
+        <datalist id='branches' className='w-full text-lg m-2 outline-none'>
+          {props.branches.map((item, i) => {
+            return <option key={i} value={item.branch_name} />;
           })}
-        </select>
-        <label htmlFor='offer' className='block'>
-          <span className='text-sm text-default'>الاعلان</span>
-          <input
-            required
-            maxlength='10'
-            type='text'
-            value={prop.inputValues.name}
-            onChange={prop.handleNameChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='redirectUrl' className='block'>
-          <span className='text-sm text-default'>اللينك</span>
-          <input
-            maxlength='15'
-            required
-            type='text'
-            value={prop.inputValues.redirectUrl}
-            onChange={prop.handleRedirectUrlChange}
-            className='text-sm form-input mt-1 block w-full border'
-          />
-        </label>
-        <label htmlFor='fileUpload' className='block'>
-          <span className='text-sm text-default'>اضف صورة الاعلان</span>
-          {!prop.inputValues.file && (
-            <input
-              id='fileUpload'
-              accept='image/*'
-              type='file'
-              value={prop.inputValues.file}
-              onChange={prop.handleImageChange}
-              className='text-sm form-input mt-1 block w-full border'
-              required
+        </datalist>
+      </div>
+
+      <label htmlFor='offer' className='block m-2'>
+        <span className='text-sm text-default'>الاعلان</span>
+        <input
+          required
+          maxLength='30'
+          type='text'
+          placeholder={props.inputValues.name}
+          value={props.inputValues.name}
+          onChange={props.handleNameChange}
+          className='text-sm form-input mt-1 block w-full border'
+        />
+      </label>
+      <label htmlFor='redirectUrl' className='block m-2'>
+        <span className='text-sm text-default'>لينك الاعلان</span>
+        <input
+          maxLength='30'
+          type='text'
+          placeholder={props.inputValues.redirectUrl}
+          value={props.inputValues.redirectUrl}
+          onChange={props.handleRedirectUrlChange}
+          className='text-sm form-input mt-1 block w-full border'
+        />
+      </label>
+      <div className='flex'>
+        <div className='text-sm form-input mt-1 flex-1 w-full border'>
+          <span className='text-sm text-default'>ادخل موعد بداية العرض </span>
+          <label htmlFor='DatePicker' className='block m-2 w-full'>
+            <DatePicker
+              className='outline-none w-full'
+              selected={props.startDate}
+              onChange={props.startDateChange}
+              minDate={new Date()}
+              dateFormat='yyyy-MM-dd'
             />
-          )}
-        </label>
-        {prop.inputValues.file && (
-          <div className='relative'>
-            <span
-              className='modal-close btn btn-transparent absolute'
-              onClick={prop.deleteImage}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                className={`text-secondary stroke-current inline-block h-5 w-5`}>
-                <line x1='18' y1='6' x2='6' y2='18'></line>
-                <line x1='6' y1='6' x2='18' y2='18'></line>
-              </svg>
-            </span>
-            <img
-              className=' bg-center object-cover w-full  h-48 '
-              src={prop.inputValues.file}
+          </label>
+        </div>
+
+        <div className='text-sm form-input mt-1 flex-1 w-full border'>
+          <span className='text-sm text-default'>ادخل موعد انتهاء العرض </span>
+          <label htmlFor='DatePicker' className='block m-2 w-full'>
+            <DatePicker
+              className='outline-none w-full'
+              selected={props.endDate}
+              onChange={props.endDateChange} //only when value has changed
+              minDate={new Date()}
+              dateFormat='yyyy-MM-dd'
             />
-          </div>
+          </label>
+        </div>
+      </div>
+
+      {/* <label htmlFor='fileUpload' className='block p-4'>
+        <span className='text-sm text-default'>اضف صورة الاعلان</span>
+        {!props.inputValues.file && (
+          <input
+            id='fileUpload'
+            accept='image/*'
+            type='file'
+            placeholder={props.inputValues.file}
+            value={props.inputValues.file}
+            onChange={props.handleImageChange}
+            className='text-sm form-input mt-1 block w-full border'
+            required
+          />
         )}
-      </form>
-    </div>
+      </label> */}
+
+      {/* {props.inputValues.file && (
+        <div className='relative'>
+          <span
+            className='modal-close btn btn-transparent absolute'
+            onClick={props.deleteImage}>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              width='24'
+              height='24'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              className={`text-secondary stroke-current inline-block h-5 w-5`}>
+              <line x1='18' y1='6' x2='6' y2='18'></line>
+              <line x1='6' y1='6' x2='18' y2='18'></line>
+            </svg>
+          </span>
+          <img
+            className=' bg-center object-cover w-full  h-48 '
+            src={URL.createObjectURL(props.inputValues.file)}
+          />
+        </div>
+      )} */}
+      <div className=' mb-12 p-5 mt-5 bg-white border-2 border-gray-200'>
+        <label className='block'>
+          <span className='text-default mb-2 block'>صورة الاعلان</span>
+        </label>
+        <div className='form-group multi-preview addNewImageCont'>
+          {props.defaultImagesList !== null ? (
+            <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+              <img src={props.defaultImagesList} className='' alt='...' />
+              <i
+                className='w-34 h-34 p-0 cursor-pointer rounded-full icon-close text-xl absolute right-0 top-0 text-white z-0'
+                onClick={() => props.setDefaultImagesList(null)}
+              />
+            </div>
+          ) : (
+            <div className='border-8 border-transparent rounded shadow-sm w-2/5 h-48 imagecontainer relative'>
+              <ImageSelector uploadImages={props.setImagesList} />
+            </div>
+          )}
+        </div>
+        <div className={"clearfix"}></div>
+      </div>
+    </form>
   );
 };
 
@@ -239,8 +310,19 @@ const AddsModal = ({
   handleNameChange,
   handleRedirectUrlChange,
   handleImageChange,
+  handleBranchChange,
+  handleDropDownChange,
+  startDateChange,
+  endDateChange,
   deleteImage,
-  error
+  error,
+  branches,
+  startDate,
+  endDate,
+  defaultImagesList,
+  setDefaultImagesList,
+  imagesList,
+  setImagesList
 }) => {
   return (
     <>
@@ -252,12 +334,23 @@ const AddsModal = ({
             <ModalBody
               body={message}
               inputValues={inputValues}
+              handleBranchChange={handleBranchChange}
+              handleDropDownChange={handleDropDownChange}
               handleNameChange={handleNameChange}
               handleRedirectUrlChange={handleRedirectUrlChange}
               handleImageChange={handleImageChange}
+              startDateChange={date => startDateChange(date)}
+              endDateChange={date => endDateChange(date)}
               type={type}
+              branches={branches}
               deleteImage={deleteImage}
               error={error}
+              startDate={startDate}
+              endDate={endDate}
+              defaultImagesList={defaultImagesList}
+              setDefaultImagesList={setDefaultImagesList}
+              imagesList={imagesList}
+              setImagesList={setImagesList}
             />
             <ModalFooter cancel={() => cancel()} handleSubmit={handleSubmit} />
           </div>

@@ -420,7 +420,6 @@ const Index = () => {
 
   const _getAllBranches = ( page, counts ) => {
     setLoadingData(true);
-    console.log('_getAllBranchesProps', page, counts);
       Api.Branches.all(page, counts).then((res)=>{
         setLoadingData(false);
         console.log('_getAllBranches', res);

@@ -6,83 +6,117 @@ import SectionTitle from "../../src/components/section-title";
 import AdsModal from "../../src/components/modals/AdsModal";
 import DeleteModal from "../../src/components/modals/DeleteModal";
 import api from "../../src/api";
+import moment from "moment";
 
 const Index = () => {
   const [id, setId] = useState("");
+  // const [adsData, setAdsData] = useState(null);
   const [type, setType] = useState("");
   const [ads, setAds] = useState([]);
   const [adsModal, setAdsModal] = useState(false);
   const [adsModalTitle, setAdsModalTitle] = useState("");
+  const [imagesList, setImagesList] = useState([]);
+  const [defaultImagesList, setDefaultImagesList] = useState(null);
   const [inputValues, setInputValues] = useState({
     id: "",
     name: "",
-    file: "",
-    // branch_id: 1,
+    branch_id: 1,
     redirectUrl: ""
   });
-
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [deleteModalMessage, setDeleteModalMessage] = useState("");
   const [deleteModalTitle, setDeleteModalTitle] = useState("");
   const [deleteModal, setDeleteModal] = useState("");
   const [error, setError] = useState(false);
-
+  const [branches, setBranches] = useState([]);
+  const [searchfield, setSearchfield] = useState("");
   // component did mount
   useEffect(() => {
     _getAllAds();
+    _getAllBranches();
   }, []);
 
+  const _getAllBranches = () => {
+    api.Branches.all(0, 1000).then(res => {
+      if (res.statusCode === 200) {
+        setBranches(res.data);
+      }
+    });
+  };
   const _getAllAds = () => {
     api.Ads.all().then(res => {
-      console.log("_getAllAds", res);
       if (res.statusCode === 200) {
-        console.log(res, "res");
         setAds(res.data);
       }
     });
   };
 
   const add = () => {
-    setType("ad");
+    setType("add");
     setAdsModalTitle("اضف اعلانك");
     setAdsModal(true);
     setError(false);
   };
 
   const edit = ad => {
+    setType("edit");
     const id = ad.id;
-    const name = ad.name;
-    const redirectUrl = ad.redirectUrl;
-    const file = ad.file;
+    const name = ad.ad_text;
+    const redirectUrl = ad.redirect_url;
     const branch_id = ad.branch_id;
-    setId(id);
+    const imagesList = ad.ad_img;
+    const start = ad.start_date;
+    const end = ad.end_date;
+    console.log("start", start);
+    console.log("end", end);
     setInputValues({
       id,
       name,
       redirectUrl,
-      file,
       branch_id
     });
+    setImagesList(imagesList);
+    setDefaultImagesList(imagesList);
     setType("edit");
     setError(false);
     setAdsModalTitle("تعديل");
     setAdsModal(true);
   };
 
-  const handleImageChange = e => {
-    const file = URL.createObjectURL(e.target.files[0]);
-    setInputValues({ ...inputValues, file: file });
-  };
+  // const handleImageChange = e => {
+  //   setInputValues({ ...inputValues, file: e.target.files[0] });
+  // };
+
+  // const deleteImage = () => {
+  //   let file = "";
+  //   setInputValues({ ...inputValues, file: file });
+  // };
 
   const handleNameChange = e => {
     setInputValues({ ...inputValues, name: e.target.value });
   };
 
-  const handlerediRectUrlChange = e => {
+  const handleRedirectUrlChange = e => {
     setInputValues({ ...inputValues, redirectUrl: e.target.value });
   };
 
   const handleBranchChange = e => {
+    setSearchfield(e.target.value);
+  };
+  const handleDropDownChange = e => {
     setInputValues({ ...inputValues, branch_id: Number(e.target.value) });
+  };
+  const filteredBranches = branches.filter(branch => {
+    return branch.branch_name.toLowerCase().includes(searchfield.toLowerCase());
+  });
+  const startDateChange = date => {
+    setStartDate(date);
+    console.log(" startDateChange ", date);
+  };
+  const endDateChange = date => {
+    setEndDate(date);
+    console.log("endDateChange", date);
   };
 
   const handleSubmit = e => {
@@ -90,34 +124,74 @@ const Index = () => {
     if (
       inputValues.name === "" ||
       inputValues.redirectUrl === "" ||
-      inputValues.file === ""
+      imagesList === [] ||
+      inputValues.branch_id === ""
     ) {
       setError(true);
     } else {
       if (!inputValues.id) {
-        console.log("adddddddddddddddddddddddddd", inputValues);
-      } else {
-        console.log("updateeeeeeeeeeeeeeeeee", inputValues);
-        const copyOfads = ads.filter(ad => ad.id !== id);
-        const name = inputValues.name;
-        const redirectUrl = inputValues.redirectUrl;
-        setInputValues({
-          id: id,
-          name,
-          redirectUrl,
-          branch_id
+        console.log("startDate", startDate);
+        console.log("endDate", endDate);
+        const newStartDate = moment(startDate).format("YYYY-MM-DD");
+        const newEndDate = moment(endDate).format("YYYY-MM-DD");
+        console.log("newStartDate", newStartDate);
+        console.log("newEndDate", newEndDate);
+        setType("add");
+        console.log("add", "inputValues", inputValues);
+        var formdata = new FormData();
+        formdata.append("branch_id", inputValues.branch_id);
+        formdata.append("ad_text", inputValues.name);
+        formdata.append("redirect_url", inputValues.redirectUrl);
+        formdata.append("images", imagesList[0]);
+        formdata.append("start_date", newStartDate);
+        formdata.append("end_date", newEndDate);
+
+        api.Ads.add(formdata).then(res => {
+          console.log("_getAllAds", res);
+          if (res.statusCode === 200) {
+            console.log("added", formdata);
+            _getAllAds();
+          }
         });
-        const newAds = [...copyOfads, inputValues];
-        setAds(newAds);
+      } else {
+        setType("edit");
+        const newStartDate = moment(startDate).format("YYYY-MM-DD");
+        const newEndDate = moment(endDate).format("YYYY-MM-DD");
+
+        const data = {
+          id: inputValues.id,
+          ad_text: inputValues.name,
+          redirect_url: inputValues.redirectUrl,
+          branch_id: inputValues.branch_id,
+          images: imagesList[0],
+          start_date: newStartDate,
+          end_date: newEndDate
+        };
+        if (imagesList[0]) {
+          data.images = imagesList[0];
+        } else {
+          data.images = ad.ad.Image_path;
+          setImagesList(data.images);
+        }
+
+        api.Ads.update(data).then(res => {
+          console.log("_getAllAds", res);
+          if (res.statusCode === 200) {
+            console.log("updated");
+            _getAllAds();
+          }
+        });
       }
 
       setInputValues({
         id: "",
         name: "",
         redirectUrl: "",
-        file: null,
         branch_id: 1
       });
+      setStartDate(null);
+      setEndDate(null);
+      setImagesList([]);
       setAdsModal(false);
       setError(false);
     }
@@ -136,7 +210,7 @@ const Index = () => {
     api.Ads.delete(id).then(res => {
       console.log(id);
       console.log("_getAllAds", res);
-      if (res.statusCode === 202) {
+      if (res.statusCode === 200) {
         console.log("deleted");
         _getAllAds();
       }
@@ -144,12 +218,8 @@ const Index = () => {
     });
   };
 
-  console.log(ads, "ads");
+  // console.log(ads, "ads");
 
-  const deleteImage = () => {
-    let file = null;
-    setInputValues({ ...inputValues, file: file });
-  };
   return (
     <Container>
       <Layout>
@@ -165,14 +235,24 @@ const Index = () => {
             title={adsModalTitle}
             handleImageChange={e => handleImageChange(e)}
             handleBranchChange={e => handleBranchChange(e)}
+            handleDropDownChange={handleDropDownChange}
             handleNameChange={handleNameChange}
-            handlerediRectUrlChange={handlerediRectUrlChange}
+            handleRedirectUrlChange={handleRedirectUrlChange}
+            startDateChange={date => startDateChange(date)}
+            endDateChange={date => endDateChange(date)}
             handleSubmit={handleSubmit}
+            branches={filteredBranches}
             inputValues={inputValues}
             ads={ads}
+            startDate={startDate}
+            endDate={endDate}
             deleteImage={() => deleteImage()}
             id={inputValues.id}
             error={error}
+            defaultImagesList={defaultImagesList}
+            setDefaultImagesList={setDefaultImagesList}
+            imagesList={imagesList}
+            setImagesList={setImagesList}
           />
         )}
         {deleteModal && (
@@ -190,9 +270,13 @@ const Index = () => {
           اضافة اعلان
         </button>
         <div className='flex flex-wrap  justify-start '>
+          {!ads.length && (
+            <div className='flex flex-wrap  justify-center '>
+              <span>لا يوجد اعلانات لعرضها...</span>{" "}
+            </div>
+          )}
           {ads &&
             ads.map(ad => {
-              console.log("add.image", ad.ad_img);
               return (
                 <div
                   key={ad.id}
@@ -204,8 +288,19 @@ const Index = () => {
                   <div>
                     <h1 className='mb-4 text-2xl'>{ad.ad_text}</h1>
                     <h2 className='mb-4 text-grey-darker text-sm flex-1'>
-                      LINK{ad.redirect_url}
+                      {ad.redirect_url}
                     </h2>
+                    <div className='mb-4 text-grey-darker text-sm flex-1'>
+                      <h6>
+                        {" "}
+                        بداية العرض {moment(ad.start_date).format("YYYY-MM-DD")}
+                      </h6>
+
+                      <h6>
+                        {" "}
+                        نهاية العرض {moment(ad.end_date).format("YYYY-MM-DD")}
+                      </h6>
+                    </div>
 
                     <div className='flex flex-row '>
                       <button

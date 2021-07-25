@@ -22,11 +22,11 @@ const ModalHeader = ({ cancel, head }) => (
   </div>
 );
 
-const ModalBody = prop => {
-  console.log("prop", prop);
+const ModalBody = props => {
+  console.log("props", props);
   return (
     <div className='relative p-4 flex-auto'>
-      <p className='mb-3'>{prop.body} </p>
+      <p className='mb-3'>{props.body} </p>
     </div>
   );
 };
