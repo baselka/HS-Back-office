@@ -7,10 +7,10 @@ sudo chmod -R 777 /var/www/staging.happy-season.com/html/HS-Back-office
 cd /var/www/staging.happy-season.com/html/HS-Back-office
 
 #install node modules
-npm install
+/home/satti/.nvm/versions/node/v12.18.3/bin/npm npm install
 # start building next js project 
-npm run build 
+/home/satti/.nvm/versions/node/v12.18.3/bin/npm run build 
 # delete pm2 process.
-pm2 delete "HS-Back-office"
+#/home/satti/.nvm/versions/node/v12.18.3/bin/pm2 delete "HS-Back-office"
 # start pm2 process
-pm2 start npm --name "HS-Back-office" -- start
+/home/satti/.nvm/versions/node/v12.18.3/bin/pm2 start npm --name "HS-Back-office" -- start
