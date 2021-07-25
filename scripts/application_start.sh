@@ -13,6 +13,6 @@ cd /var/www/staging.happy-season.com/html/HS-Back-office
 # start building next js project 
 /home/satti/.nvm/versions/node/v12.18.3/bin/npm run build 
 # delete pm2 process.
-#/home/satti/.nvm/versions/node/v12.18.3/bin/pm2 delete "HS-Back-office"
+/home/satti/.nvm/versions/node/v12.18.3/bin/pm2 delete "HS-Back-office"
 # start pm2 process
 /home/satti/.nvm/versions/node/v12.18.3/bin/pm2 start npm --name "HS-Back-office" -- start
