@@ -284,6 +284,16 @@ module.exports = {
         'monospace'
       ]
     },
+    extend: {
+      fontFamily: {
+        'sans': ['Cairo', 'sans-serif'],
+        poppins: ['Cairo', 'sans-serif'],
+        borderRadius: ['responsive', 'hover'],
+        padding: ['responsive', 'hover'],
+        backgroundColor: ['responsive', 'hover'],
+        borderColor: ['responsive', 'hover'],
+      }
+    },
     fontSize: {
       xxs: '0.625rem',
       xs: '0.75rem',

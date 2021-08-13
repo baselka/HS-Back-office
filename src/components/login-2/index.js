@@ -1,108 +1,99 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router'
-import Link from 'next/link'
-import {useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { Alert } from '../../../src/components/alerts'
+import { wrapper } from '../../../src/store'
+import { connect } from "react-redux"
+import Api from '../../api'
+import { authenticate, checkServerSideCookie } from "../../actions/authActions"
 
-let socialMediaColors = {
-  facebook: '#365397',
-  linkedin: '#006db3',
-  google: '#e0452c',
-  github: '#2f2f2f'
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    checkServerSideCookie(context);
+    const token = context.store.getState().authentication.token;
+    return { props: { token } };
+  }
+);
 
-const Login1 = () => {
+const Login1 = ({ authenticate, token }) => {
+  const [messages, setMessages] = useState(false)
   const {register, handleSubmit, watch, errors} = useForm()
   const router = useRouter()
+
+  useEffect(() => {
+    if (token) {
+      router.push('/dashboards');
+    }
+  });
+
   const onSubmit = data => {
-    console.log(data)
-    router.push('/dashboards/dashboard-1')
+    Api.Auth.login(data).then((res)=>{
+      if(res.statusCode === 200){
+        authenticate(res.data);
+        router.push('/dashboards');
+      }else{
+        setMessages(res.statusName);
+        setTimeout(() => {
+          setMessages(false);
+        }, 3000);
+      }
+    });
   }
-  const [checked, setChecked] = useState(true)
 
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col text-sm mb-4 w-full">
+        className="flex flex-col text-sm mb-4 w-4/6">
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Email</span>
+            <span className="text-default">البريد الإلكتروني</span>
             <input
               name="email"
               type="email"
               ref={register({required: true})}
               className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Enter your email"
+              placeholder="ادخل البريد الإلكتروني"
             />
           </label>
           {errors.email && (
-            <p className="mt-1 text-xs text-red-500">Email is required</p>
+            <p className="mt-1 text-xs text-red-500">البريد الإلكتروني اجباري</p>
           )}
         </div>
         <div className="w-full mb-4">
           <label className="block">
-            <span className="text-default">Password</span>
+            <span className="text-default">كلمة المرور</span>
             <input
               name="password"
               type="password"
               ref={register({required: true})}
               className="form-input mt-1 text-xs block w-full bg-white"
-              placeholder="Enter your password"
+              placeholder="ادخل كلمة المرور"
             />
           </label>
           {errors.password && (
-            <p className="mt-1 text-xs text-red-500">Password is required</p>
+            <p className="mt-1 text-xs text-red-500">كلمة المرور اجبارية</p>
           )}
         </div>
 
         <div className="w-full">
+          {messages && (
+            <div className={"bg-white"} >
+              <Alert color="red" raised flat >
+                {messages}
+              </Alert>
+            </div>
+          )}
           <input
             type="submit"
-            className="px-4 py-3 uppercase font-bold text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:outline-none active:outline-none"
-            value="Login"
+            className="px-4 py-3 mt-4 uppercase font-bold text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:outline-none active:outline-none cursor-pointer"
+            value="تسجيل الدخول"
           />
         </div>
       </form>
 
-      <div className="w-full mb-4 text-center">
-        <p className="text-secondary mb-2">Or login with</p>
-        <div className="flex w-full flex-row justify-center items-center children-x-2">
-          <i
-            className={`icon-social-facebook text-xl`}
-            style={{color: socialMediaColors['facebook']}}></i>
-          <i
-            className={`icon-social-google text-xl`}
-            style={{color: socialMediaColors['google']}}></i>
-          <i
-            className={`icon-social-linkedin text-xl`}
-            style={{color: socialMediaColors['linkedin']}}></i>
-          <i
-            className={`icon-social-github text-xl`}
-            style={{color: socialMediaColors['github']}}></i>
-        </div>
-      </div>
-
-      <div className="w-full children-x-1">
-        <span className="text-secondary">New user?</span>
-        <span>
-          <Link href="/pages/create-account">
-            <a className="link">
-              Create account here
-            </a>
-          </Link>
-        </span>
-      </div>
-      <div className="w-full">
-        <span>
-          <Link href="/pages/forgot-password">
-            <a className="link">
-              Forgot password?
-            </a>
-          </Link>
-        </span>
-      </div>
     </>
   )
 }
 
-export default Login1
+export default connect((state) => state, { authenticate })(Login1);

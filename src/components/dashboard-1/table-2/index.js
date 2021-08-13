@@ -10,7 +10,7 @@ const Table3 = ({title, subtitle}) => {
       <div className="flex items-center justify-between">
         <WidgetTitle title={title} description={subtitle} />
       </div>
-      <table className="table">
+      <table className="table striped">
         <thead>
           <tr>
             <th>Name</th>
@@ -27,11 +27,11 @@ const Table3 = ({title, subtitle}) => {
                     <img
                       className="h-10 w-10 rounded-full shadow"
                       src={`/assets/faces/${user.img}`}
-                      alt={user.name}
+                      alt={user.fullName}
                     />
                   </div>
                   <div className="ltr:ml-4 rtl:mr-4">
-                    <div className="text-sm font-medium">{user.name}</div>
+                    <div className="text-sm font-medium">{user.fullName}</div>
                     <div className={`text-secondary text-sm`}>
                       {user.country}
                     </div>

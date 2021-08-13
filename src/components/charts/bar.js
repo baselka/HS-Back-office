@@ -7,7 +7,8 @@ import {random} from '../../functions/numbers'
 const Chart = ({
   height = 300,
   bgColor = 'bg-red-400',
-  borderColor = 'bg-red-500'
+  borderColor = 'bg-red-500',
+  stats = {}
 }) => {
   const {palettes, collapsed, layout} = useSelector(
     state => ({
@@ -22,7 +23,8 @@ const Chart = ({
   const key = `${layout}-${collapsed}-${background}`
 
   const randomData = Array.from(Array(12).keys()).map(i => random(50, 100))
-
+  console.log("dtan", randomData);
+  
   const legend = {
     display: true,
     labels: {
@@ -35,6 +37,9 @@ const Chart = ({
   const options = {
     animation: {
       duration: 0
+    },
+    legend: {
+        display: false,
     },
     maintainAspectRatio: false,
     layout: {
@@ -77,29 +82,32 @@ const Chart = ({
       ]
     }
   }
-
+  let labels = [
+    "عدد الفروع",
+    "عدد مقدمي الخدمة",
+    "عدد المدن",
+    "عدد مستخدمي التطبيق",
+    "عدد الدعوات",
+  ];
+  let sData = [];
+  for (const key in stats) {
+    if (Object.hasOwnProperty.call(stats, key)) {
+      const selement = stats[key];
+      sData.push(selement);
+    }
+  }
+  console.log("stats", stats);
+  console.log("labels", labels);
+  console.log("sData", sData);
   const data = {
-    labels: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ],
+    labels,
     datasets: [
       {
-        label: 'Sales',
+        label: '',
         backgroundColor: getColor(bgColor),
         borderColor: getColor(borderColor),
         borderWidth: 1,
-        data: randomData
+        data: sData
       }
     ]
   }

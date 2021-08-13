@@ -9,7 +9,7 @@ const LockScreen = () => {
       <div className="w-full p-2">
         <div className="flex flex-col w-full items-center justify-start p-4">
           <img
-            src="/assets/faces/m1.png"
+            src="/assets/faces/avatar.png"
             alt="image"
             className="shadow rounded-full h-20 w-20 border-2 border-gray-100 mb-2"
           />

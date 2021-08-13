@@ -5,7 +5,7 @@ const Search = () => {
         <input
           type="search"
           name="search"
-          placeholder="Search..."
+          placeholder="بجث ..."
         />
         <button type="submit">
           <svg

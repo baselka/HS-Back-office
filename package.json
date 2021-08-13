@@ -15,10 +15,11 @@
     "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "dotenv": "^8.2.0",
+    "js-cookie": "^2.2.1",
     "lodash": "^4.17.15",
     "madge": "^3.8.0",
     "micro-cors": "^0.1.1",
-    "moment": "^2.25.1",
+    "moment": "^2.29.1",
     "next": "^9.3.6",
     "next-redux-wrapper": "^6.0.2",
     "nprogress": "^0.2.0",
@@ -27,11 +28,14 @@
     "prop-types": "^15.7.2",
     "rc-slider": "^9.2.4",
     "react": "^16.13.1",
+    "react-calendar": "^3.3.1",
     "react-chartjs-2": "^2.9.0",
     "react-circle": "^1.1.1",
     "react-cookie": "^4.0.3",
+    "react-datepicker": "^3.7.0",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
+    "react-google-maps": "^9.4.5",
     "react-hook-form": "^5.6.1",
     "react-notifications": "^1.6.0",
     "react-redux": "^7.2.0",
@@ -44,7 +48,8 @@
     "redux-thunk": "^2.3.0",
     "sass": "^1.26.5",
     "tailwindcss": "^1.4.4",
-    "use-debounce": "^3.4.2"
+    "use-debounce": "^3.4.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@tailwindcss/custom-forms": "^0.2.1"

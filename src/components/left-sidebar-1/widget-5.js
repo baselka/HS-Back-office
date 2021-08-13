@@ -14,7 +14,7 @@ const Widget5 = () => {
         <div className="flex flex-col w-full items-center justify-start">
           <img
               src={`/assets/faces/${user.img}`}
-              alt={user.name}
+              alt={user.fullName}
             className="shadow rounded-full h-20 w-20 border-2 mb-2"
           />
           <div className="flex flex-row items-center justify-center w-full">

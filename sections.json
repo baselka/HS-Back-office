@@ -1,0 +1,15 @@
+[
+    {"url": "/","title": "الرئيسية"},
+    {"url": "/users", "title": "إدارة المستخدمين"},
+    {"url": "/app/cities", "title": "إدارة التطبيق"},
+    {"url": "/app/cities", "title": "إدارة المدن"},
+    {"url": "/app/categories", "title": "إدارة الأقسام الرئيسية"},
+    {"url": "/app/sub-categories", "title": "إدارة الأقسام الفرعية"},
+    {"url": "/app/cards", "title": "كروت الدعوة"},
+    {"url": "/providers", "title": "إدارة حساب مقدم خدمة"},
+    {"url": "/providers/branches", "title": "إدارة الفروع"},
+    {"url": "/services", "title": "إدارة الخدمات"},
+    {"url": "/advertisements", "title": "الإعلانات"},
+    {"url": "/offers", "title": "العروض"},
+    {"url": "/suggestions", "title": "إقتراحات وشكاوى"}
+]

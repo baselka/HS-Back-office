@@ -1,10 +1,10 @@
 .left-sidebar {
   &.left-sidebar-1 {
     > div {
-      width: calc(16rem + 24px);
+      width: calc(18rem + 24px);
     }
     .list-item {
-      @apply rounded-lg py-3 px-2 w-full flex items-center justify-start;
+      @apply rounded-lg py-3 px-2 w-full flex items-center justify-start rounded-full;
       [data-direction="ltr"] & {
         .badge {
           @apply mr-4 ml-auto #{!important};
@@ -16,6 +16,9 @@
         }
       }
     }
+    .list-item:hover{
+      @apply rounded-full bg-pink-600;
+    }
 
     .accordion {
       max-height: 0;
@@ -24,6 +27,13 @@
       &.open {
         max-height: 100vh;
       }
+    }
+
+    button.open-active-btn, a.open-active-btn{
+        @apply bg-pink-800 #{!important};
+    }
+    ul.list-none li a, ul.list-none li button{
+      @apply pr-4 #{!important};
     }
 
     .right-arrow:before {
@@ -46,7 +56,7 @@
     [data-direction="rtl"] & {
       .right-arrow:before {
         left: 8px;
-        transform: rotate(-540deg);
+        //transform: rotate(-540deg);
       }
     }
   }

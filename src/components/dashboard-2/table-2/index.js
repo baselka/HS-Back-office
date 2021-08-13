@@ -1,7 +1,7 @@
 import tickers from '../../../json/tickers.json'
 
 const Table2 = () => (
-  <table className="table">
+  <table className="table striped">
     <tbody>
       {tickers.map((ticker, i) => (
         <tr key={i}>

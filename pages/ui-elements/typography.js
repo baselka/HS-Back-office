@@ -84,7 +84,7 @@ const Index = () => {
             <code>.text-size</code>{' '}utilities. For more information go to <a className="link" target="_blank" href="https://tailwindcss.com/docs/font-size/#app">this url</a>. For text color information go to <a className="link" target="_blank" href="https://tailwindcss.com/docs/text-color/#app">this url</a>.
           </span>
         }>
-        <table className="table table-auto no-border">
+        <table className="table table-auto no-border striped">
           <tbody>
             {items.map((item, i) => (
               <tr key={i}>

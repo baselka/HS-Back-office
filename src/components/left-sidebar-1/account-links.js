@@ -48,11 +48,11 @@ const AccountLinks = () => {
   return (
     <div className="flex flex-col w-full">
       <Title>My account</Title>
-      <ul className="list-none px-4">
+      <ul className="list-none px-6">
         {items.map((item, i) => (
           <li className="relative" key={i}>
             <Link href={item.url}>
-              <a className="list-item children-x-2">
+              <a className="list-item children-x-2 rounded-full">
                 {item.icon}
                 <span>{item.name}</span>
                 {item.badge && (
